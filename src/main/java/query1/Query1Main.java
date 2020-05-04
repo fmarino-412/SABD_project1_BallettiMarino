@@ -34,8 +34,7 @@ public class Query1Main {
                     // split the date basing on the T character and save just the initial part (year, month, day)
                     String generalDate = (lineSplit[0].split("T"))[0];
                     // create the final tuple
-                    return new Tuple2<Date, Tuple2<Integer, Integer>>(
-                            new SimpleDateFormat("yyyy-MM-dd").parse(generalDate), innerTuple);
+                    return new Tuple2<>(new SimpleDateFormat("yyyy-MM-dd").parse(generalDate), innerTuple);
                 }
         );
 
