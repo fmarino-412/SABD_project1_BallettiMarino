@@ -7,10 +7,7 @@ import org.apache.spark.api.java.JavaSparkContext;
 import scala.Tuple2;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.Map;
+import java.util.*;
 
 public class Query1Main {
 
@@ -53,10 +50,29 @@ public class Query1Main {
 
         Map<String, Long> totals = weekPairs.countByKey();
 
+        // Return structure creation
+        Map<String, Double> averageCuredByWeek = new HashMap<>();
+        Map<String, Double> averageSwabsByWeek = new HashMap<>();
+
+        for (Map.Entry<String, Tuple2<Integer, Integer>> entry : sumByWeek.entrySet()) {
+            String key = entry.getKey();
+            Integer sumOfCured = entry.getValue()._1();
+            Integer sumOfSwabs = entry.getValue()._2();
+            averageCuredByWeek.put(key, (Double.valueOf(sumOfCured)/totals.get(key)));
+            averageSwabsByWeek.put(key, (Double.valueOf(sumOfSwabs)/totals.get(key)));
+        }
+
+        for (Map.Entry<String, Double> entry : averageCuredByWeek.entrySet()) {
+            System.out.println("-------------------------------------------------------------------------------------");
+            System.out.printf("Week %s\t%f\t%f\n",
+                    entry.getKey(), entry.getValue(), averageSwabsByWeek.get(entry.getKey()));
+            System.out.println("-------------------------------------------------------------------------------------");
+        }
+
         // compute by key on master
 
         // Transformations
-        // 1(PREPROCESSING?): from cumulative to daily data
+        // TODO: 1(PREPROCESSING): from cumulative to daily data
         // 2: from data as key to week number + year
         // 3: evaluate statistics
 
