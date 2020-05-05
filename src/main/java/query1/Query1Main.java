@@ -62,11 +62,15 @@ public class Query1Main {
             averageSwabsByWeek.put(key, (Double.valueOf(sumOfSwabs)/totals.get(key)));
         }
 
+        System.out.println("Index\tWeek Number\tMean of cured\tMean of swabs");
+        int i = 1;
+
         for (Map.Entry<String, Double> entry : averageCuredByWeek.entrySet()) {
             System.out.println("-------------------------------------------------------------------------------------");
-            System.out.printf("Week %s\t%f\t%f\n",
-                    entry.getKey(), entry.getValue(), averageSwabsByWeek.get(entry.getKey()));
+            System.out.printf("%d): Week %s\t%f\t%f\n",
+                    i, entry.getKey(), entry.getValue(), averageSwabsByWeek.get(entry.getKey()));
             System.out.println("-------------------------------------------------------------------------------------");
+            i++;
         }
 
         // compute by key on master
