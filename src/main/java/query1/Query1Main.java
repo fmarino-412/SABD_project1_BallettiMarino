@@ -37,7 +37,7 @@ public class Query1Main {
 
         JavaPairRDD<String, Tuple2<Integer, Integer>> weekPairs = pairs.mapToPair(
                 tuple -> {
-                    Calendar calendar = new GregorianCalendar();
+                    Calendar calendar = new GregorianCalendar(Locale.ITALIAN);
                     calendar.setTime(tuple._1());
                     String key = calendar.get(Calendar.WEEK_OF_YEAR) + "-" + calendar.get(Calendar.YEAR);
                     return new Tuple2<>(key, tuple._2());
