@@ -34,21 +34,19 @@ public class Query2Main {
                             Arrays.asList(splitted).subList(4,splitted.length)));
                 });
 
-        JavaPairRDD<String, CountryData> countriesWithCoefficient = data.mapToPair(
-                tuple -> {
+        List<Tuple2<Double, CountryData>> orderedCountries = data.mapToPair(tuple -> {
                     SimpleRegression regression = new SimpleRegression();
                     List<Double> values = tuple._2.getCovidConfirmedCases();
                     for (int i = 0; i < values.size(); i++) {
                         regression.addData(i, values.get(i));
                     }
-                    Double coefficient = regression.getSlope();
+                    return new Tuple2<>(tuple._1, new CountryData(tuple._2, regression.getSlope()));
+                })
+                .mapToPair(tuple -> new Tuple2<>(tuple._2.getCovidTrendlineCoefficient(),
+                        new CountryData(tuple._2, tuple._1))).sortByKey(false)
+                .top(100);
 
-                    return new Tuple2<>(tuple._1, new CountryData(tuple._2, coefficient));
-                }
-        );
-
-        JavaPairRDD<Double, CountryData> orderedCountries = countriesWithCoefficient.mapToPair(
-                tuple -> new Tuple2<>(tuple._2.getCovidTrendlineCoefficient(), new CountryData(tuple._2, tuple._1)))
-                .sortByKey(false);
+        JavaPairRDD<String, CountryData> topCountries = sparkContext.parallelizePairs(orderedCountries)
+                .mapToPair(tuple -> new Tuple2<>(tuple._2.getName(), new CountryData(tuple._2, tuple._1)));
     }
 }
