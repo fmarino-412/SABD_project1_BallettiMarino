@@ -11,9 +11,10 @@ public class CountryData {
     private List<Double> covidConfirmedCases;
     private String name;
 
-    public CountryData(GeoCoordinate geoCoordinate, List<String> covidCases) {
+    public CountryData(GeoCoordinate geoCoordinate, List<String> covidCases, String s) {
         this.coordinate = geoCoordinate;
         this.covidConfirmedCases = new ArrayList<>();
+        this.name = s;
         for (String covidCase : covidCases) {
             this.covidConfirmedCases.add(Double.valueOf(covidCase));
         }

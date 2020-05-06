@@ -25,28 +25,23 @@ public class Query2Main {
         //TODO: remove header in csv and if needed include date in the list
 
         // convert data in RDD
-        JavaPairRDD<String, CountryData> data = dataset2.mapToPair(
+        JavaPairRDD<Double, CountryData> data = dataset2.mapToPair(
                 line -> {
                     String[] splitted = line.split(",");
                     String key = splitted[0].equals("") ? splitted[1] : splitted[0];
                     GeoCoordinate geoCoordinate = new GeoCoordinate(splitted[2], splitted[3]);
-                    return new Tuple2<>(key, new CountryData(geoCoordinate,
-                            Arrays.asList(splitted).subList(4,splitted.length)));
-                });
+                    CountryData countryData = new CountryData(geoCoordinate,
+                            Arrays.asList(splitted).subList(4,splitted.length), key);
 
-        List<Tuple2<Double, CountryData>> orderedCountries = data.mapToPair(tuple -> {
                     SimpleRegression regression = new SimpleRegression();
-                    List<Double> values = tuple._2.getCovidConfirmedCases();
+                    List<Double> values = countryData.getCovidConfirmedCases();
                     for (int i = 0; i < values.size(); i++) {
                         regression.addData(i, values.get(i));
                     }
-                    return new Tuple2<>(tuple._1, new CountryData(tuple._2, regression.getSlope()));
-                })
-                .mapToPair(tuple -> new Tuple2<>(tuple._2.getCovidTrendlineCoefficient(),
-                        new CountryData(tuple._2, tuple._1))).sortByKey(false)
-                .top(100);
+                    return new Tuple2<>(regression.getSlope(), countryData);
+                });
 
-        JavaPairRDD<String, CountryData> topCountries = sparkContext.parallelizePairs(orderedCountries)
-                .mapToPair(tuple -> new Tuple2<>(tuple._2.getName(), new CountryData(tuple._2, tuple._1)));
+        JavaRDD<Tuple2<Double, CountryData>> topCountries = data.sortByKey(false).zipWithIndex()
+                .filter(xi -> xi._2 < 100).keys();
     }
 }
