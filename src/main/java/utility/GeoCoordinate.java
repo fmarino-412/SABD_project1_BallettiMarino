@@ -1,6 +1,8 @@
 package utility;
 
-public class GeoCoordinate {
+import java.io.Serializable;
+
+public class GeoCoordinate implements Serializable {
 
     private Double latitude;
     private Double longitude;
