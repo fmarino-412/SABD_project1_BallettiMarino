@@ -10,6 +10,12 @@ public class GeoCoordinate {
         this.longitude = longitude;
     }
 
+    public GeoCoordinate(String latitude, String longitude) {
+        this.latitude = Double.valueOf(latitude);
+        this.longitude = Double.valueOf(longitude);
+    }
+
+
     public Double getLatitude() {
         return latitude;
     }
