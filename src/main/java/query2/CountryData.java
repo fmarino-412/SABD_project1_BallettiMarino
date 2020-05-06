@@ -15,23 +15,11 @@ public class CountryData {
         this.coordinate = geoCoordinate;
         this.covidConfirmedCases = new ArrayList<>();
         this.name = s;
+        double tmp = 0;
         for (String covidCase : covidCases) {
-            this.covidConfirmedCases.add(Double.valueOf(covidCase));
+            this.covidConfirmedCases.add(Double.parseDouble(covidCase) - tmp);
+            tmp = Double.parseDouble(covidCase);
         }
-    }
-
-    public CountryData(CountryData country, Double coefficient) {
-        this.coordinate = country.getCoordinate();
-        this.covidConfirmedCases = country.getCovidConfirmedCases();
-        this.name = country.getName();
-        this.covidTrendlineCoefficient = coefficient;
-    }
-
-    public CountryData(CountryData country, String s) {
-        this.coordinate = country.getCoordinate();
-        this.covidConfirmedCases = country.getCovidConfirmedCases();
-        this.covidTrendlineCoefficient = country.getCovidTrendlineCoefficient();
-        this.name = s;
     }
 
     public GeoCoordinate getCoordinate() {
