@@ -34,14 +34,14 @@ public class ContinentDecoder {
             String jsonResponse = readAll(reader);
             JSONObject object = new JSONObject(jsonResponse);
             if (object.has("error")) {
-                return null;
+                return "";
             } else {
                 String countryCode = object.getJSONObject("address").getString("country_code").toUpperCase();
                 return Codes.valueOf(countryCode).getContinent();
             }
         } catch (IOException e) {
             e.printStackTrace();
-            return null;
+            return "";
         }
     }
 
@@ -77,7 +77,7 @@ public class ContinentDecoder {
         return continent;
     }
 
-    public static void test() {
+    public static void testLocal() {
         try {
             BufferedReader br = Files.newBufferedReader(Paths.get("data/DS2.csv"));
             String csvLine = br.readLine();
@@ -86,6 +86,29 @@ public class ContinentDecoder {
             while (csvLine != null) {
                 String[] split = csvLine.split(",");
                 continent = detectContinentByBoundaries(new GeoCoordinate(Double.parseDouble(split[2]),
+                        Double.parseDouble(split[3])));
+                if (continent.equals("")) {
+                    System.err.printf("%d)\tError retrieving: %s\n", i, split[1]);
+                } else {
+                    System.out.printf("%d)\t%s:\t%s\n", i, split[1], continent);
+                }
+                i++;
+                csvLine = br.readLine();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void testGlobal() {
+        try {
+            BufferedReader br = Files.newBufferedReader(Paths.get("data/DS2.csv"));
+            String csvLine = br.readLine();
+            int i = 1;
+            String continent;
+            while (csvLine != null) {
+                String[] split = csvLine.split(",");
+                continent = detectContinent(new GeoCoordinate(Double.parseDouble(split[2]),
                         Double.parseDouble(split[3])));
                 if (continent.equals("")) {
                     System.err.printf("%d)\tError retrieving: %s\n", i, split[1]);
