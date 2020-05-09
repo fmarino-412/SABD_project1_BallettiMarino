@@ -35,50 +35,82 @@ public class Query1Main {
                 }
         );
 
-        JavaPairRDD<String, Tuple2<Integer, Integer>> weekPairs = pairs.mapToPair(
+        JavaPairRDD<String, Tuple2<Double, Double>> averageDataByWeek = pairs.flatMapToPair(
                 tuple -> {
+                    List<Tuple2<String, Tuple2<Integer, Integer>>> result = new ArrayList<>();
                     Calendar calendar = new GregorianCalendar(Locale.ITALIAN);
                     calendar.setTime(tuple._1());
                     String key = calendar.get(Calendar.WEEK_OF_YEAR) + "-" + calendar.get(Calendar.YEAR);
-                    return new Tuple2<>(key, tuple._2());
+                    result.add(new Tuple2<>(key, tuple._2()));
+                    if (calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
+                        calendar.add(Calendar.WEEK_OF_YEAR, 1);
+                        String key2 = calendar.get(Calendar.WEEK_OF_YEAR) + "-" + calendar.get(Calendar.YEAR);
+                        result.add(new Tuple2<>(key2, tuple._2()));
+                    }
+                    return result.iterator();
                 }
-        ).cache();
+        ).groupByKey(
+        ).flatMapToPair(
+                tuple -> {
 
-        Map<String, Tuple2<Integer, Integer>> sumByWeek = weekPairs.reduceByKey(
-                (tuple1, tuple2) -> new Tuple2<>(tuple1._1() + tuple2._1(), tuple1._2() + tuple2._2())
-        ).collectAsMap();
+                    ArrayList<Tuple2<String, Tuple2<Double, Double>>> result = new ArrayList<>();
+                    ArrayList<Integer> cured = new ArrayList<>();
+                    ArrayList<Integer> swabs = new ArrayList<>();
 
-        Map<String, Long> totals = weekPairs.countByKey();
+                    int elements = 0;
 
-        // Return structure creation
-        Map<String, Double> averageCuredByWeek = new HashMap<>();
-        Map<String, Double> averageSwabsByWeek = new HashMap<>();
+                    for (Tuple2<Integer, Integer> element : tuple._2()) {
+                        cured.add(element._1());
+                        swabs.add(element._2());
+                        elements++;
+                    }
 
-        for (Map.Entry<String, Tuple2<Integer, Integer>> entry : sumByWeek.entrySet()) {
-            String key = entry.getKey();
-            Integer sumOfCured = entry.getValue()._1();
-            Integer sumOfSwabs = entry.getValue()._2();
-            averageCuredByWeek.put(key, (Double.valueOf(sumOfCured)/totals.get(key)));
-            averageSwabsByWeek.put(key, (Double.valueOf(sumOfSwabs)/totals.get(key)));
-        }
+                    cured.sort(Comparator.naturalOrder());
+                    swabs.sort(Comparator.naturalOrder());
+
+                    String firstWeekKey = new GregorianCalendar(2020, Calendar.FEBRUARY, 24)
+                            .get(Calendar.WEEK_OF_YEAR) + "-2020";
+                    if (!firstWeekKey.equals(tuple._1())) {
+                        if (elements == 1) {
+                            // week created with only a precedent week element
+                            return result.iterator();
+                        }
+
+                        // we are not in the first week, there is precedent week data
+                        // make week data independent from precedent weeks
+                        for (int i = 1; i < elements; i++) {
+                            cured.set(i, cured.get(i) - cured.get(0));
+                            swabs.set(i, swabs.get(i) - swabs.get(0));
+                        }
+                        cured.remove(0);
+                        swabs.remove(0);
+                        elements = elements - 1;
+                    }
+
+                    // turn from cumulative to punctual data
+                    for (int i = elements - 1; i > 0; i--) {
+                        cured.set(i, cured.get(i) - cured.get(i-1));
+                        swabs.set(i, swabs.get(i) - swabs.get(i -1));
+                    }
+                    Double avgCured = cured.stream().mapToInt(val -> val).average().orElse(0.0);
+                    Double avgSwabs = swabs.stream().mapToInt(val -> val).average().orElse(0.0);
+                    result.add(new Tuple2<>(tuple._1(), new Tuple2<>(avgCured, avgSwabs)));
+                    return result.iterator();
+                }
+        );
+
+        Map<String, Tuple2<Double, Double>> finalData = averageDataByWeek.collectAsMap();
 
         System.out.println("Index\tWeek Number\tMean of cured\tMean of swabs");
         int i = 1;
 
-        for (Map.Entry<String, Double> entry : averageCuredByWeek.entrySet()) {
+        for (Map.Entry<String, Tuple2<Double, Double>> entry : finalData.entrySet()) {
             System.out.println("-------------------------------------------------------------------------------------");
             System.out.printf("%d): Week %s\t%f\t%f\n",
-                    i, entry.getKey(), entry.getValue(), averageSwabsByWeek.get(entry.getKey()));
+                    i, entry.getKey(), entry.getValue()._1(), entry.getValue()._2());
             System.out.println("-------------------------------------------------------------------------------------");
             i++;
         }
-
-        // compute by key on master
-
-        // Transformations
-        // TODO: 1(PREPROCESSING): from cumulative to daily data
-        // 2: from data as key to week number + year
-        // 3: evaluate statistics
 
         // TODO: sparkContext.close();
         sparkContext.stop();
