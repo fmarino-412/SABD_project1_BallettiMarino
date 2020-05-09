@@ -5,6 +5,7 @@ import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import scala.Tuple2;
+import utility.Config;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -18,7 +19,7 @@ public class Query1Main {
                 .setAppName("Query 1");
         JavaSparkContext sparkContext = new JavaSparkContext(sparkConf);
 
-        JavaRDD<String> dataset1 = sparkContext.textFile("data/DS1.csv");
+        JavaRDD<String> dataset1 = sparkContext.textFile(Config.getDS1());
 
         // Transformations
         JavaPairRDD<Date, Tuple2<Integer, Integer>> pairs = dataset1.mapToPair(
