@@ -5,4 +5,6 @@ docker cp nifi-hdfs nifi:/opt/nifi/nifi-current
 docker run -t -i -p 9864:9864 -d --network=apache_network --name=slave1 effeerre/hadoop
 docker run -t -i -p 9863:9864 -d --network=apache_network --name=slave2 effeerre/hadoop
 docker run -t -i -p 9862:9864 -d --network=apache_network --name=slave3 effeerre/hadoop
-docker run -t -i -p 9870:9870 --network=apache_network --name=master effeerre/hadoop
+docker run -t -i -p 9870:9870 -d --network=apache_network --name=master effeerre/hadoop
+docker cp hdfs-script/start-hdfs.sh master:/start-hdfs.sh
+docker exec -it master sh /start-hdfs.sh
