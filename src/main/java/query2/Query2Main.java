@@ -22,12 +22,10 @@ public class Query2Main {
 
         JavaRDD<String> dataset2 = sparkContext.textFile("data/DS2.csv");
 
-        //TODO: remove header in csv and if needed include date in the list
-
-        //TODO: remember "Korea, South" error
-
         // convert data in RDD
-        JavaPairRDD<Double, CountryData> data = dataset2.mapToPair(
+        JavaPairRDD<Double, CountryData> data = dataset2.filter(
+                line -> !line.startsWith("Province")
+        ).mapToPair(
                 line -> {
                     String[] splitted = line.split(",");
                     String key = splitted[0].equals("") ? splitted[1] : splitted[0];

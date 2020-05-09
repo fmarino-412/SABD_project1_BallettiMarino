@@ -5,7 +5,6 @@ import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import scala.Tuple2;
-import utility.Config;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -19,13 +18,13 @@ public class Query1Main {
                 .setAppName("Query 1");
         JavaSparkContext sparkContext = new JavaSparkContext(sparkConf);
 
-        JavaRDD<String> dataset1 = sparkContext.textFile(Config.getDS1());
+        JavaRDD<String> dataset1 = sparkContext.textFile("data/DS1.csv");
 
         // Transformations
         JavaPairRDD<Date, Tuple2<Integer, Integer>> pairs = dataset1.mapToPair(
                 line -> {
                     // split csv line basing on the separator
-                    String[] lineSplit = line.split(";");
+                    String[] lineSplit = line.split(",");
                     // create the inner tuple as <cured, swabs>
                     Tuple2<Integer, Integer> innerTuple = new Tuple2<>(Integer.valueOf(lineSplit[1]),
                             Integer.valueOf(lineSplit[2]));
