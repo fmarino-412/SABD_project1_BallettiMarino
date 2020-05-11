@@ -6,6 +6,7 @@ import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import scala.Tuple2;
 import utility.Config;
+import utility.QueryUtility;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -69,8 +70,7 @@ public class Query1Main {
                     cured.sort(Comparator.naturalOrder());
                     swabs.sort(Comparator.naturalOrder());
 
-                    String firstWeekKey = new GregorianCalendar(2020, Calendar.FEBRUARY, 24)
-                            .get(Calendar.WEEK_OF_YEAR) + "-2020";
+                    String firstWeekKey = QueryUtility.getDataset1StartDate().get(Calendar.WEEK_OF_YEAR) + "-2020";
                     if (!firstWeekKey.equals(tuple._1())) {
                         if (elements == 1) {
                             // week created with only a precedent week element

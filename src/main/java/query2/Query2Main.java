@@ -24,14 +24,14 @@ public class Query2Main {
         JavaRDD<String> dataset2 = sparkContext.textFile(Config.getDS2());
 
         // convert data in RDD
-        JavaPairRDD<Double, CountryData> data = dataset2.filter(
+        JavaPairRDD<Double, CountryDataQuery2> data = dataset2.filter(
                 line -> !line.startsWith("Province")
         ).mapToPair(
                 line -> {
                     String[] splitted = line.split(",");
                     String key = splitted[0].equals("") ? splitted[1] : splitted[0];
                     GeoCoordinate geoCoordinate = new GeoCoordinate(splitted[2], splitted[3]);
-                    CountryData countryData = new CountryData(geoCoordinate,
+                    CountryDataQuery2 countryData = new CountryDataQuery2(geoCoordinate,
                             Arrays.asList(splitted).subList(4,splitted.length), key);
 
                     SimpleRegression regression = new SimpleRegression();
