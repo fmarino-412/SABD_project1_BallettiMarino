@@ -1,5 +1,6 @@
 package query2;
 
+import com.sun.xml.internal.ws.api.message.ExceptionHasMessage;
 import utility.GeoCoordinate;
 
 import java.io.BufferedReader;
@@ -20,10 +21,19 @@ public class CountryData implements Serializable {
         this.coordinate = geoCoordinate;
         this.covidConfirmedCases = new ArrayList<>();
         this.name = name;
-        double tmp = 0;
+        double tmp = 0, curr;
         for (String covidCase : covidCases) {
-            this.covidConfirmedCases.add(Double.parseDouble(covidCase) - tmp);
-            tmp = Double.parseDouble(covidCase);
+            curr = Double.parseDouble(covidCase);
+
+            // there is an error in the dataset so we assume no increment in confirmed cases in such days
+            if (curr - tmp < 0) {
+                this.covidConfirmedCases.add(0.0);
+            }
+            // normal behaviour
+            else {
+                this.covidConfirmedCases.add(curr - tmp);
+                tmp = curr;
+            }
         }
     }
 
