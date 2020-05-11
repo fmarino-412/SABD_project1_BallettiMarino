@@ -1,5 +1,7 @@
 package query3;
 
+import com.clearspring.analytics.util.Lists;
+import org.apache.commons.collections.IteratorUtils;
 import org.apache.commons.math3.stat.regression.SimpleRegression;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
@@ -10,10 +12,9 @@ import utility.Config;
 import utility.QueryUtility;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 public class Query3Main {
 
@@ -69,7 +70,25 @@ public class Query3Main {
                 }
         );
 
-        //monthlySlopes.groupByKey().mapTo
+        //TODO: assegnare
+        monthlySlopes.groupByKey().mapToPair(
+                tuple -> {
+                    List<Tuple2<Double, CountryDataQuery3>> data = StreamSupport
+                            .stream(tuple._2().spliterator(), false).sorted((t1, t2) -> {
+                                double val = t1._1 - t2._1;
+                                if (val < 0) return -1;
+                                else if (val > 0) return 1;
+                                else return 0;
+                            }).collect(Collectors.toList());
+
+                    return new Tuple2<>(tuple._1(), data.subList(0, 49));
+                }
+        );
+        /*.reduceByKey(
+                tuple -> {
+                    //TODO: clustering
+                }
+        )*/
     }
 
 
