@@ -6,6 +6,7 @@ import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import scala.Tuple2;
+import utility.Config;
 import utility.ContinentDecoder;
 import utility.GeoCoordinate;
 
@@ -20,7 +21,7 @@ public class Query2Main {
                 .setAppName("Query 2");
         JavaSparkContext sparkContext = new JavaSparkContext(sparkConf);
 
-        JavaRDD<String> dataset2 = sparkContext.textFile("data/DS2.csv");
+        JavaRDD<String> dataset2 = sparkContext.textFile(Config.getDS2());
 
         // convert data in RDD
         JavaPairRDD<Double, CountryData> data = dataset2.filter(
