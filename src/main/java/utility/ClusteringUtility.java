@@ -39,13 +39,18 @@ public class ClusteringUtility {
         );
 
         KMeansModel model = KMeans.train(values.rdd(), CLUSTERS, ITERATION);
-        //model.predict(values.rdd()).collect();
+        JavaRDD<Integer> pred = model.predict(values);
+        List<Integer> list = pred.collect();
 
         System.out.println(month + " results:");
         System.out.println("-----------------------------------------------------------------------------------------");
         System.out.println("Cluster centers:");
         for (Vector center: model.clusterCenters()) {
             System.out.println(" " + center);
+        }
+        System.out.println("Predictions:");
+        for (Integer i : list) {
+            System.out.println("#### " + i);
         }
         System.out.println("-----------------------------------------------------------------------------------------");
     }
