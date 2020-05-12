@@ -9,6 +9,7 @@ import org.apache.spark.mllib.linalg.Vectors;
 import query3.CountryDataQuery3;
 import scala.Tuple2;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ClusteringUtility {
@@ -21,34 +22,31 @@ public class ClusteringUtility {
 
     }
 
-    public static void clusteringMLlib(JavaPairRDD<String, List<Tuple2<Double, CountryDataQuery3>>> data) {
+    public static void clusteringMLlib(JavaPairRDD<String, List<Tuple2<Double, CountryDataQuery3>>> data, String month) {
 
-        /*JavaRDD<Vector> parsedData = data.map(
+        JavaPairRDD<Double, String> toCluster = data.flatMapToPair(
                 tuple -> {
-                    double[] values = new double[tuple._2().size()];
-                    for (int i = 0; i < tuple._2().size(); i++) {
-                        values[i] = tuple._2().get(i)._1();
+                    ArrayList<Tuple2<Double, String>> result = new ArrayList<>();
+                    for (Tuple2<Double, CountryDataQuery3> elem : tuple._2()) {
+                        result.add(new Tuple2<>(elem._1(), elem._2().getName()));
                     }
-                    return Vectors.dense(values);
+                    return result.iterator();
                 }
-        );*/
+        );
 
-        data.map(
-                tuple -> {
-                    double[] values = new double[tuple._2().size()];
-                    for (int i = 0; i < tuple._2().size(); i++) {
-                        values[i] = tuple._2().get(i)._1();
-                    }
-                    Vector v = Vectors.dense(values);
-                    KMeansModel model = KMeans.train(v, CLUSTERS, ITERATION);
-                }
-        )
+        JavaRDD<Vector> values = toCluster.map(
+                tuple -> Vectors.dense(tuple._1())
+        );
 
-        KMeansModel model = KMeans.train(parsedData.rdd(), CLUSTERS, ITERATION);
+        KMeansModel model = KMeans.train(values.rdd(), CLUSTERS, ITERATION);
+        //model.predict(values.rdd()).collect();
 
+        System.out.println(month + " results:");
+        System.out.println("-----------------------------------------------------------------------------------------");
         System.out.println("Cluster centers:");
         for (Vector center: model.clusterCenters()) {
             System.out.println(" " + center);
         }
+        System.out.println("-----------------------------------------------------------------------------------------");
     }
 }

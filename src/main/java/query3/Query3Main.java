@@ -80,15 +80,28 @@ public class Query3Main {
                             List<Tuple2<Double, CountryDataQuery3>> data = StreamSupport
                                     .stream(tuple._2().spliterator(), false).sorted((t1, t2) -> {
                                         double val = t1._1 - t2._1;
-                                        if (val < 0) return -1;
-                                        else if (val > 0) return 1;
+                                        if (val > 0) return -1;
+                                        else if (val < 0) return 1;
                                         else return 0;
                                     }).collect(Collectors.toList());
                             return new Tuple2<>(tuple._1(), data.subList(0, 49));
                         })
                 .cache();
 
-        ClusteringUtility.clusteringMLlib(topMonthlySlopes);
+        long numOfRDDs = topMonthlySlopes.count();
+        //ArrayList<JavaPairRDD<String, List<Tuple2<Double, CountryDataQuery3>>>> rdds = new ArrayList<>();
+        //ArrayList<String> months = new ArrayList<>();
+
+        Calendar startDate = QueryUtility.getDataset2StartDate();
+        SimpleDateFormat format = new SimpleDateFormat("MM-yyyy");
+
+        System.out.println("Month number: " + numOfRDDs);
+
+        for (int i = 0; i < numOfRDDs; i++) {
+            String key = format.format(startDate.getTime());
+            ClusteringUtility.clusteringMLlib(topMonthlySlopes.filter(tuple -> tuple._1().equals(key)), key);
+            startDate.add(Calendar.MONTH, 1);
+        }
     }
 
 
