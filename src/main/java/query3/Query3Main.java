@@ -30,9 +30,7 @@ public class Query3Main {
         JavaRDD<String> dataset2 = sparkContext.textFile(Config.getDS2());
 
         //TODO: remove header with nifi
-        JavaPairRDD<String, CountryDataQuery3> monthlyData = dataset2.filter(
-                line -> !line.startsWith("Province")
-        ).flatMapToPair(
+        JavaPairRDD<String, CountryDataQuery3> monthlyData = dataset2.flatMapToPair(
                 line -> {
                     List<Tuple2<String, CountryDataQuery3>> result = new ArrayList<>();
                     String[] splitted = line.split(",");

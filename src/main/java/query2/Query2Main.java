@@ -24,9 +24,7 @@ public class Query2Main {
         JavaRDD<String> dataset2 = sparkContext.textFile(Config.getDS2());
 
         // convert data in RDD
-        JavaPairRDD<Double, CountryDataQuery2> data = dataset2.filter(
-                line -> !line.startsWith("Province")
-        ).mapToPair(
+        JavaPairRDD<Double, CountryDataQuery2> data = dataset2.mapToPair(
                 line -> {
                     String[] splitted = line.split(",");
                     String key = splitted[0].equals("") ? splitted[1] : splitted[0];
