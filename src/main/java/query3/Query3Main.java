@@ -88,7 +88,7 @@ public class Query3Main {
         List<String> keys = topMonthlySlopes.keys().collect();
 
         for (String key : keys) {
-            ClusteringUtility.clusteringMLlib(topMonthlySlopes.filter(tuple -> tuple._1().equals(key)), key);
+            ClusteringUtility.performClustering(topMonthlySlopes.filter(tuple -> tuple._1().equals(key)), key);
         }
 
         sparkContext.close();
