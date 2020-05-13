@@ -20,6 +20,7 @@ public class Query2Main {
                 .setMaster("local")
                 .setAppName("Query 2");
         JavaSparkContext sparkContext = new JavaSparkContext(sparkConf);
+        sparkContext.setLogLevel("ERROR");
 
         JavaRDD<String> dataset2 = sparkContext.textFile(Config.getDS2());
 
@@ -106,5 +107,7 @@ public class Query2Main {
 
         Map<String, Map<String, List<Double>>> results = statistics.collectAsMap();
         System.out.println(results);
+
+        sparkContext.close();
     }
 }

@@ -19,6 +19,7 @@ public class Query1Main {
                 .setMaster("local")
                 .setAppName("Query 1");
         JavaSparkContext sparkContext = new JavaSparkContext(sparkConf);
+        sparkContext.setLogLevel("ERROR");
 
         JavaRDD<String> dataset1 = sparkContext.textFile(Config.getDS1());
 
@@ -113,7 +114,6 @@ public class Query1Main {
             i++;
         }
 
-        // TODO: sparkContext.close();
-        sparkContext.stop();
+        sparkContext.close();
     }
 }

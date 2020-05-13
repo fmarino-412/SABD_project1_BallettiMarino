@@ -26,10 +26,10 @@ public class Query3Main {
                 .setMaster("local")
                 .setAppName("Query 3");
         JavaSparkContext sparkContext = new JavaSparkContext(sparkConf);
+        sparkContext.setLogLevel("ERROR");
 
         JavaRDD<String> dataset2 = sparkContext.textFile(Config.getDS2());
 
-        //TODO: remove header with nifi
         JavaPairRDD<String, CountryDataQuery3> monthlyData = dataset2.flatMapToPair(
                 line -> {
                     List<Tuple2<String, CountryDataQuery3>> result = new ArrayList<>();
@@ -70,7 +70,6 @@ public class Query3Main {
                 }
         );
 
-        //TODO: assegnare
         JavaPairRDD<String, List<Tuple2<Double, CountryDataQuery3>>> topMonthlySlopes = monthlySlopes
                 .groupByKey()
                 .mapToPair(
@@ -86,20 +85,13 @@ public class Query3Main {
                         })
                 .cache();
 
-        long numOfRDDs = topMonthlySlopes.count();
-        //ArrayList<JavaPairRDD<String, List<Tuple2<Double, CountryDataQuery3>>>> rdds = new ArrayList<>();
-        //ArrayList<String> months = new ArrayList<>();
+        List<String> keys = topMonthlySlopes.keys().collect();
 
-        Calendar startDate = QueryUtility.getDataset2StartDate();
-        SimpleDateFormat format = new SimpleDateFormat("MM-yyyy");
-
-        System.out.println("Month number: " + numOfRDDs);
-
-        for (int i = 0; i < numOfRDDs; i++) {
-            String key = format.format(startDate.getTime());
+        for (String key : keys) {
             ClusteringUtility.clusteringMLlib(topMonthlySlopes.filter(tuple -> tuple._1().equals(key)), key);
-            startDate.add(Calendar.MONTH, 1);
         }
+
+        sparkContext.close();
     }
 
 

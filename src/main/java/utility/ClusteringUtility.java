@@ -10,13 +10,17 @@ import query3.CountryDataQuery3;
 import scala.Tuple2;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ClusteringUtility {
 
     private static final boolean NAIVE = Boolean.FALSE;
     private static final Integer CLUSTERS = 4;
     private static final Integer ITERATION = 20;
+    private static final String INITIALIZATION_MODE = "random";
+    private static final Integer RUNS = 3;
 
     public void clusteringNaive() {
 
@@ -32,25 +36,29 @@ public class ClusteringUtility {
                     }
                     return result.iterator();
                 }
-        );
+        ).cache();
 
         JavaRDD<Vector> values = toCluster.map(
                 tuple -> Vectors.dense(tuple._1())
         );
 
-        KMeansModel model = KMeans.train(values.rdd(), CLUSTERS, ITERATION);
-        JavaRDD<Integer> pred = model.predict(values);
-        List<Integer> list = pred.collect();
+        KMeansModel model = KMeans.train(values.rdd(), CLUSTERS, ITERATION, INITIALIZATION_MODE, RUNS);
+        List<Tuple2<Double, String>> toPredict = toCluster.collect();
 
-        System.out.println(month + " results:");
-        System.out.println("-----------------------------------------------------------------------------------------");
-        System.out.println("Cluster centers:");
-        for (Vector center: model.clusterCenters()) {
-            System.out.println(" " + center);
+        // initialization of result structure
+        ArrayList<ArrayList<String>> result = new ArrayList<>();
+        for (int i = 0; i < CLUSTERS; i++) {
+            result.add(new ArrayList<>());
         }
-        System.out.println("Predictions:");
-        for (Integer i : list) {
-            System.out.println("#### " + i);
+
+        for (Tuple2<Double, String> elem : toPredict) {
+            int clusterIndex = model.predict(Vectors.dense(elem._1()));
+            result.get(clusterIndex).add(elem._2());
+        }
+
+        System.out.println("Results for: " + month);
+        for (ArrayList<String> singleCluster : result) {
+            System.out.println(singleCluster);
         }
         System.out.println("-----------------------------------------------------------------------------------------");
     }
