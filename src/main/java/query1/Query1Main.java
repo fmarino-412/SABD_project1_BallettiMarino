@@ -99,7 +99,7 @@ public class Query1Main {
                     result.add(new Tuple2<>(tuple._1(), new Tuple2<>(avgCured, avgSwabs)));
                     return result.iterator();
                 }
-        );
+        ).cache();
 
         Map<String, Tuple2<Double, Double>> finalData = averageDataByWeek.collectAsMap();
 
@@ -113,6 +113,8 @@ public class Query1Main {
             System.out.println("-------------------------------------------------------------------------------------");
             i++;
         }
+
+        averageDataByWeek.saveAsObjectFile(Config.putQuery1());
 
         sparkContext.close();
     }

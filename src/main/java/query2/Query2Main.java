@@ -108,6 +108,8 @@ public class Query2Main {
         Map<String, Map<String, List<Double>>> results = statistics.collectAsMap();
         System.out.println(results);
 
+        statistics.saveAsObjectFile(Config.putQuery2());
+
         sparkContext.close();
     }
 }
