@@ -9,6 +9,7 @@ import scala.Tuple2;
 import utility.Config;
 import utility.ContinentDecoder;
 import utility.GeoCoordinate;
+import utility.QueryUtility;
 
 import java.util.*;
 
@@ -42,11 +43,45 @@ public class Query2Main {
                 });
 
         JavaPairRDD<String, List<Double>> continents = data.sortByKey(false).zipWithIndex()
-                .filter(xi -> xi._2 < 100).keys().mapToPair(
-                        tuple -> new Tuple2<>(ContinentDecoder.detectContinent(tuple._2().getCoordinate()),
-                                tuple._2().getCovidConfirmedCases())
+                .filter(xi -> xi._2 < 100).keys().flatMapToPair(
+                        tuple -> {
+                            ArrayList<Tuple2<String, List<Double>>> result = new ArrayList<>();
+                            String keyHeader = ContinentDecoder.detectContinent(tuple._2().getCoordinate()) + " - ";
+
+                            Calendar currentDate = QueryUtility.getDataset2StartDate();
+                            // work on different years too being sequential and taking care of just two following values
+                            int currentWeekNumber = currentDate.get(Calendar.WEEK_OF_YEAR);
+                            List<Double> weeklyValues = new ArrayList<>();
+                            for (Double value : tuple._2().getCovidConfirmedCases()) {
+                                if (currentWeekNumber != currentDate.get(Calendar.WEEK_OF_YEAR)) {
+                                    currentDate.add(Calendar.WEEK_OF_YEAR, -1);
+                                    result.add(new Tuple2<>(keyHeader +
+                                            QueryUtility.getFirstDayOfTheWeek(currentDate.get(Calendar.WEEK_OF_YEAR),
+                                                    currentDate.get(Calendar.YEAR)), weeklyValues));
+                                    currentDate.add(Calendar.WEEK_OF_YEAR, 1);
+                                    weeklyValues = new ArrayList<>();
+                                    currentWeekNumber = currentDate.get(Calendar.WEEK_OF_YEAR);
+                                }
+                                weeklyValues.add(value);
+                                currentDate.add(Calendar.DATE, 1);
+                            }
+                            // end of data, add last batch if present
+                            if (!weeklyValues.isEmpty()) {
+                                if (weeklyValues.size() == 7) {
+                                    // the week is completed so the current date points to the next monday,
+                                    // return to the right week
+                                    currentDate.add(Calendar.DATE, -1);
+                                }
+                                result.add(new Tuple2<>(keyHeader +
+                                        QueryUtility.getFirstDayOfTheWeek(currentDate.get(Calendar.WEEK_OF_YEAR),
+                                                currentDate.get(Calendar.YEAR)), weeklyValues));
+
+                            }
+                            return result.iterator();
+                        }
                 ).reduceByKey(
                         (x, y) -> {
+                            // same x and y list length due to dataset update rules
                             List<Double> sum = new ArrayList<>();
                             for (int i = 0; i < x.size(); i++) {
                                 sum.add(x.get(i) + y.get(i));
@@ -55,58 +90,50 @@ public class Query2Main {
                         }
                 );
 
-        JavaPairRDD<String, Map<String, List<Double>>> statistics = continents.mapToPair(
+        JavaPairRDD<String, List<Double>> statistics = continents.mapToPair(
                         tuple -> {
-                            List<Double> weeklyMeans = new ArrayList<>();
-                            List<Double> weeklyStdDev = new ArrayList<>();
-                            List<Double> weeklyMin = new ArrayList<>();
-                            List<Double> weeklyMax = new ArrayList<>();
+                            double weeklyMean = 0.0;
+                            double weeklyStdDev = 0.0;
 
-                            List<Double> weekValues = new ArrayList<>();
+                            int weekLength = tuple._2().size();
 
-                            for (int i = 0; i < tuple._2().size(); i++) {
-                                weekValues.add(tuple._2().get(i));
+                            // compute max and min
+                            double weeklyMax = Collections.max(tuple._2());
+                            double weeklyMin = Collections.min(tuple._2());
 
-                                // if it was the last day of the week
-                                if (i%7 == 6 || i == tuple._2().size() - 1) {
-
-                                    // compute weekly min and max
-                                    weeklyMin.add(Collections.min(weekValues));
-                                    weeklyMax.add(Collections.max(weekValues));
-
-                                    // compute weekly mean values
-                                    double mean = 0.0;
-                                    for (Double value : weekValues) {
-                                        mean += value;
-                                    }
-                                    mean = mean / weekValues.size();
-                                    weeklyMeans.add(mean);
-
-                                    // compute standard deviation
-                                    double stddev = 0.0;
-                                    for (Double value : weekValues) {
-                                        stddev = stddev + Math.pow((value - mean), 2);
-                                    }
-                                    stddev = Math.sqrt(stddev / weekValues.size());
-                                    weeklyStdDev.add(stddev);
-
-                                    // reset temporary list
-                                    weekValues.clear();
-                                }
+                            // compute mean
+                            for (Double value : tuple._2()) {
+                                weeklyMean += value;
                             }
+                            weeklyMean = weeklyMean / weekLength;
 
-                            Map<String, List<Double>> weeklyStatistics = new HashMap<>();
-                            weeklyStatistics.put("Weekly Means", weeklyMeans);
-                            weeklyStatistics.put("Weekly Standard Deviations", weeklyStdDev);
-                            weeklyStatistics.put("Weekly Mins", weeklyMin);
-                            weeklyStatistics.put("Weekly Maxs", weeklyMax);
+                            // compute standard deviation
+                            for (Double value : tuple._2()) {
+                                weeklyStdDev += Math.pow((value - weeklyMean), 2);
+                            }
+                            weeklyStdDev = weeklyStdDev / weekLength;
 
-                            return new Tuple2<>(tuple._1(), weeklyStatistics);
+                            List<Double> result = Arrays.asList(weeklyMean, weeklyStdDev, weeklyMin, weeklyMax);
+
+                            return new Tuple2<>(tuple._1(), result);
                         }
                 );
 
-        Map<String, Map<String, List<Double>>> results = statistics.collectAsMap();
-        System.out.println(results);
+        // TODO: remove sort by key
+        List<Tuple2<String, List<Double>>> orderedResult = statistics.sortByKey(true).collect();
+
+        System.out.println("Index\tWeek Start Day\t\t\tMean\tStandard Deviation\tMinimum\tMaximum");
+        int i = 1;
+        for (Tuple2<String, List<Double>> element : orderedResult) {
+
+            System.out.println("-------------------------------------------------------------------------------------");
+
+            System.out.printf("%2d) %s:\t\t%f\t\t%f\t\t%f\t\t%f\n",
+                    i, element._1(), element._2().get(0), element._2().get(1), element._2().get(2), element._2().get(3));
+
+            System.out.println("-------------------------------------------------------------------------------------");
+            i++;
+        }
 
         statistics.saveAsObjectFile(Config.putQuery2());
 

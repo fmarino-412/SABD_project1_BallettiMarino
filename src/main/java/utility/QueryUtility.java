@@ -1,5 +1,6 @@
 package utility;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -32,5 +33,13 @@ public class QueryUtility {
 
     public static Calendar getDataset2StartDate() {
         return new GregorianCalendar(2020, Calendar.JANUARY, 22);
+    }
+
+    public static String getFirstDayOfTheWeek(int week, int year) {
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.WEEK_OF_YEAR, week);
+        cal.set(Calendar.YEAR, year);
+        cal.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+        return new SimpleDateFormat("yyyy-MM-dd").format(cal.getTime());
     }
 }
