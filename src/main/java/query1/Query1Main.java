@@ -43,11 +43,12 @@ public class Query1Main {
                     List<Tuple2<String, Tuple2<Integer, Integer>>> result = new ArrayList<>();
                     Calendar calendar = new GregorianCalendar(Locale.ITALIAN);
                     calendar.setTime(tuple._1());
-                    String key = calendar.get(Calendar.WEEK_OF_YEAR) + "-" + calendar.get(Calendar.YEAR);
+                    String key = getFirstDayOfTheWeek(calendar.get(Calendar.WEEK_OF_YEAR), calendar.get(Calendar.YEAR));
                     result.add(new Tuple2<>(key, tuple._2()));
                     if (calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
                         calendar.add(Calendar.WEEK_OF_YEAR, 1);
-                        String key2 = calendar.get(Calendar.WEEK_OF_YEAR) + "-" + calendar.get(Calendar.YEAR);
+                        String key2 = getFirstDayOfTheWeek(calendar.get(Calendar.WEEK_OF_YEAR),
+                                calendar.get(Calendar.YEAR));
                         result.add(new Tuple2<>(key2, tuple._2()));
                     }
                     return result.iterator();
@@ -71,7 +72,10 @@ public class Query1Main {
                     cured.sort(Comparator.naturalOrder());
                     swabs.sort(Comparator.naturalOrder());
 
-                    String firstWeekKey = QueryUtility.getDataset1StartDate().get(Calendar.WEEK_OF_YEAR) + "-2020";
+                    String firstWeekKey = getFirstDayOfTheWeek(
+                            QueryUtility.getDataset1StartDate().get(Calendar.WEEK_OF_YEAR),
+                            QueryUtility.getDataset1StartDate().get(Calendar.YEAR));
+
                     if (!firstWeekKey.equals(tuple._1())) {
                         if (elements == 1) {
                             // week created with only a precedent week element
@@ -117,5 +121,13 @@ public class Query1Main {
         averageDataByWeek.saveAsObjectFile(Config.putQuery1());
 
         sparkContext.close();
+    }
+
+    private static String getFirstDayOfTheWeek(int week, int year) {
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.WEEK_OF_YEAR, week);
+        cal.set(Calendar.YEAR, year);
+        cal.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+        return new SimpleDateFormat("dd/MM/yyyy").format(cal.getTime());
     }
 }
