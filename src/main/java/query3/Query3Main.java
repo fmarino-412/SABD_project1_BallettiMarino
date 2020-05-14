@@ -93,6 +93,15 @@ public class Query3Main {
                     ClusteringUtility.performClustering(topMonthlySlopes.filter(tuple -> tuple._1().equals(key)))));
         }
 
+        // result print
+        for (Tuple2<String, ArrayList<ArrayList<String>>> singleResult : result) {
+            System.out.println("Results for: " + singleResult._1());
+            for (ArrayList<String> singleCluster : singleResult._2()) {
+                System.out.println(singleCluster);
+            }
+            System.out.println("-------------------------------------------------------------------------------------");
+        }
+
         sparkContext.close();
     }
 
