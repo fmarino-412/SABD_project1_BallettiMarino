@@ -23,6 +23,8 @@ public class Query1Main {
 
         JavaRDD<String> dataset1 = sparkContext.textFile(Config.getDS1());
 
+        final long startTime = System.currentTimeMillis();
+
         // Transformations
         JavaPairRDD<Date, Tuple2<Integer, Integer>> pairs = dataset1.mapToPair(
                 line -> {
@@ -108,6 +110,8 @@ public class Query1Main {
 
         Map<String, Tuple2<Double, Double>> finalData = averageDataByWeek.collectAsMap();
 
+        Config.printTime(System.currentTimeMillis() - startTime);
+
         System.out.println("Index\tWeek Start Day\t\t\t\t\tMean of cured\tMean of swabs");
         int i = 1;
 
@@ -119,7 +123,11 @@ public class Query1Main {
             i++;
         }
 
-        averageDataByWeek.saveAsObjectFile(Config.putQuery1());
+        try {
+            averageDataByWeek.saveAsObjectFile(Config.putQuery1());
+        } catch (Exception e) {
+            System.err.println("This query output has already been saved in HDFS");
+        }
 
         sparkContext.close();
     }

@@ -25,6 +25,8 @@ public class Query2Main {
 
         JavaRDD<String> dataset2 = sparkContext.textFile(Config.getDS2());
 
+        final long startTime = System.currentTimeMillis();
+
         // convert data in RDD
         JavaPairRDD<Double, CountryDataQuery2> data = dataset2.mapToPair(
                 line -> {
@@ -122,6 +124,8 @@ public class Query2Main {
         // TODO: remove sort by key
         List<Tuple2<String, List<Double>>> orderedResult = statistics.sortByKey(true).collect();
 
+        Config.printTime(System.currentTimeMillis() - startTime);
+
         System.out.println("Index\tWeek Start Day\t\t\tMean\tStandard Deviation\tMinimum\tMaximum");
         int i = 1;
         for (Tuple2<String, List<Double>> element : orderedResult) {
@@ -135,7 +139,11 @@ public class Query2Main {
             i++;
         }
 
-        statistics.saveAsObjectFile(Config.putQuery2());
+        try {
+            statistics.saveAsObjectFile(Config.putQuery2());
+        } catch(Exception e) {
+            System.err.println("This query output has already been saved in HDFS");
+        }
 
         sparkContext.close();
     }

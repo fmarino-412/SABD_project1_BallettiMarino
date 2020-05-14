@@ -30,6 +30,8 @@ public class Query3Main {
 
         JavaRDD<String> dataset2 = sparkContext.textFile(Config.getDS2());
 
+        final long startTime = System.currentTimeMillis();
+
         JavaPairRDD<String, CountryDataQuery3> monthlyData = dataset2.flatMapToPair(
                 line -> {
                     List<Tuple2<String, CountryDataQuery3>> result = new ArrayList<>();
@@ -92,6 +94,8 @@ public class Query3Main {
             result.add(new Tuple2<>(key,
                     ClusteringUtility.performClustering(topMonthlySlopes.filter(tuple -> tuple._1().equals(key)))));
         }
+
+        Config.printTime(System.currentTimeMillis() - startTime);
 
         // result print
         for (Tuple2<String, ArrayList<ArrayList<String>>> singleResult : result) {
