@@ -146,21 +146,13 @@ public class ClusteringUtility {
         return result;
     }
 
-    public static void performClustering(JavaPairRDD<String, List<Tuple2<Double, CountryDataQuery3>>> data,
-                                         String month) {
-
-        ArrayList<ArrayList<String>> result;
+    public static ArrayList<ArrayList<String>> performClustering(JavaPairRDD<String,
+            List<Tuple2<Double, CountryDataQuery3>>> data) {
 
         if (NAIVE) {
-            result = clusteringNaive(data);
+            return clusteringNaive(data);
         } else {
-            result = clusteringMLlib(data);
+            return clusteringMLlib(data);
         }
-
-        System.out.println("Results for: " + month);
-        for (ArrayList<String> singleCluster : result) {
-            System.out.println(singleCluster);
-        }
-        System.out.println("-----------------------------------------------------------------------------------------");
     }
 }

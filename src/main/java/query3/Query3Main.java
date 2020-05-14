@@ -86,9 +86,11 @@ public class Query3Main {
                 .cache();
 
         List<String> keys = topMonthlySlopes.keys().collect();
+        List<Tuple2<String, ArrayList<ArrayList<String>>>> result = new ArrayList<>();
 
         for (String key : keys) {
-            ClusteringUtility.performClustering(topMonthlySlopes.filter(tuple -> tuple._1().equals(key)), key);
+            result.add(new Tuple2<>(key,
+                    ClusteringUtility.performClustering(topMonthlySlopes.filter(tuple -> tuple._1().equals(key)))));
         }
 
         sparkContext.close();
