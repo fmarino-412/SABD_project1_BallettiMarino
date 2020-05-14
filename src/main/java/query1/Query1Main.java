@@ -107,12 +107,12 @@ public class Query1Main {
 
         Map<String, Tuple2<Double, Double>> finalData = averageDataByWeek.collectAsMap();
 
-        System.out.println("Index\tWeek Number\tMean of cured\tMean of swabs");
+        System.out.println("Index\tWeek Start Day\t\t\t\t\tMean of cured\tMean of swabs");
         int i = 1;
 
         for (Map.Entry<String, Tuple2<Double, Double>> entry : finalData.entrySet()) {
             System.out.println("-------------------------------------------------------------------------------------");
-            System.out.printf("%d): Week %s\t%f\t%f\n",
+            System.out.printf("%2d) Week starting at %s:\t\t%f\t\t%f\n",
                     i, entry.getKey(), entry.getValue()._1(), entry.getValue()._2());
             System.out.println("-------------------------------------------------------------------------------------");
             i++;
@@ -128,6 +128,6 @@ public class Query1Main {
         cal.set(Calendar.WEEK_OF_YEAR, week);
         cal.set(Calendar.YEAR, year);
         cal.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
-        return new SimpleDateFormat("dd/MM/yyyy").format(cal.getTime());
+        return new SimpleDateFormat("yyyy-MM-dd").format(cal.getTime());
     }
 }
