@@ -15,9 +15,9 @@ import java.util.regex.Pattern;
 
 public class HbaseImport {
 
-    private static final String TABLE_QUERY1 = "Weekly Mean Swabs and Cured in Italy";
-    private static final String TABLE_QUERY2 = "Continent Weekly Statistics";
-    private static final String TABLE_QUERY3 = "Monthly Countries Clustering";
+    private static final String TABLE_QUERY1 = "Query1_hbase_table";
+    private static final String TABLE_QUERY2 = "Query2_hbase_table";
+    private static final String TABLE_QUERY3 = "Query3_hbase_table";
 
     // Query 1 table structure
     private static final String TABLE_QUERY1_CF = "Statistics";
@@ -27,16 +27,21 @@ public class HbaseImport {
     // Query 2 table structure
     private static final String TABLE_QUERY2_CF = "Statistics";
     private static final String TABLE_QUERY2_C1 = "Mean";
-    private static final String TABLE_QUERY2_C2 = "Standard Deviation";
+    private static final String TABLE_QUERY2_C2 = "Standard_Deviation";
     private static final String TABLE_QUERY2_C3 = "Minimum";
     private static final String TABLE_QUERY2_C4 = "Maximum";
 
     // Query 3 table structure
     private static final String TABLE_QUERY3_CF = "Clusters";
-    private static final String TABLE_QUERY3_C1 = "Cluster 1";
-    private static final String TABLE_QUERY3_C2 = "Cluster 2";
-    private static final String TABLE_QUERY3_C3 = "Cluster 3";
-    private static final String TABLE_QUERY3_C4 = "Cluster 4";
+    private static final String TABLE_QUERY3_C1 = "Cluster_1";
+    private static final String TABLE_QUERY3_C2 = "Cluster_2";
+    private static final String TABLE_QUERY3_C3 = "Cluster_3";
+    private static final String TABLE_QUERY3_C4 = "Cluster_4";
+
+    /**
+     * Tool to import data from HDFS to HBASE,
+     * In order to use this class make sure to have in /etc/hosts the line "127.0.0.1  hbase"
+     */
 
     public static void main(String[] args) {
 
@@ -59,6 +64,9 @@ public class HbaseImport {
         importQuery1Result(client);
         importQuery2Result(client);
         importQuery3Result(client);
+
+        System.out.println("-----------------------\nPrinting Query 2 table:");
+        client.printTable(TABLE_QUERY2);
     }
 
     private static String importQuery1Result(HBaseLightClient hBaseLightClient) {
@@ -78,14 +86,14 @@ public class HbaseImport {
 
         try {
             FileSystem hdfs = FileSystem.get(new URI(IOUtility.getHdfs()), configuration);
-            Path file = new Path(IOUtility.getOutputPathQuery2());
+            Path file = new Path(IOUtility.getOutputPathQuery2() + "/part-00000");
             FSDataInputStream inputStream = hdfs.open(file);
             BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
 
             while ((line = br.readLine()) != null) {
 
-                Pattern pattern = Pattern.compile("\\((\\w+\\s-\\s\\d+-\\d+-\\d+),\\[(\\d+.\\d+),\\s(\\d+.\\d+)" +
-                        ",\\s(\\d+.\\d+),\\s(\\d+.\\d+)]\\)");
+                Pattern pattern = Pattern.compile("\\((\\w+\\s-\\s\\d+-\\d+-\\d+),\\[(\\d+.\\d+\\w*\\d*)," +
+                        "\\s(\\d+.\\d+\\w*\\d*),\\s(\\d+.\\d+\\w*\\d*),\\s(\\d+.\\d+\\w*\\d*)]\\)");
                 Matcher matcher = pattern.matcher(line);
 
                 if (matcher.find()) {

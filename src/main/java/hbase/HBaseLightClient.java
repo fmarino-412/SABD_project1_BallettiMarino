@@ -12,10 +12,9 @@ import org.apache.hadoop.hbase.util.Bytes;
 import java.io.IOException;
 
 public class HBaseLightClient {
-    private static final String ZOOKEEPER_HOST = "localhost";
+    private static final String ZOOKEEPER_HOST = "hbase";
     private static final String ZOOKEEPER_PORT = "2181";
-    private static final String HBASE_MASTER_HOST = "localhost";
-    private static final String HBASE_MASTER_PORT = "16000";
+    private static final String HBASE_MASTER = "hbase:16000";
     private static final int HBASE_MAX_VERSIONS = 1;
 
     private Connection connection = null;
@@ -26,7 +25,7 @@ public class HBaseLightClient {
             Configuration conf = HBaseConfiguration.create();
             conf.set("hbase.zookeeper.quorum", ZOOKEEPER_HOST);
             conf.set("hbase.zookeeper.property.clientPort", ZOOKEEPER_PORT);
-            conf.set("hbase.master", HBASE_MASTER_HOST + ":" + HBASE_MASTER_PORT);
+            conf.set("hbase.master", HBASE_MASTER);
 
             HBaseAdmin.checkHBaseAvailable(conf);
             this.connection = ConnectionFactory.createConnection(conf);
@@ -134,26 +133,13 @@ public class HBaseLightClient {
         }
     }
 
-    public void printTable(String tableName, String ...columns) {
-
-        if (columns == null || (columns.length % 2 != 0)) {
-            // Invalid usage of the function; columns should contain 2-ple in the
-            // format: columnFamily, columnName
-            System.err.println("Invalid usage of print table function; columns should " +
-                    "contain 2-ple in the format: columnFamily, columnName");
-            return;
-        }
+    public void printTable(String tableName) {
 
         try {
 
             Table table = getConnection().getTable(TableName.valueOf(tableName));
 
             Scan scan = new Scan();
-
-            for (int i = 0; i < (columns.length / 2); i++) {
-                scan.addColumn(Bytes.toBytes(columns[i * 2]),
-                        Bytes.toBytes(columns[(i * 2) + 1]));
-            }
 
             ResultScanner scanner = table.getScanner(scan);
 
