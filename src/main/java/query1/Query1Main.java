@@ -6,6 +6,7 @@ import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import scala.Tuple2;
 import utility.Config;
+import utility.HdfsUtility;
 import utility.QueryUtility;
 
 import java.text.SimpleDateFormat;
@@ -124,7 +125,7 @@ public class Query1Main {
         }
 
         try {
-            averageDataByWeek.saveAsObjectFile(Config.putQuery1());
+            averageDataByWeek.saveAsObjectFile(Config.getOutputPathQuery1());
         } catch (Exception e) {
             System.err.println("This query output has already been saved in HDFS");
         }

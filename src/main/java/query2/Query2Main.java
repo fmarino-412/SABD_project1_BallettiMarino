@@ -140,7 +140,7 @@ public class Query2Main {
         }
 
         try {
-            statistics.saveAsObjectFile(Config.putQuery2());
+            statistics.saveAsObjectFile(Config.getOutputPathQuery2());
         } catch(Exception e) {
             System.err.println("This query output has already been saved in HDFS");
         }

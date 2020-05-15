@@ -24,16 +24,20 @@ public class Config {
         return "hdfs://" + HDFS_NAMENODE_ADDRESS + ":" + HDFS_NAMENODE_PORT + INPUT_FOLDER + DATASET2_FILENAME;
     }
 
-    public static String putQuery1() {
+    public static String getOutputPathQuery1() {
         return "hdfs://" + HDFS_NAMENODE_ADDRESS + ":" + HDFS_NAMENODE_PORT + OUTPUT_FOLDER + QUERY1_RESULT;
     }
 
-    public static String putQuery2() {
+    public static String getOutputPathQuery2() {
         return "hdfs://" + HDFS_NAMENODE_ADDRESS + ":" + HDFS_NAMENODE_PORT + OUTPUT_FOLDER + QUERY2_RESULT;
     }
 
-    public static String putQuery3() {
+    public static String getOutputPathQuery3() {
         return "hdfs://" + HDFS_NAMENODE_ADDRESS + ":" + HDFS_NAMENODE_PORT + OUTPUT_FOLDER + QUERY3_RESULT;
+    }
+
+    public static String getHdfs() {
+        return "hdfs://" + HDFS_NAMENODE_ADDRESS + ":" + HDFS_NAMENODE_PORT;
     }
 
     public static void printTime(Long time) {
