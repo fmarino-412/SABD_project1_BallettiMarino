@@ -8,3 +8,4 @@ docker run -t -i -p 9862:9864 -d --network=apache_network --name=slave3 effeerre
 docker run -t -i -p 9870:9870 -p 9871:54310 -d --network=apache_network --name=master effeerre/hadoop
 docker cp hdfs-script/start-hdfs.sh master:/start-hdfs.sh
 docker exec -it master sh /start-hdfs.sh
+docker run -it --name=hbase -h hbase -p 2181:2181 -p 8080:8080 -p 8085:8085 -p 9090:9090 -p 9095:9095 -p 16000:16000 -p 16010:16010 -p 16020:16020 -p 16201:16201 -p 16301:16301 -d harisekhon/hbase:1.4
