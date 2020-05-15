@@ -20,7 +20,7 @@ public class Query2Main {
         JavaSparkContext sparkContext = new JavaSparkContext(sparkConf);
         sparkContext.setLogLevel("ERROR");
 
-        JavaRDD<String> dataset2 = sparkContext.textFile(Config.getDS2());
+        JavaRDD<String> dataset2 = sparkContext.textFile(IOUtility.getDS2());
 
         final long startTime = System.currentTimeMillis();
 
@@ -120,9 +120,9 @@ public class Query2Main {
 
         // TODO: remove sort by key
         JavaPairRDD<String, List<Double>> orderedStatistics = statistics.sortByKey(true).cache();
-        Config.printTime(System.currentTimeMillis() - startTime);
-
         List<Tuple2<String, List<Double>>> orderedResult = orderedStatistics.collect();
+
+        IOUtility.printTime(System.currentTimeMillis() - startTime);
 
         // TODO: remove in future
         System.out.println("Index\tWeek Start Day\t\t\tMean\tStandard Deviation\tMinimum\tMaximum");
@@ -138,7 +138,7 @@ public class Query2Main {
             i++;
         }
 
-        HdfsUtility.writeRDDToHdfs(Config.getOutputPathQuery2(), orderedStatistics);
+        IOUtility.writeRDDToHdfs(IOUtility.getOutputPathQuery2(), orderedStatistics);
 
         sparkContext.close();
     }

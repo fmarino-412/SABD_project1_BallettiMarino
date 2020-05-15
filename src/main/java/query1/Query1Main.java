@@ -5,8 +5,7 @@ import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import scala.Tuple2;
-import utility.Config;
-import utility.HdfsUtility;
+import utility.IOUtility;
 import utility.QueryUtility;
 
 import java.text.SimpleDateFormat;
@@ -22,7 +21,7 @@ public class Query1Main {
         JavaSparkContext sparkContext = new JavaSparkContext(sparkConf);
         sparkContext.setLogLevel("ERROR");
 
-        JavaRDD<String> dataset1 = sparkContext.textFile(Config.getDS1());
+        JavaRDD<String> dataset1 = sparkContext.textFile(IOUtility.getDS1());
 
         final long startTime = System.currentTimeMillis();
 
@@ -109,9 +108,9 @@ public class Query1Main {
                 }
         ).sortByKey(true).cache();
 
-        Config.printTime(System.currentTimeMillis() - startTime);
-
         Map<String, Tuple2<Double, Double>> finalData = averageDataByWeek.collectAsMap();
+
+        IOUtility.printTime(System.currentTimeMillis() - startTime);
 
         // TODO: remove in future
         System.out.println("Index\tWeek Start Day\t\t\t\t\tMean of cured\tMean of swabs");
@@ -125,7 +124,7 @@ public class Query1Main {
             i++;
         }
 
-        HdfsUtility.writeRDDToHdfs(Config.getOutputPathQuery1(), averageDataByWeek);
+        IOUtility.writeRDDToHdfs(IOUtility.getOutputPathQuery1(), averageDataByWeek);
 
         sparkContext.close();
     }
