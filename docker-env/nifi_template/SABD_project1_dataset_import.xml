@@ -2,7 +2,7 @@
 <template encoding-version="1.3">
     <description>NiFi flow template used to import data from Github to the HDFS after preprocessing operations</description>
     <groupId>05471cfb-0172-1000-7a05-c9b0abdaa661</groupId>
-    <name>SABD_Dataset_Import</name>
+    <name>SABD_project1_dataset_import</name>
     <snippet>
         <connections>
             <id>179cb709-72b3-318d-0000-000000000000</id>
@@ -272,64 +272,9 @@
                 <concurrentlySchedulableTaskCount>1</concurrentlySchedulableTaskCount>
                 <descriptors>
                     <entry>
-                        <key>URL</key>
+                        <key>Proxy Host</key>
                         <value>
-                            <name>URL</name>
-                        </value>
-                    </entry>
-                    <entry>
-                        <key>Filename</key>
-                        <value>
-                            <name>Filename</name>
-                        </value>
-                    </entry>
-                    <entry>
-                        <key>SSL Context Service</key>
-                        <value>
-                            <identifiesControllerService>org.apache.nifi.ssl.SSLContextService</identifiesControllerService>
-                            <name>SSL Context Service</name>
-                        </value>
-                    </entry>
-                    <entry>
-                        <key>Username</key>
-                        <value>
-                            <name>Username</name>
-                        </value>
-                    </entry>
-                    <entry>
-                        <key>Password</key>
-                        <value>
-                            <name>Password</name>
-                        </value>
-                    </entry>
-                    <entry>
-                        <key>Connection Timeout</key>
-                        <value>
-                            <name>Connection Timeout</name>
-                        </value>
-                    </entry>
-                    <entry>
-                        <key>Data Timeout</key>
-                        <value>
-                            <name>Data Timeout</name>
-                        </value>
-                    </entry>
-                    <entry>
-                        <key>User Agent</key>
-                        <value>
-                            <name>User Agent</name>
-                        </value>
-                    </entry>
-                    <entry>
-                        <key>Accept Content-Type</key>
-                        <value>
-                            <name>Accept Content-Type</name>
-                        </value>
-                    </entry>
-                    <entry>
-                        <key>Follow Redirects</key>
-                        <value>
-                            <name>Follow Redirects</name>
+                            <name>Proxy Host</name>
                         </value>
                     </entry>
                     <entry>
@@ -346,9 +291,15 @@
                         </value>
                     </entry>
                     <entry>
-                        <key>Proxy Host</key>
+                        <key>Filename</key>
                         <value>
-                            <name>Proxy Host</name>
+                            <name>Filename</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>User Agent</key>
+                        <value>
+                            <name>User Agent</name>
                         </value>
                     </entry>
                     <entry>
@@ -357,27 +308,83 @@
                             <name>Proxy Port</name>
                         </value>
                     </entry>
+                    <entry>
+                        <key>URL</key>
+                        <value>
+                            <name>URL</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Connection Timeout</key>
+                        <value>
+                            <name>Connection Timeout</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Data Timeout</key>
+                        <value>
+                            <name>Data Timeout</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>SSL Context Service</key>
+                        <value>
+                            <identifiesControllerService>org.apache.nifi.ssl.SSLContextService</identifiesControllerService>
+                            <name>SSL Context Service</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Username</key>
+                        <value>
+                            <name>Username</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Accept Content-Type</key>
+                        <value>
+                            <name>Accept Content-Type</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Follow Redirects</key>
+                        <value>
+                            <name>Follow Redirects</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Password</key>
+                        <value>
+                            <name>Password</name>
+                        </value>
+                    </entry>
                 </descriptors>
                 <executionNode>ALL</executionNode>
                 <lossTolerant>false</lossTolerant>
                 <penaltyDuration>30 sec</penaltyDuration>
                 <properties>
                     <entry>
-                        <key>URL</key>
-                        <value>http://raw.githubusercontent.com/pcm-dpc/COVID-19/master/dati-andamento-nazionale/dpc-covid19-ita-andamento-nazionale.csv</value>
+                        <key>Proxy Host</key>
+                    </entry>
+                    <entry>
+                        <key>redirect-cookie-policy</key>
+                        <value>default</value>
+                    </entry>
+                    <entry>
+                        <key>proxy-configuration-service</key>
                     </entry>
                     <entry>
                         <key>Filename</key>
                         <value>DS1.csv</value>
                     </entry>
                     <entry>
-                        <key>SSL Context Service</key>
+                        <key>User Agent</key>
                     </entry>
                     <entry>
-                        <key>Username</key>
+                        <key>Proxy Port</key>
                     </entry>
                     <entry>
-                        <key>Password</key>
+                        <key>URL</key>
+                        <value>http://raw.githubusercontent.com/pcm-dpc/COVID-19/master/dati-andamento-nazionale/dpc-covid19-ita-andamento-nazionale.csv</value>
                     </entry>
                     <entry>
                         <key>Connection Timeout</key>
@@ -388,7 +395,10 @@
                         <value>30 sec</value>
                     </entry>
                     <entry>
-                        <key>User Agent</key>
+                        <key>SSL Context Service</key>
+                    </entry>
+                    <entry>
+                        <key>Username</key>
                     </entry>
                     <entry>
                         <key>Accept Content-Type</key>
@@ -398,17 +408,7 @@
                         <value>true</value>
                     </entry>
                     <entry>
-                        <key>redirect-cookie-policy</key>
-                        <value>default</value>
-                    </entry>
-                    <entry>
-                        <key>proxy-configuration-service</key>
-                    </entry>
-                    <entry>
-                        <key>Proxy Host</key>
-                    </entry>
-                    <entry>
-                        <key>Proxy Port</key>
+                        <key>Password</key>
                     </entry>
                 </properties>
                 <runDurationMillis>0</runDurationMillis>
@@ -422,7 +422,7 @@
                 <autoTerminate>false</autoTerminate>
                 <name>success</name>
             </relationships>
-            <state>RUNNING</state>
+            <state>STOPPED</state>
             <style>
                 <entry>
                     <key>background-color</key>
@@ -461,6 +461,18 @@
                         </value>
                     </entry>
                     <entry>
+                        <key>Evaluation Mode</key>
+                        <value>
+                            <name>Evaluation Mode</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Line-by-Line Evaluation Mode</key>
+                        <value>
+                            <name>Line-by-Line Evaluation Mode</name>
+                        </value>
+                    </entry>
+                    <entry>
                         <key>Character Set</key>
                         <value>
                             <name>Character Set</name>
@@ -478,18 +490,6 @@
                             <name>Replacement Strategy</name>
                         </value>
                     </entry>
-                    <entry>
-                        <key>Evaluation Mode</key>
-                        <value>
-                            <name>Evaluation Mode</name>
-                        </value>
-                    </entry>
-                    <entry>
-                        <key>Line-by-Line Evaluation Mode</key>
-                        <value>
-                            <name>Line-by-Line Evaluation Mode</name>
-                        </value>
-                    </entry>
                 </descriptors>
                 <executionNode>ALL</executionNode>
                 <lossTolerant>false</lossTolerant>
@@ -497,11 +497,19 @@
                 <properties>
                     <entry>
                         <key>Regular Expression</key>
-                        <value>, </value>
+                        <value>(")(.*)(, )(.*)(")</value>
                     </entry>
                     <entry>
                         <key>Replacement Value</key>
-                        <value> </value>
+                        <value>$2 $4</value>
+                    </entry>
+                    <entry>
+                        <key>Evaluation Mode</key>
+                        <value>Entire text</value>
+                    </entry>
+                    <entry>
+                        <key>Line-by-Line Evaluation Mode</key>
+                        <value>All</value>
                     </entry>
                     <entry>
                         <key>Character Set</key>
@@ -513,15 +521,7 @@
                     </entry>
                     <entry>
                         <key>Replacement Strategy</key>
-                        <value>Literal Replace</value>
-                    </entry>
-                    <entry>
-                        <key>Evaluation Mode</key>
-                        <value>Entire text</value>
-                    </entry>
-                    <entry>
-                        <key>Line-by-Line Evaluation Mode</key>
-                        <value>All</value>
+                        <value>Regex Replace</value>
                     </entry>
                 </properties>
                 <runDurationMillis>2000</runDurationMillis>
@@ -539,7 +539,7 @@
                 <autoTerminate>false</autoTerminate>
                 <name>success</name>
             </relationships>
-            <state>RUNNING</state>
+            <state>STOPPED</state>
             <style>
                 <entry>
                     <key>background-color</key>
@@ -578,6 +578,18 @@
                         </value>
                     </entry>
                     <entry>
+                        <key>Evaluation Mode</key>
+                        <value>
+                            <name>Evaluation Mode</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Line-by-Line Evaluation Mode</key>
+                        <value>
+                            <name>Line-by-Line Evaluation Mode</name>
+                        </value>
+                    </entry>
+                    <entry>
                         <key>Character Set</key>
                         <value>
                             <name>Character Set</name>
@@ -595,18 +607,6 @@
                             <name>Replacement Strategy</name>
                         </value>
                     </entry>
-                    <entry>
-                        <key>Evaluation Mode</key>
-                        <value>
-                            <name>Evaluation Mode</name>
-                        </value>
-                    </entry>
-                    <entry>
-                        <key>Line-by-Line Evaluation Mode</key>
-                        <value>
-                            <name>Line-by-Line Evaluation Mode</name>
-                        </value>
-                    </entry>
                 </descriptors>
                 <executionNode>ALL</executionNode>
                 <lossTolerant>false</lossTolerant>
@@ -621,6 +621,14 @@
                         <value></value>
                     </entry>
                     <entry>
+                        <key>Evaluation Mode</key>
+                        <value>Entire text</value>
+                    </entry>
+                    <entry>
+                        <key>Line-by-Line Evaluation Mode</key>
+                        <value>All</value>
+                    </entry>
+                    <entry>
                         <key>Character Set</key>
                         <value>UTF-8</value>
                     </entry>
@@ -631,14 +639,6 @@
                     <entry>
                         <key>Replacement Strategy</key>
                         <value>Regex Replace</value>
-                    </entry>
-                    <entry>
-                        <key>Evaluation Mode</key>
-                        <value>Entire text</value>
-                    </entry>
-                    <entry>
-                        <key>Line-by-Line Evaluation Mode</key>
-                        <value>All</value>
                     </entry>
                 </properties>
                 <runDurationMillis>2000</runDurationMillis>
@@ -656,7 +656,7 @@
                 <autoTerminate>false</autoTerminate>
                 <name>success</name>
             </relationships>
-            <state>RUNNING</state>
+            <state>STOPPED</state>
             <style>
                 <entry>
                     <key>background-color</key>
@@ -683,9 +683,9 @@
                 <concurrentlySchedulableTaskCount>1</concurrentlySchedulableTaskCount>
                 <descriptors>
                     <entry>
-                        <key>Line Split Count</key>
+                        <key>Remove Trailing Newlines</key>
                         <value>
-                            <name>Line Split Count</name>
+                            <name>Remove Trailing Newlines</name>
                         </value>
                     </entry>
                     <entry>
@@ -695,21 +695,21 @@
                         </value>
                     </entry>
                     <entry>
-                        <key>Header Line Count</key>
-                        <value>
-                            <name>Header Line Count</name>
-                        </value>
-                    </entry>
-                    <entry>
                         <key>Header Line Marker Characters</key>
                         <value>
                             <name>Header Line Marker Characters</name>
                         </value>
                     </entry>
                     <entry>
-                        <key>Remove Trailing Newlines</key>
+                        <key>Header Line Count</key>
                         <value>
-                            <name>Remove Trailing Newlines</name>
+                            <name>Header Line Count</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Line Split Count</key>
+                        <value>
+                            <name>Line Split Count</name>
                         </value>
                     </entry>
                 </descriptors>
@@ -718,22 +718,22 @@
                 <penaltyDuration>30 sec</penaltyDuration>
                 <properties>
                     <entry>
-                        <key>Line Split Count</key>
-                        <value>1</value>
+                        <key>Remove Trailing Newlines</key>
+                        <value>false</value>
                     </entry>
                     <entry>
                         <key>Maximum Fragment Size</key>
+                    </entry>
+                    <entry>
+                        <key>Header Line Marker Characters</key>
                     </entry>
                     <entry>
                         <key>Header Line Count</key>
                         <value>0</value>
                     </entry>
                     <entry>
-                        <key>Header Line Marker Characters</key>
-                    </entry>
-                    <entry>
-                        <key>Remove Trailing Newlines</key>
-                        <value>false</value>
+                        <key>Line Split Count</key>
+                        <value>1</value>
                     </entry>
                 </properties>
                 <runDurationMillis>2000</runDurationMillis>
@@ -755,7 +755,7 @@
                 <autoTerminate>false</autoTerminate>
                 <name>splits</name>
             </relationships>
-            <state>RUNNING</state>
+            <state>STOPPED</state>
             <style>
                 <entry>
                     <key>background-color</key>
@@ -794,6 +794,18 @@
                         </value>
                     </entry>
                     <entry>
+                        <key>Evaluation Mode</key>
+                        <value>
+                            <name>Evaluation Mode</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Line-by-Line Evaluation Mode</key>
+                        <value>
+                            <name>Line-by-Line Evaluation Mode</name>
+                        </value>
+                    </entry>
+                    <entry>
                         <key>Character Set</key>
                         <value>
                             <name>Character Set</name>
@@ -811,18 +823,6 @@
                             <name>Replacement Strategy</name>
                         </value>
                     </entry>
-                    <entry>
-                        <key>Evaluation Mode</key>
-                        <value>
-                            <name>Evaluation Mode</name>
-                        </value>
-                    </entry>
-                    <entry>
-                        <key>Line-by-Line Evaluation Mode</key>
-                        <value>
-                            <name>Line-by-Line Evaluation Mode</name>
-                        </value>
-                    </entry>
                 </descriptors>
                 <executionNode>ALL</executionNode>
                 <lossTolerant>false</lossTolerant>
@@ -837,6 +837,14 @@
                         <value>$1$10$13</value>
                     </entry>
                     <entry>
+                        <key>Evaluation Mode</key>
+                        <value>Entire text</value>
+                    </entry>
+                    <entry>
+                        <key>Line-by-Line Evaluation Mode</key>
+                        <value>All</value>
+                    </entry>
+                    <entry>
                         <key>Character Set</key>
                         <value>UTF-8</value>
                     </entry>
@@ -847,14 +855,6 @@
                     <entry>
                         <key>Replacement Strategy</key>
                         <value>Regex Replace</value>
-                    </entry>
-                    <entry>
-                        <key>Evaluation Mode</key>
-                        <value>Entire text</value>
-                    </entry>
-                    <entry>
-                        <key>Line-by-Line Evaluation Mode</key>
-                        <value>All</value>
                     </entry>
                 </properties>
                 <runDurationMillis>2000</runDurationMillis>
@@ -872,7 +872,7 @@
                 <autoTerminate>false</autoTerminate>
                 <name>success</name>
             </relationships>
-            <state>RUNNING</state>
+            <state>STOPPED</state>
             <style>
                 <entry>
                     <key>background-color</key>
@@ -899,15 +899,21 @@
                 <concurrentlySchedulableTaskCount>1</concurrentlySchedulableTaskCount>
                 <descriptors>
                     <entry>
-                        <key>Merge Strategy</key>
+                        <key>Keep Path</key>
                         <value>
-                            <name>Merge Strategy</name>
+                            <name>Keep Path</name>
                         </value>
                     </entry>
                     <entry>
-                        <key>Merge Format</key>
+                        <key>Maximum Group Size</key>
                         <value>
-                            <name>Merge Format</name>
+                            <name>Maximum Group Size</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Merge Strategy</key>
+                        <value>
+                            <name>Merge Strategy</name>
                         </value>
                     </entry>
                     <entry>
@@ -917,21 +923,9 @@
                         </value>
                     </entry>
                     <entry>
-                        <key>Correlation Attribute Name</key>
+                        <key>Compression Level</key>
                         <value>
-                            <name>Correlation Attribute Name</name>
-                        </value>
-                    </entry>
-                    <entry>
-                        <key>mergecontent-metadata-strategy</key>
-                        <value>
-                            <name>mergecontent-metadata-strategy</name>
-                        </value>
-                    </entry>
-                    <entry>
-                        <key>Minimum Number of Entries</key>
-                        <value>
-                            <name>Minimum Number of Entries</name>
+                            <name>Compression Level</name>
                         </value>
                     </entry>
                     <entry>
@@ -947,21 +941,15 @@
                         </value>
                     </entry>
                     <entry>
-                        <key>Maximum Group Size</key>
-                        <value>
-                            <name>Maximum Group Size</name>
-                        </value>
-                    </entry>
-                    <entry>
-                        <key>Max Bin Age</key>
-                        <value>
-                            <name>Max Bin Age</name>
-                        </value>
-                    </entry>
-                    <entry>
                         <key>Maximum number of Bins</key>
                         <value>
                             <name>Maximum number of Bins</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Tar Modified Time</key>
+                        <value>
+                            <name>Tar Modified Time</name>
                         </value>
                     </entry>
                     <entry>
@@ -971,9 +959,9 @@
                         </value>
                     </entry>
                     <entry>
-                        <key>Header File</key>
+                        <key>Merge Format</key>
                         <value>
-                            <name>Header File</name>
+                            <name>Merge Format</name>
                         </value>
                     </entry>
                     <entry>
@@ -983,27 +971,39 @@
                         </value>
                     </entry>
                     <entry>
+                        <key>Max Bin Age</key>
+                        <value>
+                            <name>Max Bin Age</name>
+                        </value>
+                    </entry>
+                    <entry>
                         <key>Demarcator File</key>
                         <value>
                             <name>Demarcator File</name>
                         </value>
                     </entry>
                     <entry>
-                        <key>Compression Level</key>
+                        <key>Correlation Attribute Name</key>
                         <value>
-                            <name>Compression Level</name>
+                            <name>Correlation Attribute Name</name>
                         </value>
                     </entry>
                     <entry>
-                        <key>Keep Path</key>
+                        <key>Header File</key>
                         <value>
-                            <name>Keep Path</name>
+                            <name>Header File</name>
                         </value>
                     </entry>
                     <entry>
-                        <key>Tar Modified Time</key>
+                        <key>mergecontent-metadata-strategy</key>
                         <value>
-                            <name>Tar Modified Time</name>
+                            <name>mergecontent-metadata-strategy</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Minimum Number of Entries</key>
+                        <value>
+                            <name>Minimum Number of Entries</name>
                         </value>
                     </entry>
                 </descriptors>
@@ -1012,26 +1012,22 @@
                 <penaltyDuration>30 sec</penaltyDuration>
                 <properties>
                     <entry>
-                        <key>Merge Strategy</key>
-                        <value>Defragment</value>
+                        <key>Keep Path</key>
+                        <value>false</value>
                     </entry>
                     <entry>
-                        <key>Merge Format</key>
-                        <value>Binary Concatenation</value>
+                        <key>Maximum Group Size</key>
+                    </entry>
+                    <entry>
+                        <key>Merge Strategy</key>
+                        <value>Defragment</value>
                     </entry>
                     <entry>
                         <key>Attribute Strategy</key>
                         <value>Keep Only Common Attributes</value>
                     </entry>
                     <entry>
-                        <key>Correlation Attribute Name</key>
-                    </entry>
-                    <entry>
-                        <key>mergecontent-metadata-strategy</key>
-                        <value>Do Not Merge Uncommon Metadata</value>
-                    </entry>
-                    <entry>
-                        <key>Minimum Number of Entries</key>
+                        <key>Compression Level</key>
                         <value>1</value>
                     </entry>
                     <entry>
@@ -1043,39 +1039,43 @@
                         <value>0 B</value>
                     </entry>
                     <entry>
-                        <key>Maximum Group Size</key>
-                    </entry>
-                    <entry>
-                        <key>Max Bin Age</key>
-                    </entry>
-                    <entry>
                         <key>Maximum number of Bins</key>
                         <value>5</value>
+                    </entry>
+                    <entry>
+                        <key>Tar Modified Time</key>
+                        <value>${file.lastModifiedTime}</value>
                     </entry>
                     <entry>
                         <key>Delimiter Strategy</key>
                         <value>Filename</value>
                     </entry>
                     <entry>
-                        <key>Header File</key>
+                        <key>Merge Format</key>
+                        <value>Binary Concatenation</value>
                     </entry>
                     <entry>
                         <key>Footer File</key>
                     </entry>
                     <entry>
+                        <key>Max Bin Age</key>
+                    </entry>
+                    <entry>
                         <key>Demarcator File</key>
                     </entry>
                     <entry>
-                        <key>Compression Level</key>
+                        <key>Correlation Attribute Name</key>
+                    </entry>
+                    <entry>
+                        <key>Header File</key>
+                    </entry>
+                    <entry>
+                        <key>mergecontent-metadata-strategy</key>
+                        <value>Do Not Merge Uncommon Metadata</value>
+                    </entry>
+                    <entry>
+                        <key>Minimum Number of Entries</key>
                         <value>1</value>
-                    </entry>
-                    <entry>
-                        <key>Keep Path</key>
-                        <value>false</value>
-                    </entry>
-                    <entry>
-                        <key>Tar Modified Time</key>
-                        <value>${file.lastModifiedTime}</value>
                     </entry>
                 </properties>
                 <runDurationMillis>0</runDurationMillis>
@@ -1097,7 +1097,7 @@
                 <autoTerminate>true</autoTerminate>
                 <name>original</name>
             </relationships>
-            <state>RUNNING</state>
+            <state>STOPPED</state>
             <style>
                 <entry>
                     <key>background-color</key>
@@ -1136,6 +1136,18 @@
                         </value>
                     </entry>
                     <entry>
+                        <key>Evaluation Mode</key>
+                        <value>
+                            <name>Evaluation Mode</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Line-by-Line Evaluation Mode</key>
+                        <value>
+                            <name>Line-by-Line Evaluation Mode</name>
+                        </value>
+                    </entry>
+                    <entry>
                         <key>Character Set</key>
                         <value>
                             <name>Character Set</name>
@@ -1153,18 +1165,6 @@
                             <name>Replacement Strategy</name>
                         </value>
                     </entry>
-                    <entry>
-                        <key>Evaluation Mode</key>
-                        <value>
-                            <name>Evaluation Mode</name>
-                        </value>
-                    </entry>
-                    <entry>
-                        <key>Line-by-Line Evaluation Mode</key>
-                        <value>
-                            <name>Line-by-Line Evaluation Mode</name>
-                        </value>
-                    </entry>
                 </descriptors>
                 <executionNode>ALL</executionNode>
                 <lossTolerant>false</lossTolerant>
@@ -1179,6 +1179,14 @@
                         <value></value>
                     </entry>
                     <entry>
+                        <key>Evaluation Mode</key>
+                        <value>Entire text</value>
+                    </entry>
+                    <entry>
+                        <key>Line-by-Line Evaluation Mode</key>
+                        <value>All</value>
+                    </entry>
+                    <entry>
                         <key>Character Set</key>
                         <value>UTF-8</value>
                     </entry>
@@ -1189,14 +1197,6 @@
                     <entry>
                         <key>Replacement Strategy</key>
                         <value>Regex Replace</value>
-                    </entry>
-                    <entry>
-                        <key>Evaluation Mode</key>
-                        <value>Entire text</value>
-                    </entry>
-                    <entry>
-                        <key>Line-by-Line Evaluation Mode</key>
-                        <value>All</value>
                     </entry>
                 </properties>
                 <runDurationMillis>2000</runDurationMillis>
@@ -1214,7 +1214,7 @@
                 <autoTerminate>false</autoTerminate>
                 <name>success</name>
             </relationships>
-            <state>RUNNING</state>
+            <state>STOPPED</state>
             <style>
                 <entry>
                     <key>background-color</key>
@@ -1241,64 +1241,9 @@
                 <concurrentlySchedulableTaskCount>1</concurrentlySchedulableTaskCount>
                 <descriptors>
                     <entry>
-                        <key>URL</key>
+                        <key>Proxy Host</key>
                         <value>
-                            <name>URL</name>
-                        </value>
-                    </entry>
-                    <entry>
-                        <key>Filename</key>
-                        <value>
-                            <name>Filename</name>
-                        </value>
-                    </entry>
-                    <entry>
-                        <key>SSL Context Service</key>
-                        <value>
-                            <identifiesControllerService>org.apache.nifi.ssl.SSLContextService</identifiesControllerService>
-                            <name>SSL Context Service</name>
-                        </value>
-                    </entry>
-                    <entry>
-                        <key>Username</key>
-                        <value>
-                            <name>Username</name>
-                        </value>
-                    </entry>
-                    <entry>
-                        <key>Password</key>
-                        <value>
-                            <name>Password</name>
-                        </value>
-                    </entry>
-                    <entry>
-                        <key>Connection Timeout</key>
-                        <value>
-                            <name>Connection Timeout</name>
-                        </value>
-                    </entry>
-                    <entry>
-                        <key>Data Timeout</key>
-                        <value>
-                            <name>Data Timeout</name>
-                        </value>
-                    </entry>
-                    <entry>
-                        <key>User Agent</key>
-                        <value>
-                            <name>User Agent</name>
-                        </value>
-                    </entry>
-                    <entry>
-                        <key>Accept Content-Type</key>
-                        <value>
-                            <name>Accept Content-Type</name>
-                        </value>
-                    </entry>
-                    <entry>
-                        <key>Follow Redirects</key>
-                        <value>
-                            <name>Follow Redirects</name>
+                            <name>Proxy Host</name>
                         </value>
                     </entry>
                     <entry>
@@ -1315,9 +1260,15 @@
                         </value>
                     </entry>
                     <entry>
-                        <key>Proxy Host</key>
+                        <key>Filename</key>
                         <value>
-                            <name>Proxy Host</name>
+                            <name>Filename</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>User Agent</key>
+                        <value>
+                            <name>User Agent</name>
                         </value>
                     </entry>
                     <entry>
@@ -1326,27 +1277,83 @@
                             <name>Proxy Port</name>
                         </value>
                     </entry>
+                    <entry>
+                        <key>URL</key>
+                        <value>
+                            <name>URL</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Connection Timeout</key>
+                        <value>
+                            <name>Connection Timeout</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Data Timeout</key>
+                        <value>
+                            <name>Data Timeout</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>SSL Context Service</key>
+                        <value>
+                            <identifiesControllerService>org.apache.nifi.ssl.SSLContextService</identifiesControllerService>
+                            <name>SSL Context Service</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Username</key>
+                        <value>
+                            <name>Username</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Accept Content-Type</key>
+                        <value>
+                            <name>Accept Content-Type</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Follow Redirects</key>
+                        <value>
+                            <name>Follow Redirects</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Password</key>
+                        <value>
+                            <name>Password</name>
+                        </value>
+                    </entry>
                 </descriptors>
                 <executionNode>ALL</executionNode>
                 <lossTolerant>false</lossTolerant>
                 <penaltyDuration>30 sec</penaltyDuration>
                 <properties>
                     <entry>
-                        <key>URL</key>
-                        <value>http://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv</value>
+                        <key>Proxy Host</key>
+                    </entry>
+                    <entry>
+                        <key>redirect-cookie-policy</key>
+                        <value>default</value>
+                    </entry>
+                    <entry>
+                        <key>proxy-configuration-service</key>
                     </entry>
                     <entry>
                         <key>Filename</key>
                         <value>DS2.csv</value>
                     </entry>
                     <entry>
-                        <key>SSL Context Service</key>
+                        <key>User Agent</key>
                     </entry>
                     <entry>
-                        <key>Username</key>
+                        <key>Proxy Port</key>
                     </entry>
                     <entry>
-                        <key>Password</key>
+                        <key>URL</key>
+                        <value>http://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv</value>
                     </entry>
                     <entry>
                         <key>Connection Timeout</key>
@@ -1357,7 +1364,10 @@
                         <value>30 sec</value>
                     </entry>
                     <entry>
-                        <key>User Agent</key>
+                        <key>SSL Context Service</key>
+                    </entry>
+                    <entry>
+                        <key>Username</key>
                     </entry>
                     <entry>
                         <key>Accept Content-Type</key>
@@ -1367,17 +1377,7 @@
                         <value>true</value>
                     </entry>
                     <entry>
-                        <key>redirect-cookie-policy</key>
-                        <value>default</value>
-                    </entry>
-                    <entry>
-                        <key>proxy-configuration-service</key>
-                    </entry>
-                    <entry>
-                        <key>Proxy Host</key>
-                    </entry>
-                    <entry>
-                        <key>Proxy Port</key>
+                        <key>Password</key>
                     </entry>
                 </properties>
                 <runDurationMillis>0</runDurationMillis>
@@ -1391,7 +1391,7 @@
                 <autoTerminate>false</autoTerminate>
                 <name>success</name>
             </relationships>
-            <state>RUNNING</state>
+            <state>STOPPED</state>
             <style>
                 <entry>
                     <key>background-color</key>
@@ -1430,6 +1430,18 @@
                         </value>
                     </entry>
                     <entry>
+                        <key>Evaluation Mode</key>
+                        <value>
+                            <name>Evaluation Mode</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Line-by-Line Evaluation Mode</key>
+                        <value>
+                            <name>Line-by-Line Evaluation Mode</name>
+                        </value>
+                    </entry>
+                    <entry>
                         <key>Character Set</key>
                         <value>
                             <name>Character Set</name>
@@ -1447,18 +1459,6 @@
                             <name>Replacement Strategy</name>
                         </value>
                     </entry>
-                    <entry>
-                        <key>Evaluation Mode</key>
-                        <value>
-                            <name>Evaluation Mode</name>
-                        </value>
-                    </entry>
-                    <entry>
-                        <key>Line-by-Line Evaluation Mode</key>
-                        <value>
-                            <name>Line-by-Line Evaluation Mode</name>
-                        </value>
-                    </entry>
                 </descriptors>
                 <executionNode>ALL</executionNode>
                 <lossTolerant>false</lossTolerant>
@@ -1473,6 +1473,14 @@
                         <value></value>
                     </entry>
                     <entry>
+                        <key>Evaluation Mode</key>
+                        <value>Entire text</value>
+                    </entry>
+                    <entry>
+                        <key>Line-by-Line Evaluation Mode</key>
+                        <value>All</value>
+                    </entry>
+                    <entry>
                         <key>Character Set</key>
                         <value>UTF-8</value>
                     </entry>
@@ -1483,14 +1491,6 @@
                     <entry>
                         <key>Replacement Strategy</key>
                         <value>Regex Replace</value>
-                    </entry>
-                    <entry>
-                        <key>Evaluation Mode</key>
-                        <value>Entire text</value>
-                    </entry>
-                    <entry>
-                        <key>Line-by-Line Evaluation Mode</key>
-                        <value>All</value>
                     </entry>
                 </properties>
                 <runDurationMillis>2000</runDurationMillis>
@@ -1508,7 +1508,7 @@
                 <autoTerminate>false</autoTerminate>
                 <name>success</name>
             </relationships>
-            <state>RUNNING</state>
+            <state>STOPPED</state>
             <style>
                 <entry>
                     <key>background-color</key>
@@ -1547,6 +1547,18 @@
                         </value>
                     </entry>
                     <entry>
+                        <key>Evaluation Mode</key>
+                        <value>
+                            <name>Evaluation Mode</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Line-by-Line Evaluation Mode</key>
+                        <value>
+                            <name>Line-by-Line Evaluation Mode</name>
+                        </value>
+                    </entry>
+                    <entry>
                         <key>Character Set</key>
                         <value>
                             <name>Character Set</name>
@@ -1564,18 +1576,6 @@
                             <name>Replacement Strategy</name>
                         </value>
                     </entry>
-                    <entry>
-                        <key>Evaluation Mode</key>
-                        <value>
-                            <name>Evaluation Mode</name>
-                        </value>
-                    </entry>
-                    <entry>
-                        <key>Line-by-Line Evaluation Mode</key>
-                        <value>
-                            <name>Line-by-Line Evaluation Mode</name>
-                        </value>
-                    </entry>
                 </descriptors>
                 <executionNode>ALL</executionNode>
                 <lossTolerant>false</lossTolerant>
@@ -1590,6 +1590,14 @@
                         <value></value>
                     </entry>
                     <entry>
+                        <key>Evaluation Mode</key>
+                        <value>Entire text</value>
+                    </entry>
+                    <entry>
+                        <key>Line-by-Line Evaluation Mode</key>
+                        <value>All</value>
+                    </entry>
+                    <entry>
                         <key>Character Set</key>
                         <value>UTF-8</value>
                     </entry>
@@ -1600,14 +1608,6 @@
                     <entry>
                         <key>Replacement Strategy</key>
                         <value>Regex Replace</value>
-                    </entry>
-                    <entry>
-                        <key>Evaluation Mode</key>
-                        <value>Entire text</value>
-                    </entry>
-                    <entry>
-                        <key>Line-by-Line Evaluation Mode</key>
-                        <value>All</value>
                     </entry>
                 </properties>
                 <runDurationMillis>2000</runDurationMillis>
@@ -1625,7 +1625,7 @@
                 <autoTerminate>false</autoTerminate>
                 <name>success</name>
             </relationships>
-            <state>RUNNING</state>
+            <state>STOPPED</state>
             <style>
                 <entry>
                     <key>background-color</key>
@@ -1652,9 +1652,51 @@
                 <concurrentlySchedulableTaskCount>1</concurrentlySchedulableTaskCount>
                 <descriptors>
                     <entry>
+                        <key>Permissions umask</key>
+                        <value>
+                            <name>Permissions umask</name>
+                        </value>
+                    </entry>
+                    <entry>
                         <key>Hadoop Configuration Resources</key>
                         <value>
                             <name>Hadoop Configuration Resources</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Remote Owner</key>
+                        <value>
+                            <name>Remote Owner</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Additional Classpath Resources</key>
+                        <value>
+                            <name>Additional Classpath Resources</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Compression codec</key>
+                        <value>
+                            <name>Compression codec</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>IO Buffer Size</key>
+                        <value>
+                            <name>IO Buffer Size</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Remote Group</key>
+                        <value>
+                            <name>Remote Group</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Block Size</key>
+                        <value>
+                            <name>Block Size</name>
                         </value>
                     </entry>
                     <entry>
@@ -1665,27 +1707,33 @@
                         </value>
                     </entry>
                     <entry>
-                        <key>Kerberos Principal</key>
-                        <value>
-                            <name>Kerberos Principal</name>
-                        </value>
-                    </entry>
-                    <entry>
                         <key>Kerberos Keytab</key>
                         <value>
                             <name>Kerberos Keytab</name>
                         </value>
                     </entry>
                     <entry>
-                        <key>Kerberos Relogin Period</key>
+                        <key>Ignore Locality</key>
                         <value>
-                            <name>Kerberos Relogin Period</name>
+                            <name>Ignore Locality</name>
                         </value>
                     </entry>
                     <entry>
-                        <key>Additional Classpath Resources</key>
+                        <key>Kerberos Principal</key>
                         <value>
-                            <name>Additional Classpath Resources</name>
+                            <name>Kerberos Principal</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Replication</key>
+                        <value>
+                            <name>Replication</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Kerberos Relogin Period</key>
+                        <value>
+                            <name>Kerberos Relogin Period</name>
                         </value>
                     </entry>
                     <entry>
@@ -1700,78 +1748,56 @@
                             <name>Conflict Resolution Strategy</name>
                         </value>
                     </entry>
-                    <entry>
-                        <key>Block Size</key>
-                        <value>
-                            <name>Block Size</name>
-                        </value>
-                    </entry>
-                    <entry>
-                        <key>IO Buffer Size</key>
-                        <value>
-                            <name>IO Buffer Size</name>
-                        </value>
-                    </entry>
-                    <entry>
-                        <key>Replication</key>
-                        <value>
-                            <name>Replication</name>
-                        </value>
-                    </entry>
-                    <entry>
-                        <key>Permissions umask</key>
-                        <value>
-                            <name>Permissions umask</name>
-                        </value>
-                    </entry>
-                    <entry>
-                        <key>Remote Owner</key>
-                        <value>
-                            <name>Remote Owner</name>
-                        </value>
-                    </entry>
-                    <entry>
-                        <key>Remote Group</key>
-                        <value>
-                            <name>Remote Group</name>
-                        </value>
-                    </entry>
-                    <entry>
-                        <key>Compression codec</key>
-                        <value>
-                            <name>Compression codec</name>
-                        </value>
-                    </entry>
-                    <entry>
-                        <key>Ignore Locality</key>
-                        <value>
-                            <name>Ignore Locality</name>
-                        </value>
-                    </entry>
                 </descriptors>
                 <executionNode>ALL</executionNode>
                 <lossTolerant>false</lossTolerant>
                 <penaltyDuration>30 sec</penaltyDuration>
                 <properties>
                     <entry>
+                        <key>Permissions umask</key>
+                    </entry>
+                    <entry>
                         <key>Hadoop Configuration Resources</key>
                         <value>/opt/nifi/nifi-current/nifi-hdfs/core-site.xml,/opt/nifi/nifi-current/nifi-hdfs/hdfs-site.xml</value>
+                    </entry>
+                    <entry>
+                        <key>Remote Owner</key>
+                    </entry>
+                    <entry>
+                        <key>Additional Classpath Resources</key>
+                    </entry>
+                    <entry>
+                        <key>Compression codec</key>
+                        <value>NONE</value>
+                    </entry>
+                    <entry>
+                        <key>IO Buffer Size</key>
+                    </entry>
+                    <entry>
+                        <key>Remote Group</key>
+                    </entry>
+                    <entry>
+                        <key>Block Size</key>
                     </entry>
                     <entry>
                         <key>kerberos-credentials-service</key>
                     </entry>
                     <entry>
+                        <key>Kerberos Keytab</key>
+                    </entry>
+                    <entry>
+                        <key>Ignore Locality</key>
+                        <value>false</value>
+                    </entry>
+                    <entry>
                         <key>Kerberos Principal</key>
                     </entry>
                     <entry>
-                        <key>Kerberos Keytab</key>
+                        <key>Replication</key>
                     </entry>
                     <entry>
                         <key>Kerberos Relogin Period</key>
                         <value>4 hours</value>
-                    </entry>
-                    <entry>
-                        <key>Additional Classpath Resources</key>
                     </entry>
                     <entry>
                         <key>Directory</key>
@@ -1780,32 +1806,6 @@
                     <entry>
                         <key>Conflict Resolution Strategy</key>
                         <value>replace</value>
-                    </entry>
-                    <entry>
-                        <key>Block Size</key>
-                    </entry>
-                    <entry>
-                        <key>IO Buffer Size</key>
-                    </entry>
-                    <entry>
-                        <key>Replication</key>
-                    </entry>
-                    <entry>
-                        <key>Permissions umask</key>
-                    </entry>
-                    <entry>
-                        <key>Remote Owner</key>
-                    </entry>
-                    <entry>
-                        <key>Remote Group</key>
-                    </entry>
-                    <entry>
-                        <key>Compression codec</key>
-                        <value>NONE</value>
-                    </entry>
-                    <entry>
-                        <key>Ignore Locality</key>
-                        <value>false</value>
                     </entry>
                 </properties>
                 <runDurationMillis>0</runDurationMillis>
@@ -1823,7 +1823,7 @@
                 <autoTerminate>true</autoTerminate>
                 <name>success</name>
             </relationships>
-            <state>RUNNING</state>
+            <state>STOPPED</state>
             <style>
                 <entry>
                     <key>background-color</key>
@@ -1850,9 +1850,51 @@
                 <concurrentlySchedulableTaskCount>1</concurrentlySchedulableTaskCount>
                 <descriptors>
                     <entry>
+                        <key>Permissions umask</key>
+                        <value>
+                            <name>Permissions umask</name>
+                        </value>
+                    </entry>
+                    <entry>
                         <key>Hadoop Configuration Resources</key>
                         <value>
                             <name>Hadoop Configuration Resources</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Remote Owner</key>
+                        <value>
+                            <name>Remote Owner</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Additional Classpath Resources</key>
+                        <value>
+                            <name>Additional Classpath Resources</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Compression codec</key>
+                        <value>
+                            <name>Compression codec</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>IO Buffer Size</key>
+                        <value>
+                            <name>IO Buffer Size</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Remote Group</key>
+                        <value>
+                            <name>Remote Group</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Block Size</key>
+                        <value>
+                            <name>Block Size</name>
                         </value>
                     </entry>
                     <entry>
@@ -1863,27 +1905,33 @@
                         </value>
                     </entry>
                     <entry>
-                        <key>Kerberos Principal</key>
-                        <value>
-                            <name>Kerberos Principal</name>
-                        </value>
-                    </entry>
-                    <entry>
                         <key>Kerberos Keytab</key>
                         <value>
                             <name>Kerberos Keytab</name>
                         </value>
                     </entry>
                     <entry>
-                        <key>Kerberos Relogin Period</key>
+                        <key>Ignore Locality</key>
                         <value>
-                            <name>Kerberos Relogin Period</name>
+                            <name>Ignore Locality</name>
                         </value>
                     </entry>
                     <entry>
-                        <key>Additional Classpath Resources</key>
+                        <key>Kerberos Principal</key>
                         <value>
-                            <name>Additional Classpath Resources</name>
+                            <name>Kerberos Principal</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Replication</key>
+                        <value>
+                            <name>Replication</name>
+                        </value>
+                    </entry>
+                    <entry>
+                        <key>Kerberos Relogin Period</key>
+                        <value>
+                            <name>Kerberos Relogin Period</name>
                         </value>
                     </entry>
                     <entry>
@@ -1898,78 +1946,56 @@
                             <name>Conflict Resolution Strategy</name>
                         </value>
                     </entry>
-                    <entry>
-                        <key>Block Size</key>
-                        <value>
-                            <name>Block Size</name>
-                        </value>
-                    </entry>
-                    <entry>
-                        <key>IO Buffer Size</key>
-                        <value>
-                            <name>IO Buffer Size</name>
-                        </value>
-                    </entry>
-                    <entry>
-                        <key>Replication</key>
-                        <value>
-                            <name>Replication</name>
-                        </value>
-                    </entry>
-                    <entry>
-                        <key>Permissions umask</key>
-                        <value>
-                            <name>Permissions umask</name>
-                        </value>
-                    </entry>
-                    <entry>
-                        <key>Remote Owner</key>
-                        <value>
-                            <name>Remote Owner</name>
-                        </value>
-                    </entry>
-                    <entry>
-                        <key>Remote Group</key>
-                        <value>
-                            <name>Remote Group</name>
-                        </value>
-                    </entry>
-                    <entry>
-                        <key>Compression codec</key>
-                        <value>
-                            <name>Compression codec</name>
-                        </value>
-                    </entry>
-                    <entry>
-                        <key>Ignore Locality</key>
-                        <value>
-                            <name>Ignore Locality</name>
-                        </value>
-                    </entry>
                 </descriptors>
                 <executionNode>ALL</executionNode>
                 <lossTolerant>false</lossTolerant>
                 <penaltyDuration>30 sec</penaltyDuration>
                 <properties>
                     <entry>
+                        <key>Permissions umask</key>
+                    </entry>
+                    <entry>
                         <key>Hadoop Configuration Resources</key>
                         <value>/opt/nifi/nifi-current/nifi-hdfs/core-site.xml,/opt/nifi/nifi-current/nifi-hdfs/hdfs-site.xml</value>
+                    </entry>
+                    <entry>
+                        <key>Remote Owner</key>
+                    </entry>
+                    <entry>
+                        <key>Additional Classpath Resources</key>
+                    </entry>
+                    <entry>
+                        <key>Compression codec</key>
+                        <value>NONE</value>
+                    </entry>
+                    <entry>
+                        <key>IO Buffer Size</key>
+                    </entry>
+                    <entry>
+                        <key>Remote Group</key>
+                    </entry>
+                    <entry>
+                        <key>Block Size</key>
                     </entry>
                     <entry>
                         <key>kerberos-credentials-service</key>
                     </entry>
                     <entry>
+                        <key>Kerberos Keytab</key>
+                    </entry>
+                    <entry>
+                        <key>Ignore Locality</key>
+                        <value>false</value>
+                    </entry>
+                    <entry>
                         <key>Kerberos Principal</key>
                     </entry>
                     <entry>
-                        <key>Kerberos Keytab</key>
+                        <key>Replication</key>
                     </entry>
                     <entry>
                         <key>Kerberos Relogin Period</key>
                         <value>4 hours</value>
-                    </entry>
-                    <entry>
-                        <key>Additional Classpath Resources</key>
                     </entry>
                     <entry>
                         <key>Directory</key>
@@ -1978,32 +2004,6 @@
                     <entry>
                         <key>Conflict Resolution Strategy</key>
                         <value>replace</value>
-                    </entry>
-                    <entry>
-                        <key>Block Size</key>
-                    </entry>
-                    <entry>
-                        <key>IO Buffer Size</key>
-                    </entry>
-                    <entry>
-                        <key>Replication</key>
-                    </entry>
-                    <entry>
-                        <key>Permissions umask</key>
-                    </entry>
-                    <entry>
-                        <key>Remote Owner</key>
-                    </entry>
-                    <entry>
-                        <key>Remote Group</key>
-                    </entry>
-                    <entry>
-                        <key>Compression codec</key>
-                        <value>NONE</value>
-                    </entry>
-                    <entry>
-                        <key>Ignore Locality</key>
-                        <value>false</value>
                     </entry>
                 </properties>
                 <runDurationMillis>0</runDurationMillis>
@@ -2021,7 +2021,7 @@
                 <autoTerminate>true</autoTerminate>
                 <name>success</name>
             </relationships>
-            <state>RUNNING</state>
+            <state>STOPPED</state>
             <style>
                 <entry>
                     <key>background-color</key>
@@ -2031,5 +2031,5 @@
             <type>org.apache.nifi.processors.hadoop.PutHDFS</type>
         </processors>
     </snippet>
-    <timestamp>05/15/2020 10:30:41 UTC</timestamp>
+    <timestamp>05/15/2020 13:15:56 UTC</timestamp>
 </template>
