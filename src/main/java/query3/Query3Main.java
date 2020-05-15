@@ -8,6 +8,7 @@ import org.apache.spark.api.java.JavaSparkContext;
 import scala.Tuple2;
 import utility.ClusteringUtility;
 import utility.Config;
+import utility.HdfsUtility;
 import utility.QueryUtility;
 
 import java.text.SimpleDateFormat;
@@ -97,6 +98,9 @@ public class Query3Main {
 
         Config.printTime(System.currentTimeMillis() - startTime);
 
+        HdfsUtility.writeLocalStructureToHdfs(Config.getOutputPathQuery3(), result);
+
+        // TODO: remove in future
         // result print
         for (Tuple2<String, ArrayList<ArrayList<String>>> singleResult : result) {
             System.out.println("Results for: " + singleResult._1());

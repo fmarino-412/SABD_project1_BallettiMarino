@@ -109,10 +109,11 @@ public class Query1Main {
                 }
         ).sortByKey(true).cache();
 
-        Map<String, Tuple2<Double, Double>> finalData = averageDataByWeek.collectAsMap();
-
         Config.printTime(System.currentTimeMillis() - startTime);
 
+        Map<String, Tuple2<Double, Double>> finalData = averageDataByWeek.collectAsMap();
+
+        // TODO: remove in future
         System.out.println("Index\tWeek Start Day\t\t\t\t\tMean of cured\tMean of swabs");
         int i = 1;
 
@@ -124,11 +125,7 @@ public class Query1Main {
             i++;
         }
 
-        try {
-            HdfsUtility.writeRDDToHdfs(Config.getOutputPathQuery1(), averageDataByWeek);
-        } catch (Exception e) {
-            System.err.println("This query output has already been saved in HDFS");
-        }
+        HdfsUtility.writeRDDToHdfs(Config.getOutputPathQuery1(), averageDataByWeek);
 
         sparkContext.close();
     }

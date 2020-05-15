@@ -120,10 +120,11 @@ public class Query2Main {
 
         // TODO: remove sort by key
         JavaPairRDD<String, List<Double>> orderedStatistics = statistics.sortByKey(true).cache();
-        List<Tuple2<String, List<Double>>> orderedResult = orderedStatistics.collect();
-
         Config.printTime(System.currentTimeMillis() - startTime);
 
+        List<Tuple2<String, List<Double>>> orderedResult = orderedStatistics.collect();
+
+        // TODO: remove in future
         System.out.println("Index\tWeek Start Day\t\t\tMean\tStandard Deviation\tMinimum\tMaximum");
         int i = 1;
         for (Tuple2<String, List<Double>> element : orderedResult) {
@@ -137,11 +138,7 @@ public class Query2Main {
             i++;
         }
 
-        try {
-            HdfsUtility.writeRDDToHdfs(Config.getOutputPathQuery2(), orderedStatistics);
-        } catch(Exception e) {
-            System.err.println("This query output has already been saved in HDFS");
-        }
+        HdfsUtility.writeRDDToHdfs(Config.getOutputPathQuery2(), orderedStatistics);
 
         sparkContext.close();
     }
