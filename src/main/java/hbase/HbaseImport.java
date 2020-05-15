@@ -1,5 +1,18 @@
 package hbase;
 
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FSDataInputStream;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
+import scala.util.matching.Regex;
+import utility.IOUtility;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.URI;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class HbaseImport {
 
     private static final String TABLE_QUERY1 = "Weekly Mean Swabs and Cured in Italy";
@@ -43,17 +56,58 @@ public class HbaseImport {
         client.createTable(TABLE_QUERY2, TABLE_QUERY2_CF);
         client.createTable(TABLE_QUERY3, TABLE_QUERY3_CF);
 
+        importQuery1Result(client);
+        importQuery2Result(client);
+        importQuery3Result(client);
     }
 
-    private static String importQuery1Result() {
+    private static String importQuery1Result(HBaseLightClient hBaseLightClient) {
         return null;
     }
 
-    private static String importQuery2Result() {
-        return null;
+    private static void importQuery2Result(HBaseLightClient hBaseLightClient) {
+
+        String line;
+        String key;
+        String mean;
+        String max;
+        String min;
+        String stdDev;
+
+        Configuration configuration = new Configuration();
+
+        try {
+            FileSystem hdfs = FileSystem.get(new URI(IOUtility.getHdfs()), configuration);
+            Path file = new Path(IOUtility.getOutputPathQuery2());
+            FSDataInputStream inputStream = hdfs.open(file);
+            BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
+
+            while ((line = br.readLine()) != null) {
+
+                Pattern pattern = Pattern.compile("\\((\\w+\\s-\\s\\d+-\\d+-\\d+),\\[(\\d+.\\d+),\\s(\\d+.\\d+)" +
+                        ",\\s(\\d+.\\d+),\\s(\\d+.\\d+)]\\)");
+                Matcher matcher = pattern.matcher(line);
+
+                if (matcher.find()) {
+                    key = matcher.group(1);
+                    mean = matcher.group(2);
+                    stdDev = matcher.group(3);
+                    min = matcher.group(4);
+                    max = matcher.group(5);
+                    hBaseLightClient.put(TABLE_QUERY2, key,
+                            TABLE_QUERY2_CF, TABLE_QUERY2_C1, mean,
+                            TABLE_QUERY2_CF, TABLE_QUERY2_C2, stdDev,
+                            TABLE_QUERY2_CF, TABLE_QUERY2_C3, min,
+                            TABLE_QUERY2_CF, TABLE_QUERY2_C4, max);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println("Could not load query 2 result from HDFS");
+        }
     }
 
-    private static String importQuery3Result() {
+    private static String importQuery3Result(HBaseLightClient hBaseLightClient) {
         return null;
     }
 }
