@@ -8,8 +8,10 @@ import scala.util.matching.Regex;
 import utility.IOUtility;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -116,6 +118,45 @@ public class HbaseImport {
     }
 
     private static String importQuery3Result(HBaseLightClient hBaseLightClient) {
+
+        String line;
+        String cluster1;
+        String cluster2;
+        String cluster3;
+        String cluster4;
+        String key;
+
+        Configuration configuration = new Configuration();
+
+        try {
+            FileSystem hdfs = FileSystem.get(new URI(IOUtility.getHdfs()), configuration);
+            Path file = new Path(IOUtility.getOutputPathQuery3());
+            FSDataInputStream inputStream = hdfs.open(file);
+            BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
+
+            while ((line = br.readLine()) != null) {
+
+                Pattern pattern = Pattern.compile("\\((\\d+-\\d+),\\[\\[(.*?)\\],\\[(.*?)\\],\\[(.*?)\\]," +
+                        "\\[(.*?)\\]\\]\\)");
+                Matcher matcher = pattern.matcher(line);
+
+                if (matcher.find()) {
+                    key = matcher.group(1);
+                    cluster1 = matcher.group(2);
+                    cluster2 = matcher.group(3);
+                    cluster3 = matcher.group(4);
+                    cluster4 = matcher.group(5);
+                    hBaseLightClient.put(TABLE_QUERY3, key,
+                            TABLE_QUERY3_CF, TABLE_QUERY3_C1, cluster1,
+                            TABLE_QUERY3_CF, TABLE_QUERY3_C2, cluster2,
+                            TABLE_QUERY3_CF, TABLE_QUERY3_C3, cluster3,
+                            TABLE_QUERY3_CF, TABLE_QUERY3_C4, cluster4);
+                }
+            }
+        } catch (URISyntaxException | IOException e) {
+            e.printStackTrace();
+            System.err.println("Could not load query 3 result from HDFS");
+        }
         return null;
     }
 }
