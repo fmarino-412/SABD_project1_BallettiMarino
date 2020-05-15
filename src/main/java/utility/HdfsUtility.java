@@ -4,12 +4,13 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
+import org.apache.spark.api.java.JavaPairRDD;
 
 import java.net.URI;
 
 public class HdfsUtility {
 
-    public static void writeToHdfs(String path, String data) {
+    public static void writeLocalStructureToHdfs(String path, String data) {
         Configuration configuration = new Configuration();
         try {
             FileSystem hdfs = FileSystem.get(new URI(Config.getHdfs()), configuration);
@@ -21,5 +22,9 @@ public class HdfsUtility {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public static void writeRDDToHdfs(String path, JavaPairRDD rdd) throws Exception {
+        rdd.saveAsTextFile(path);
     }
 }

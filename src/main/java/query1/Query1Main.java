@@ -107,7 +107,7 @@ public class Query1Main {
                     result.add(new Tuple2<>(tuple._1(), new Tuple2<>(avgCured, avgSwabs)));
                     return result.iterator();
                 }
-        ).cache();
+        ).sortByKey(true).cache();
 
         Map<String, Tuple2<Double, Double>> finalData = averageDataByWeek.collectAsMap();
 
@@ -125,7 +125,7 @@ public class Query1Main {
         }
 
         try {
-            averageDataByWeek.saveAsObjectFile(Config.getOutputPathQuery1());
+            HdfsUtility.writeRDDToHdfs(Config.getOutputPathQuery1(), averageDataByWeek);
         } catch (Exception e) {
             System.err.println("This query output has already been saved in HDFS");
         }

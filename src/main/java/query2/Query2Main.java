@@ -6,10 +6,7 @@ import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import scala.Tuple2;
-import utility.Config;
-import utility.ContinentDecoder;
-import utility.GeoCoordinate;
-import utility.QueryUtility;
+import utility.*;
 
 import java.util.*;
 
@@ -122,7 +119,8 @@ public class Query2Main {
                 );
 
         // TODO: remove sort by key
-        List<Tuple2<String, List<Double>>> orderedResult = statistics.sortByKey(true).collect();
+        JavaPairRDD<String, List<Double>> orderedStatistics = statistics.sortByKey(true).cache();
+        List<Tuple2<String, List<Double>>> orderedResult = orderedStatistics.collect();
 
         Config.printTime(System.currentTimeMillis() - startTime);
 
@@ -140,7 +138,7 @@ public class Query2Main {
         }
 
         try {
-            statistics.saveAsObjectFile(Config.getOutputPathQuery2());
+            HdfsUtility.writeRDDToHdfs(Config.getOutputPathQuery2(), orderedStatistics);
         } catch(Exception e) {
             System.err.println("This query output has already been saved in HDFS");
         }
