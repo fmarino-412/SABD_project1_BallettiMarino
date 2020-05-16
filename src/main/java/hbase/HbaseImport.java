@@ -71,8 +71,39 @@ public class HbaseImport {
         client.printTable(TABLE_QUERY2);
     }
 
-    private static String importQuery1Result(HBaseLightClient hBaseLightClient) {
-        return null;
+    private static void importQuery1Result(HBaseLightClient hBaseLightClient) {
+
+        String line;
+        String key;
+        String cured;
+        String swabs;
+
+        Configuration configuration = new Configuration();
+
+        try {
+            FileSystem hdfs = FileSystem.get(new URI(IOUtility.getHdfs()), configuration);
+            Path file = new Path(IOUtility.getOutputPathQuery1() + "/part-00000");
+            FSDataInputStream inputStream = hdfs.open(file);
+            BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
+
+            while ((line = br.readLine()) != null) {
+
+                Pattern pattern = Pattern.compile("\\((\\d+-\\d+-\\d+),\\((\\d+.\\d+),(\\d+.\\d+)\\)\\)");
+                Matcher matcher = pattern.matcher(line);
+
+                if (matcher.find()) {
+                    key = matcher.group(1);
+                    cured = matcher.group(2);
+                    swabs = matcher.group(3);
+                    hBaseLightClient.put(TABLE_QUERY1, key,
+                            TABLE_QUERY1_CF, TABLE_QUERY1_C1, cured,
+                            TABLE_QUERY1_CF, TABLE_QUERY1_C2, swabs);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println("Could not load query 1 result from HDFS");
+        }
     }
 
     private static void importQuery2Result(HBaseLightClient hBaseLightClient) {
@@ -117,7 +148,7 @@ public class HbaseImport {
         }
     }
 
-    private static String importQuery3Result(HBaseLightClient hBaseLightClient) {
+    private static void importQuery3Result(HBaseLightClient hBaseLightClient) {
 
         String line;
         String cluster1;
@@ -156,6 +187,5 @@ public class HbaseImport {
             e.printStackTrace();
             System.err.println("Could not load query 3 result from HDFS");
         }
-        return null;
     }
 }
