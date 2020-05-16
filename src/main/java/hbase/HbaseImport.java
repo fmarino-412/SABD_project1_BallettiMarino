@@ -4,7 +4,6 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
-import scala.util.matching.Regex;
 import utility.IOUtility;
 
 import java.io.BufferedReader;
@@ -12,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -132,7 +132,7 @@ public class HbaseImport {
             FileSystem hdfs = FileSystem.get(new URI(IOUtility.getHdfs()), configuration);
             Path file = new Path(IOUtility.getOutputPathQuery3());
             FSDataInputStream inputStream = hdfs.open(file);
-            BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
+            BufferedReader br = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_16));
 
             while ((line = br.readLine()) != null) {
 
