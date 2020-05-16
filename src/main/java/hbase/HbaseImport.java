@@ -72,6 +72,9 @@ public class HbaseImport {
         importQuery2Result(client);
         importQuery3Result(client);
 
+        System.out.println("-----------------------\nPrinting Query 1 table:");
+        client.printTable(TABLE_QUERY1);
+
         System.out.println("-----------------------\nPrinting Query 2 table:");
         client.printTable(TABLE_QUERY2);
 
