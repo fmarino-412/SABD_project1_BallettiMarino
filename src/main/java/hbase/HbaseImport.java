@@ -136,8 +136,7 @@ public class HbaseImport {
 
             while ((line = br.readLine()) != null) {
 
-                Pattern pattern = Pattern.compile("\\((\\d+-\\d+),\\[\\[(.*?)\\],\\[(.*?)\\],\\[(.*?)\\]," +
-                        "\\[(.*?)\\]\\]\\)");
+                Pattern pattern = Pattern.compile("\\((\\d+-\\d+),\\[\\[(.*?)],\\[(.*?)],\\[(.*?)],\\[(.*?)]]\\)");
                 Matcher matcher = pattern.matcher(line);
 
                 if (matcher.find()) {
