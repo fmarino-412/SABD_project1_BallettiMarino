@@ -49,6 +49,8 @@ public class HbaseImport {
 
         HBaseLightClient client = new HBaseLightClient();
 
+        System.out.println("Htable started!");
+        System.out.println("Preparing environment...");
         if (client.exists(TABLE_QUERY1)) {
             client.deleteTable(TABLE_QUERY1);
         }
@@ -59,16 +61,24 @@ public class HbaseImport {
             client.deleteTable(TABLE_QUERY3);
         }
 
+        System.out.println("Htable environment ready!");
+        System.out.println("Creating tables...");
         client.createTable(TABLE_QUERY1, TABLE_QUERY1_CF);
         client.createTable(TABLE_QUERY2, TABLE_QUERY2_CF);
         client.createTable(TABLE_QUERY3, TABLE_QUERY3_CF);
 
+        System.out.println("Importing hdfs data to tables...");
         importQuery1Result(client);
         importQuery2Result(client);
         importQuery3Result(client);
 
         System.out.println("-----------------------\nPrinting Query 2 table:");
         client.printTable(TABLE_QUERY2);
+
+        System.out.println("-----------------------\nPrinting Query 3 table:");
+        client.printTable(TABLE_QUERY3);
+
+        client.closeConnection();
     }
 
     private static void importQuery1Result(HBaseLightClient hBaseLightClient) {
@@ -167,7 +177,7 @@ public class HbaseImport {
 
             while ((line = br.readLine()) != null) {
 
-                Pattern pattern = Pattern.compile("\\((\\d+-\\d+),\\[\\[(.*?)],\\[(.*?)],\\[(.*?)],\\[(.*?)]]\\)");
+                Pattern pattern = Pattern.compile("\\((\\d+-\\d+),\\[\\[(.*)],\\[(.*)],\\[(.*)],\\[(.*)]]\\)");
                 Matcher matcher = pattern.matcher(line);
 
                 if (matcher.find()) {
