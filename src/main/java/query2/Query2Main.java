@@ -119,12 +119,20 @@ public class Query2Main {
                 );
 
         // TODO: remove sort by key
-        JavaPairRDD<String, List<Double>> orderedStatistics = statistics.sortByKey(true).cache();
-        List<Tuple2<String, List<Double>>> orderedResult = orderedStatistics.collect();
+        JavaPairRDD<String, List<Double>> orderedStatistics = statistics.sortByKey(true);
+
+        // uncomment and add .cache() on the previous line to print result on console
+        //printResult(orderedStatistics.collect());
 
         IOUtility.printTime(System.currentTimeMillis() - startTime);
 
-        // TODO: remove in future
+        IOUtility.writeRDDToHdfs(IOUtility.getOutputPathQuery2(), orderedStatistics);
+
+        sparkContext.close();
+    }
+
+    private static void printResult(List<Tuple2<String, List<Double>>> orderedResult) {
+
         System.out.println("Index\tWeek Start Day\t\t\tMean\tStandard Deviation\tMinimum\tMaximum");
         int i = 1;
         for (Tuple2<String, List<Double>> element : orderedResult) {
@@ -137,9 +145,5 @@ public class Query2Main {
             System.out.println("-------------------------------------------------------------------------------------");
             i++;
         }
-
-        IOUtility.writeRDDToHdfs(IOUtility.getOutputPathQuery2(), orderedStatistics);
-
-        sparkContext.close();
     }
 }

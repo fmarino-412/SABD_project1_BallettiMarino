@@ -97,10 +97,15 @@ public class Query3Main {
 
         IOUtility.printTime(System.currentTimeMillis() - startTime);
 
+        //printResult(result);
+
         IOUtility.writeLocalStructureToHdfs(IOUtility.getOutputPathQuery3(), result);
 
-        // TODO: remove in future
-        // result print
+        sparkContext.close();
+    }
+
+    private static void printResult(List<Tuple2<String, ArrayList<ArrayList<String>>>> result) {
+
         for (Tuple2<String, ArrayList<ArrayList<String>>> singleResult : result) {
             System.out.println("Results for: " + singleResult._1());
             for (ArrayList<String> singleCluster : singleResult._2()) {
@@ -108,8 +113,6 @@ public class Query3Main {
             }
             System.out.println("-------------------------------------------------------------------------------------");
         }
-
-        sparkContext.close();
     }
 
 

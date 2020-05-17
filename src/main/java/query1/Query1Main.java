@@ -106,13 +106,20 @@ public class Query1Main {
                     result.add(new Tuple2<>(tuple._1(), new Tuple2<>(avgCured, avgSwabs)));
                     return result.iterator();
                 }
-        ).sortByKey(true).cache();
+        ).sortByKey(true);
 
-        Map<String, Tuple2<Double, Double>> finalData = averageDataByWeek.collectAsMap();
+        // uncomment and add .cache() on the previous line to print result on console
+        //printResult(averageDataByWeek.collectAsMap());
 
         IOUtility.printTime(System.currentTimeMillis() - startTime);
 
-        // TODO: remove in future
+        IOUtility.writeRDDToHdfs(IOUtility.getOutputPathQuery1(), averageDataByWeek);
+
+        sparkContext.close();
+    }
+
+    private static void printResult(Map<String, Tuple2<Double, Double>> finalData) {
+
         System.out.println("Index\tWeek Start Day\t\t\t\t\tMean of cured\tMean of swabs");
         int i = 1;
 
@@ -124,8 +131,5 @@ public class Query1Main {
             i++;
         }
 
-        IOUtility.writeRDDToHdfs(IOUtility.getOutputPathQuery1(), averageDataByWeek);
-
-        sparkContext.close();
     }
 }

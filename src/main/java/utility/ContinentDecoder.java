@@ -10,13 +10,13 @@ import java.nio.file.Paths;
 
 public class ContinentDecoder {
 
-    private static final String URL1 = "https://nominatim.openstreetmap.org/reverse?format=json";
-    private static final String LATHEAD1 = "&lat=";
-    private static final String LONHEAD1 = "&lon=";
+    private static final String URL_NOMINATIM = "https://nominatim.openstreetmap.org/reverse?format=json";
+    private static final String LATHEAD_NOMINATIM = "&lat=";
+    private static final String LONHEAD_NOMINATIM = "&lon=";
 
-    private static final String URL2 = "https://api.bigdatacloud.net/data/reverse-geocode-client?";
-    private static final String LATHEAD2 = "latitude=";
-    private static final String LONHEAD2 = "&longitude=";
+    private static final String URL_BDCLOUD = "https://api.bigdatacloud.net/data/reverse-geocode-client?";
+    private static final String LATHEAD_BDCLOUD = "latitude=";
+    private static final String LONHEAD_BDCLOUD = "&longitude=";
 
     private static String readAll(Reader reader) throws IOException {
         StringBuilder builder = new StringBuilder();
@@ -27,8 +27,9 @@ public class ContinentDecoder {
         return builder.toString();
     }
 
-    private static String detectContinentOnWeb1(GeoCoordinate coordinate) {
-        String httpUrl = URL1 + LATHEAD1 + coordinate.getLatitude().toString() + LONHEAD1 +
+    @Deprecated
+    private static String detectContinentOnWebNominatim(GeoCoordinate coordinate) {
+        String httpUrl = URL_NOMINATIM + LATHEAD_NOMINATIM + coordinate.getLatitude().toString() + LONHEAD_NOMINATIM +
                 coordinate.getLongitude().toString();
         try {
             InputStream inputStream = new URL(httpUrl).openStream();
@@ -47,8 +48,8 @@ public class ContinentDecoder {
         }
     }
 
-    private static String detectContinentOnWeb2(GeoCoordinate coordinate) {
-        String httpUrl = URL2 + LATHEAD2 + coordinate.getLatitude().toString() + LONHEAD2 +
+    private static String detectContinentOnWebBigDataCloud(GeoCoordinate coordinate) {
+        String httpUrl = URL_BDCLOUD + LATHEAD_BDCLOUD + coordinate.getLatitude().toString() + LONHEAD_BDCLOUD +
                 coordinate.getLongitude().toString();
 
         try {
@@ -95,7 +96,7 @@ public class ContinentDecoder {
     public static String detectContinent(GeoCoordinate coordinate) {
         String continent = detectContinentByBoundaries(coordinate);
         if (continent.equals("")) {
-            continent = detectContinentOnWeb2(coordinate);
+            continent = detectContinentOnWebBigDataCloud(coordinate);
         }
         return continent;
     }
