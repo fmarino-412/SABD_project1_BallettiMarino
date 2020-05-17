@@ -2,6 +2,7 @@ package hbase;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataInputStream;
+import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import utility.IOUtility;
@@ -94,23 +95,31 @@ public class HbaseImport {
         Configuration configuration = new Configuration();
 
         try {
+            FSDataInputStream inputStream;
+            BufferedReader br;
             FileSystem hdfs = FileSystem.get(new URI(IOUtility.getHdfs()), configuration);
-            Path file = new Path(IOUtility.getOutputPathQuery1() + "/part-00000");
-            FSDataInputStream inputStream = hdfs.open(file);
-            BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
+            Path dirPath = new Path(IOUtility.getOutputPathQuery1());
+            FileStatus[] fileStatuses = hdfs.listStatus(dirPath);
+            // in case of splitted file output
+            for (FileStatus fileStatus : fileStatuses) {
+                if (!fileStatus.isDirectory() && !fileStatus.getPath().toString().contains("SUCCESS")) {
+                    inputStream = hdfs.open(fileStatus.getPath());
+                    br = new BufferedReader(new InputStreamReader(inputStream));
 
-            while ((line = br.readLine()) != null) {
+                    while ((line = br.readLine()) != null) {
 
-                Pattern pattern = Pattern.compile("\\((\\d+-\\d+-\\d+),\\((\\d+.\\d+),(\\d+.\\d+)\\)\\)");
-                Matcher matcher = pattern.matcher(line);
+                        Pattern pattern = Pattern.compile("\\((\\d+-\\d+-\\d+),\\((\\d+.\\d+),(\\d+.\\d+)\\)\\)");
+                        Matcher matcher = pattern.matcher(line);
 
-                if (matcher.find()) {
-                    key = matcher.group(1);
-                    cured = matcher.group(2);
-                    swabs = matcher.group(3);
-                    hBaseLightClient.put(TABLE_QUERY1, key,
-                            TABLE_QUERY1_CF, TABLE_QUERY1_C1, cured,
-                            TABLE_QUERY1_CF, TABLE_QUERY1_C2, swabs);
+                        if (matcher.find()) {
+                            key = matcher.group(1);
+                            cured = matcher.group(2);
+                            swabs = matcher.group(3);
+                            hBaseLightClient.put(TABLE_QUERY1, key,
+                                    TABLE_QUERY1_CF, TABLE_QUERY1_C1, cured,
+                                    TABLE_QUERY1_CF, TABLE_QUERY1_C2, swabs);
+                        }
+                    }
                 }
             }
         } catch (Exception e) {
@@ -131,28 +140,36 @@ public class HbaseImport {
         Configuration configuration = new Configuration();
 
         try {
+            FSDataInputStream inputStream;
+            BufferedReader br;
             FileSystem hdfs = FileSystem.get(new URI(IOUtility.getHdfs()), configuration);
-            Path file = new Path(IOUtility.getOutputPathQuery2() + "/part-00000");
-            FSDataInputStream inputStream = hdfs.open(file);
-            BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
+            Path dirPath = new Path(IOUtility.getOutputPathQuery2());
+            FileStatus[] fileStatuses = hdfs.listStatus(dirPath);
+            // in case of splitted file output
+            for (FileStatus fileStatus : fileStatuses) {
+                if (!fileStatus.isDirectory() && !fileStatus.getPath().toString().contains("SUCCESS")) {
+                    inputStream = hdfs.open(fileStatus.getPath());
+                    br = new BufferedReader(new InputStreamReader(inputStream));
 
-            while ((line = br.readLine()) != null) {
+                    while ((line = br.readLine()) != null) {
 
-                Pattern pattern = Pattern.compile("\\((\\w+\\s-\\s\\d+-\\d+-\\d+),\\[(\\d+.\\d+\\w*\\d*)," +
-                        "\\s(\\d+.\\d+\\w*\\d*),\\s(\\d+.\\d+\\w*\\d*),\\s(\\d+.\\d+\\w*\\d*)]\\)");
-                Matcher matcher = pattern.matcher(line);
+                        Pattern pattern = Pattern.compile("\\((\\w+\\s-\\s\\d+-\\d+-\\d+),\\[(\\d+.\\d+\\w*\\d*)," +
+                                "\\s(\\d+.\\d+\\w*\\d*),\\s(\\d+.\\d+\\w*\\d*),\\s(\\d+.\\d+\\w*\\d*)]\\)");
+                        Matcher matcher = pattern.matcher(line);
 
-                if (matcher.find()) {
-                    key = matcher.group(1);
-                    mean = matcher.group(2);
-                    stdDev = matcher.group(3);
-                    min = matcher.group(4);
-                    max = matcher.group(5);
-                    hBaseLightClient.put(TABLE_QUERY2, key,
-                            TABLE_QUERY2_CF, TABLE_QUERY2_C1, mean,
-                            TABLE_QUERY2_CF, TABLE_QUERY2_C2, stdDev,
-                            TABLE_QUERY2_CF, TABLE_QUERY2_C3, min,
-                            TABLE_QUERY2_CF, TABLE_QUERY2_C4, max);
+                        if (matcher.find()) {
+                            key = matcher.group(1);
+                            mean = matcher.group(2);
+                            stdDev = matcher.group(3);
+                            min = matcher.group(4);
+                            max = matcher.group(5);
+                            hBaseLightClient.put(TABLE_QUERY2, key,
+                                    TABLE_QUERY2_CF, TABLE_QUERY2_C1, mean,
+                                    TABLE_QUERY2_CF, TABLE_QUERY2_C2, stdDev,
+                                    TABLE_QUERY2_CF, TABLE_QUERY2_C3, min,
+                                    TABLE_QUERY2_CF, TABLE_QUERY2_C4, max);
+                        }
+                    }
                 }
             }
         } catch (Exception e) {
@@ -174,6 +191,7 @@ public class HbaseImport {
 
         try {
             FileSystem hdfs = FileSystem.get(new URI(IOUtility.getHdfs()), configuration);
+            // unique file, no need to iterate on folder
             Path file = new Path(IOUtility.getOutputPathQuery3());
             FSDataInputStream inputStream = hdfs.open(file);
             BufferedReader br = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_16));
