@@ -10,9 +10,13 @@ import java.nio.file.Paths;
 
 public class ContinentDecoder {
 
-    private static final String URL = "https://nominatim.openstreetmap.org/reverse?format=json";
-    private static final String LATHEAD = "&lat=";
-    private static final String LONHEAD = "&lon=";
+    private static final String URL1 = "https://nominatim.openstreetmap.org/reverse?format=json";
+    private static final String LATHEAD1 = "&lat=";
+    private static final String LONHEAD1 = "&lon=";
+
+    private static final String URL2 = "https://api.bigdatacloud.net/data/reverse-geocode-client?";
+    private static final String LATHEAD2 = "latitude=";
+    private static final String LONHEAD2 = "&longitude=";
 
     private static String readAll(Reader reader) throws IOException {
         StringBuilder builder = new StringBuilder();
@@ -23,8 +27,8 @@ public class ContinentDecoder {
         return builder.toString();
     }
 
-    private static String detectContinentOnWeb(GeoCoordinate coordinate) {
-        String httpUrl = URL + LATHEAD + coordinate.getLatitude().toString() + LONHEAD +
+    private static String detectContinentOnWeb1(GeoCoordinate coordinate) {
+        String httpUrl = URL1 + LATHEAD1 + coordinate.getLatitude().toString() + LONHEAD1 +
                 coordinate.getLongitude().toString();
         try {
             InputStream inputStream = new URL(httpUrl).openStream();
@@ -35,6 +39,27 @@ public class ContinentDecoder {
                 return "";
             } else {
                 String countryCode = object.getJSONObject("address").getString("country_code").toUpperCase();
+                return Codes.valueOf(countryCode).getContinent();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "";
+        }
+    }
+
+    private static String detectContinentOnWeb2(GeoCoordinate coordinate) {
+        String httpUrl = URL2 + LATHEAD2 + coordinate.getLatitude().toString() + LONHEAD2 +
+                coordinate.getLongitude().toString();
+
+        try {
+            InputStream inputStream = new URL(httpUrl).openStream();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+            String jsonResponse = readAll(reader);
+            JSONObject object = new JSONObject(jsonResponse);
+            if (object.has("error")) {
+                return "";
+            } else {
+                String countryCode = object.getString("countryCode").toUpperCase();
                 return Codes.valueOf(countryCode).getContinent();
             }
         } catch (IOException e) {
@@ -70,7 +95,7 @@ public class ContinentDecoder {
     public static String detectContinent(GeoCoordinate coordinate) {
         String continent = detectContinentByBoundaries(coordinate);
         if (continent.equals("")) {
-            continent = detectContinentOnWeb(coordinate);
+            continent = detectContinentOnWeb2(coordinate);
         }
         return continent;
     }
