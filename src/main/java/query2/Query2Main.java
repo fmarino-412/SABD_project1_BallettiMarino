@@ -118,7 +118,6 @@ public class Query2Main {
                         }
                 );
 
-        // TODO: remove sort by key
         JavaPairRDD<String, List<Double>> orderedStatistics = statistics.sortByKey(true);
 
         // uncomment and add .cache() on the previous line to print result on console
