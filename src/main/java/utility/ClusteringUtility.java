@@ -16,7 +16,7 @@ import java.util.Random;
 public class ClusteringUtility {
 
     // choose to perform clustering using mllib or loyd naive implementation
-    private static final boolean NAIVE = false;
+    private static final boolean NAIVE = true;
 
     private static final Integer CLUSTERS = 4;
     private static final Integer ITERATION = 20;
@@ -89,14 +89,7 @@ public class ClusteringUtility {
             costData.get(clusterAssignment).add(elem._1());
         }
 
-        // compute cost as sum of squared intra cluster distances
-        double totalCost = 0;
-        for (int i = 0; i < CLUSTERS; i++) {
-            for (Double singlePoint : costData.get(i)) {
-                totalCost += Math.pow(euclideanDistance(singlePoint, centroids.get(i)), 2);
-            }
-        }
-        System.out.println("Total cost: " + totalCost);
+        //computeCost(costData, centroids);
 
         return result;
     }
@@ -121,6 +114,17 @@ public class ClusteringUtility {
         return indexOfCetroid;
     }
 
+    private static void computeCost(ArrayList<ArrayList<Double>> costData, List<Double> centroids) {
+        // compute cost as sum of squared intra cluster distances
+        double totalCost = 0;
+        for (int i = 0; i < CLUSTERS; i++) {
+            for (Double singlePoint : costData.get(i)) {
+                totalCost += Math.pow(euclideanDistance(singlePoint, centroids.get(i)), 2);
+            }
+        }
+        System.out.println("Total cost: " + totalCost);
+    }
+
     private static ArrayList<ArrayList<String>> clusteringMLlib(JavaPairRDD<String, List<Tuple2<Double,
             CountryDataQuery3>>> data) {
 
@@ -131,7 +135,7 @@ public class ClusteringUtility {
         );
 
         KMeansModel model = KMeans.train(values.rdd(), CLUSTERS, ITERATION, INITIALIZATION_MODE, SEED);
-        System.out.println("Total cost: " + model.computeCost(values.rdd()));
+        //System.out.println("Total cost: " + model.computeCost(values.rdd()));
         List<Tuple2<Double, String>> toPredict = toCluster.collect();
 
         // initialization of result structure
