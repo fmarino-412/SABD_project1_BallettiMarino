@@ -19,14 +19,18 @@ import java.util.regex.Pattern;
 
 public class CSVOutputFormatter {
 
-    private static final String QUERY1_CSV_FILE_PATH = "";
-    private static final String QUERY2_CSV_FILE_PATH = "";
-    private static final String QUERY3_CSV_FILE_PATH = "";
+    private static final String QUERY1_CSV_FILE_PATH = "Results/query1_output.csv";
+    private static final String QUERY2_CSV_FILE_PATH = "Results/query2_output.csv";
+    private static final String QUERY3_CSV_FILE_PATH = "Results/query3_output.csv";
 
     public static void main(String[] args) {
+        System.out.println("Generating csv for query 1 result...");
         outputFromQuery1Result(QUERY1_CSV_FILE_PATH);
+        System.out.println("Generating csv for query 2 result...");
         outputFromQuery2Result(QUERY2_CSV_FILE_PATH);
+        System.out.println("Generating csv for query 3 result...");
         outputFromQuery3Result(QUERY3_CSV_FILE_PATH);
+        System.out.println("Check \"Results\" directory");
     }
 
     private static void outputFromQuery1Result(String csvPath) {
@@ -52,6 +56,17 @@ public class CSVOutputFormatter {
             FileSystem hdfs = FileSystem.get(new URI(IOUtility.getHdfs()), configuration);
             Path dirPath = new Path(IOUtility.getOutputPathQuery1());
             FileStatus[] fileStatuses = hdfs.listStatus(dirPath);
+
+            // header
+            builder.delete(0, builder.length());
+            builder.append("Week start date")
+                    .append(";")
+                    .append("Cured mean number")
+                    .append(";")
+                    .append("Swabs mean number")
+                    .append("\n");
+            bw.append(builder.toString());
+
             // in case of splitted file output
             for (FileStatus fileStatus : fileStatuses) {
                 if (!fileStatus.isDirectory() && !fileStatus.getPath().toString().contains("SUCCESS")) {
@@ -89,6 +104,7 @@ public class CSVOutputFormatter {
     private static void outputFromQuery2Result(String csvPath) {
 
         String line;
+        String[] key;
 
         Configuration configuration = new Configuration();
 
@@ -109,6 +125,23 @@ public class CSVOutputFormatter {
             FileSystem hdfs = FileSystem.get(new URI(IOUtility.getHdfs()), configuration);
             Path dirPath = new Path(IOUtility.getOutputPathQuery2());
             FileStatus[] fileStatuses = hdfs.listStatus(dirPath);
+
+            // header
+            builder.delete(0, builder.length());
+            builder.append("Continent")
+                    .append(";")
+                    .append("Week start date")
+                    .append(";")
+                    .append("Mean of positive cases")
+                    .append(";")
+                    .append("Standard deviation of positive cases")
+                    .append(";")
+                    .append("Minimum of positive cases")
+                    .append(";")
+                    .append("Maximum of positive cases")
+                    .append("\n");
+            bw.append(builder.toString());
+
             // in case of splitted file output
             for (FileStatus fileStatus : fileStatuses) {
                 if (!fileStatus.isDirectory() && !fileStatus.getPath().toString().contains("SUCCESS")) {
@@ -122,7 +155,10 @@ public class CSVOutputFormatter {
 
                         if (matcher.find()) {
                             builder.delete(0, builder.length());
-                            builder.append(matcher.group(1))
+                            key = matcher.group(1).split(" - ");
+                            builder.append(key[0])
+                                    .append(";")
+                                    .append(key[1])
                                     .append(";")
                                     .append(matcher.group(2))
                                     .append(";")
@@ -168,6 +204,20 @@ public class CSVOutputFormatter {
             BufferedWriter bw = new BufferedWriter(writer);
             StringBuilder builder = new StringBuilder();
 
+            // header
+            builder.delete(0, builder.length());
+            builder.append("Month and year")
+                    .append(";")
+                    .append("First cluster")
+                    .append(";")
+                    .append("Second cluster")
+                    .append(";")
+                    .append("Third cluster")
+                    .append(";")
+                    .append("Fourth cluster")
+                    .append("\n");
+            bw.append(builder.toString());
+
             FileSystem hdfs = FileSystem.get(new URI(IOUtility.getHdfs()), configuration);
             // unique file, no need to iterate on folder
             Path file = new Path(IOUtility.getOutputPathQuery3());
@@ -182,13 +232,22 @@ public class CSVOutputFormatter {
                     builder.delete(0, builder.length());
                     builder.append(matcher.group(1))
                             .append(";")
+                            .append("[")
                             .append(matcher.group(2))
+                            .append("]")
                             .append(";")
+                            .append("[")
                             .append(matcher.group(3))
+                            .append("]")
                             .append(";")
+                            .append("[")
                             .append(matcher.group(4))
+                            .append("]")
                             .append(";")
-                            .append(matcher.group(5));
+                            .append("[")
+                            .append(matcher.group(5))
+                            .append("]")
+                            .append("\n");
                     bw.append(builder.toString());
                 }
             }

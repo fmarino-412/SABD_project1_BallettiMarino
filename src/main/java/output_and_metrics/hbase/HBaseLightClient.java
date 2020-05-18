@@ -1,4 +1,4 @@
-package hbase;
+package output_and_metrics.hbase;
 
 import com.google.protobuf.ServiceException;
 import org.apache.hadoop.conf.Configuration;
@@ -12,9 +12,9 @@ import org.apache.hadoop.hbase.util.Bytes;
 import java.io.IOException;
 
 public class HBaseLightClient {
-    private static final String ZOOKEEPER_HOST = "hbase";
+    private static final String ZOOKEEPER_HOST = "output_and_metrics/hbase";
     private static final String ZOOKEEPER_PORT = "2181";
-    private static final String HBASE_MASTER = "hbase:16000";
+    private static final String HBASE_MASTER = "output_and_metrics.hbase:16000";
     private static final int HBASE_MAX_VERSIONS = 1;
 
     private Connection connection = null;
@@ -23,9 +23,9 @@ public class HBaseLightClient {
 
         if (this.connection == null || this.connection.isClosed() || this.connection.isAborted()) {
             Configuration conf = HBaseConfiguration.create();
-            conf.set("hbase.zookeeper.quorum", ZOOKEEPER_HOST);
-            conf.set("hbase.zookeeper.property.clientPort", ZOOKEEPER_PORT);
-            conf.set("hbase.master", HBASE_MASTER);
+            conf.set("output_and_metrics.hbase.zookeeper.quorum", ZOOKEEPER_HOST);
+            conf.set("output_and_metrics.hbase.zookeeper.property.clientPort", ZOOKEEPER_PORT);
+            conf.set("output_and_metrics.hbase.master", HBASE_MASTER);
 
             HBaseAdmin.checkHBaseAvailable(conf);
             this.connection = ConnectionFactory.createConnection(conf);

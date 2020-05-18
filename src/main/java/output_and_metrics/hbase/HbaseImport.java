@@ -1,4 +1,4 @@
-package hbase;
+package output_and_metrics.hbase;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataInputStream;
@@ -47,7 +47,7 @@ public class HbaseImport {
 
     /**
      * Tool to import data from HDFS to HBASE,
-     * In order to use this class make sure to have in /etc/hosts the line "127.0.0.1  hbase"
+     * In order to use this class make sure to have in /etc/hosts the line "127.0.0.1  output_and_metrics.hbase"
      */
 
     public static void main(String[] args) {

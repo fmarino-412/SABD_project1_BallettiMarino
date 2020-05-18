@@ -124,9 +124,9 @@ public class ContinentDecoder {
     }
 
     /**
-     *
+     * Function to convert to string the json taken from the reader
      * @param reader
-     * @return
+     * @return a string containing the whole content retrieved from the reader
      * @throws IOException
      */
     private static String readAll(Reader reader) throws IOException {
