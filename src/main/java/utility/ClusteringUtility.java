@@ -18,7 +18,7 @@ import java.util.Random;
  */
 public class ClusteringUtility {
 
-    // choose to perform clustering using mllib or loyd naive implementation
+    // choose to perform clustering using mllib or lloyd naive implementation
     private static final boolean NAIVE = false;
 
     private static final Integer CLUSTERS = 4;
