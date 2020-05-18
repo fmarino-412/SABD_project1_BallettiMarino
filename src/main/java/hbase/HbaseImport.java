@@ -16,6 +16,10 @@ import java.nio.charset.StandardCharsets;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Class used to export spark computation results from HDFS to an HBASE datastore
+ */
+
 public class HbaseImport {
 
     private static final String TABLE_QUERY1 = "Query1_hbase_table";
@@ -120,8 +124,11 @@ public class HbaseImport {
                                     TABLE_QUERY1_CF, TABLE_QUERY1_C2, swabs);
                         }
                     }
+                    br.close();
+                    inputStream.close();
                 }
             }
+            hdfs.close();
         } catch (Exception e) {
             e.printStackTrace();
             System.err.println("Could not load query 1 result from HDFS");
@@ -170,8 +177,11 @@ public class HbaseImport {
                                     TABLE_QUERY2_CF, TABLE_QUERY2_C4, max);
                         }
                     }
+                    br.close();
+                    inputStream.close();
                 }
             }
+            hdfs.close();
         } catch (Exception e) {
             e.printStackTrace();
             System.err.println("Could not load query 2 result from HDFS");
@@ -214,6 +224,10 @@ public class HbaseImport {
                             TABLE_QUERY3_CF, TABLE_QUERY3_C4, cluster4);
                 }
             }
+
+            br.close();
+            inputStream.close();
+            hdfs.close();
         } catch (URISyntaxException | IOException e) {
             e.printStackTrace();
             System.err.println("Could not load query 3 result from HDFS");
