@@ -11,21 +11,33 @@ import org.apache.hadoop.hbase.util.Bytes;
 
 import java.io.IOException;
 
+/**
+ * An hbase client containing the required functions to export data from HDFS to the datastore
+ */
+
 public class HBaseLightClient {
-    private static final String ZOOKEEPER_HOST = "output_and_metrics/hbase";
+
+    private static final String ZOOKEEPER_HOST = "hbase";
     private static final String ZOOKEEPER_PORT = "2181";
-    private static final String HBASE_MASTER = "output_and_metrics.hbase:16000";
+    private static final String HBASE_MASTER = "hbase:16000";
     private static final int HBASE_MAX_VERSIONS = 1;
 
     private Connection connection = null;
 
+    /**
+     * Used to return a singleton instance of connection. If the current one is not active or does not exist, a new
+     * connection is created and the current instance is updated to the new one.
+     * @return Connection to hbase
+     * @throws IOException
+     * @throws ServiceException
+     */
     public Connection getConnection() throws IOException, ServiceException {
 
         if (this.connection == null || this.connection.isClosed() || this.connection.isAborted()) {
             Configuration conf = HBaseConfiguration.create();
-            conf.set("output_and_metrics.hbase.zookeeper.quorum", ZOOKEEPER_HOST);
-            conf.set("output_and_metrics.hbase.zookeeper.property.clientPort", ZOOKEEPER_PORT);
-            conf.set("output_and_metrics.hbase.master", HBASE_MASTER);
+            conf.set("hbase.zookeeper.quorum", ZOOKEEPER_HOST);
+            conf.set("hbase.zookeeper.property.clientPort", ZOOKEEPER_PORT);
+            conf.set("hbase.master", HBASE_MASTER);
 
             HBaseAdmin.checkHBaseAvailable(conf);
             this.connection = ConnectionFactory.createConnection(conf);
@@ -34,6 +46,10 @@ public class HBaseLightClient {
         return this.connection;
     }
 
+    /**
+     * Closes the current hbase connection, it must be called when no other operation has to be performed on the
+     * datastore.
+     */
     public void closeConnection() {
 
         if (!(this.connection == null || this.connection.isClosed() || this.connection.isAborted())) {
@@ -47,6 +63,12 @@ public class HBaseLightClient {
         }
     }
 
+    /**
+     * Creates a new table with the requested name and column families.
+     * @param tableName name of the new table
+     * @param columnFamilies column families (one or more) which the new table must be formed of
+     * @return true if the new table has been created, false elsewhere
+     */
     public boolean createTable(String tableName, String ... columnFamilies) {
 
         try {
@@ -69,6 +91,11 @@ public class HBaseLightClient {
         }
     }
 
+    /**
+     * Checks if a table with the specified name already exists.
+     * @param tableName name of the table whose existence is to be verified
+     * @return true if the specified table exists, false elsewhere
+     */
     public boolean exists(String tableName) {
 
         try {
@@ -81,6 +108,11 @@ public class HBaseLightClient {
         }
     }
 
+    /**
+     * Deletes the specified table.
+     * @param tableName name of the table to delete
+     * @return true if the deletion has been completed, false elsewhere
+     */
     public boolean deleteTable(String tableName) {
 
         try {
@@ -101,6 +133,14 @@ public class HBaseLightClient {
         }
     }
 
+    /**
+     * Puts a new row in the specified table.
+     * @param tableName name of the table which the put operation must be performed on
+     * @param rowKey key of the new row
+     * @param columns column family, column name and value that the new row must contain, for every value to add the
+     *                3-ple (column family, column name, value) must be specified
+     * @return true if the insertion has been completed, false elsewhere
+     */
     public boolean put(String tableName, String rowKey, String ...columns) {
 
         if (columns == null || (columns.length % 3 != 0)) {
@@ -133,6 +173,10 @@ public class HBaseLightClient {
         }
     }
 
+    /**
+     * Shows the specified table structure (columns for every table row)
+     * @param tableName name of the table whose structure is to be printed
+     */
     public void printTable(String tableName) {
 
         try {

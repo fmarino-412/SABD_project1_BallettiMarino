@@ -26,20 +26,8 @@ public class ClusteringUtility {
     private static final String INITIALIZATION_MODE = "random";
     private static final Integer SEED = 123456789;
 
-    private static JavaPairRDD<Double, String> prepareData(JavaPairRDD<String, List<Tuple2<Double,
-            CountryDataQuery3>>> data) {
-        return data.flatMapToPair(
-                tuple -> {
-                    ArrayList<Tuple2<Double, String>> result = new ArrayList<>();
-                    for (Tuple2<Double, CountryDataQuery3> elem : tuple._2()) {
-                        result.add(new Tuple2<>(elem._1(), elem._2().getName()));
-                    }
-                    return result.iterator();
-                }
-        );
-    }
-
     /**
+     * Naive scope.
      * Naive implementation of the k-means clustering based on the Lloyd's algorithm
      * @param data JavaPairRDD containing the points on which the algorithm will be performed
      * @return the clustering result
@@ -103,6 +91,7 @@ public class ClusteringUtility {
     }
 
     /**
+     * Naive scope.
      * Evaluate the euclidean distance between two values
      * @param val1 double
      * @param val2 double
@@ -113,6 +102,7 @@ public class ClusteringUtility {
     }
 
     /**
+     * Naive scope.
      * Choose the nearest centroid from a point
      * @param point to assign
      * @param centroids list of centroids
@@ -135,6 +125,7 @@ public class ClusteringUtility {
     }
 
     /**
+     * Naive scope.
      * Print the sum of squared intra cluster distances that represents the "cost" of the solution
      */
     private static void computeCost(ArrayList<ArrayList<Double>> costData, List<Double> centroids) {
@@ -149,6 +140,7 @@ public class ClusteringUtility {
     }
 
     /**
+     * MLLib scope.
      * Performs the clustering using MLlib
      * @param data JavaPairRDD containing the points on which the algorithm will be performed
      * @return the clustering result
@@ -181,6 +173,25 @@ public class ClusteringUtility {
     }
 
     /**
+     * Global scope.
+     * Used to transform monthly data (for every single month separately) from the format [Month, List of countries
+     * and values] to the format [value, country] in order to apply the k-means algorithm
+     */
+    private static JavaPairRDD<Double, String> prepareData(JavaPairRDD<String, List<Tuple2<Double,
+            CountryDataQuery3>>> data) {
+        return data.flatMapToPair(
+                tuple -> {
+                    ArrayList<Tuple2<Double, String>> result = new ArrayList<>();
+                    for (Tuple2<Double, CountryDataQuery3> elem : tuple._2()) {
+                        result.add(new Tuple2<>(elem._1(), elem._2().getName()));
+                    }
+                    return result.iterator();
+                }
+        );
+    }
+
+    /**
+     * Global scope.
      * Wrapper for the clustering function, if NAIVE has been set to true it calls the naive function else it calls
      * the MLlib function
      */

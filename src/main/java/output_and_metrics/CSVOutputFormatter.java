@@ -33,6 +33,10 @@ public class CSVOutputFormatter {
         System.out.println("Check \"Results\" directory");
     }
 
+    /**
+     * Exports results of the first query from the HDFS to a file
+     * @param csvPath path of the destination file
+     */
     private static void outputFromQuery1Result(String csvPath) {
 
         String line;
@@ -47,8 +51,10 @@ public class CSVOutputFormatter {
             // output structures
             File csv = new File(csvPath);
             if (!csv.exists()) {
+                // creates the file if it does not exist
                 csv.createNewFile();
             }
+            // append set to false to overwrite existing version of the same file
             FileWriter writer = new FileWriter(csv, false);
             BufferedWriter bw = new BufferedWriter(writer);
             StringBuilder builder = new StringBuilder();
@@ -69,12 +75,15 @@ public class CSVOutputFormatter {
 
             // in case of splitted file output
             for (FileStatus fileStatus : fileStatuses) {
+                // _SUCCESS file and subdirectories are ignored
                 if (!fileStatus.isDirectory() && !fileStatus.getPath().toString().contains("SUCCESS")) {
                     inputStream = hdfs.open(fileStatus.getPath());
                     br = new BufferedReader(new InputStreamReader(inputStream));
 
                     while ((line = br.readLine()) != null) {
+                        // regex describing every line structure in the query 1 result file
                         Pattern pattern = Pattern.compile("\\((\\d+-\\d+-\\d+),\\((\\d+.\\d+),(\\d+.\\d+)\\)\\)");
+                        // splits the line in regex groups
                         Matcher matcher = pattern.matcher(line);
 
                         if (matcher.find()) {
@@ -101,6 +110,10 @@ public class CSVOutputFormatter {
         }
     }
 
+    /**
+     * Exports results of the second query from the HDFS to a file
+     * @param csvPath path of the destination file
+     */
     private static void outputFromQuery2Result(String csvPath) {
 
         String line;
@@ -116,8 +129,10 @@ public class CSVOutputFormatter {
             // output structures
             File csv = new File(csvPath);
             if (!csv.exists()) {
+                // creates the file if it does not exist
                 csv.createNewFile();
             }
+            // append set to false to overwrite existing version of the same file
             FileWriter writer = new FileWriter(csv, false);
             BufferedWriter bw = new BufferedWriter(writer);
             StringBuilder builder = new StringBuilder();
@@ -144,13 +159,16 @@ public class CSVOutputFormatter {
 
             // in case of splitted file output
             for (FileStatus fileStatus : fileStatuses) {
+                // _SUCCESS file and subdirectories are ignored
                 if (!fileStatus.isDirectory() && !fileStatus.getPath().toString().contains("SUCCESS")) {
                     inputStream = hdfs.open(fileStatus.getPath());
                     br = new BufferedReader(new InputStreamReader(inputStream));
 
                     while ((line = br.readLine()) != null) {
+                        // regex describing every line structure in the query 2 result file
                         Pattern pattern = Pattern.compile("\\((\\w+\\s-\\s\\d+-\\d+-\\d+),\\[(\\d+.\\d+\\w*\\d*)," +
                                 "\\s(\\d+.\\d+\\w*\\d*),\\s(\\d+.\\d+\\w*\\d*),\\s(\\d+.\\d+\\w*\\d*)]\\)");
+                        // splits the line in regex groups
                         Matcher matcher = pattern.matcher(line);
 
                         if (matcher.find()) {
@@ -184,6 +202,10 @@ public class CSVOutputFormatter {
         }
     }
 
+    /**
+     * Exports results of the third query from the HDFS to a file
+     * @param csvPath path of the destination file
+     */
     private static void outputFromQuery3Result(String csvPath) {
 
         String line;
@@ -198,8 +220,10 @@ public class CSVOutputFormatter {
             // output structures
             File csv = new File(csvPath);
             if (!csv.exists()) {
+                // creates the file if it does not exist
                 csv.createNewFile();
             }
+            // append set to false to overwrite existing version of the same file
             FileWriter writer = new FileWriter(csv, false);
             BufferedWriter bw = new BufferedWriter(writer);
             StringBuilder builder = new StringBuilder();
@@ -225,7 +249,9 @@ public class CSVOutputFormatter {
             br = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_16));
 
             while ((line = br.readLine()) != null) {
+                // regex describing every line structure in the query 3 result file
                 Pattern pattern = Pattern.compile("\\((\\d+-\\d+),\\[\\[(.*)],\\[(.*)],\\[(.*)],\\[(.*)]]\\)");
+                // splits the line in regex groups
                 Matcher matcher = pattern.matcher(line);
 
                 if (matcher.find()) {

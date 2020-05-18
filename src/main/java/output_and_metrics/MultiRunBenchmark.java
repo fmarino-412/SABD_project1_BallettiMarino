@@ -4,6 +4,11 @@ import query1.Query1Main;
 import query2.Query2Main;
 import query3.Query3Main;
 
+/**
+ * Class used to perform a multi run for every query execution.
+ * Time results of this multi run were used to realize the benchmark file
+ */
+
 public class MultiRunBenchmark {
 
     private static int RUNS = 100;

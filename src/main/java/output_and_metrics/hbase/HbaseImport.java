@@ -17,7 +17,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Class used to export spark computation results from HDFS to an HBASE datastore
+ * Class used to export spark computation results from HDFS to an HBASE datastore.
+ * In order to use this class make sure to have in /etc/hosts the line "127.0.0.1  hbase".
  */
 
 public class HbaseImport {
@@ -45,10 +46,6 @@ public class HbaseImport {
     private static final String TABLE_QUERY3_C3 = "Cluster_3";
     private static final String TABLE_QUERY3_C4 = "Cluster_4";
 
-    /**
-     * Tool to import data from HDFS to HBASE,
-     * In order to use this class make sure to have in /etc/hosts the line "127.0.0.1  output_and_metrics.hbase"
-     */
 
     public static void main(String[] args) {
 
@@ -89,6 +86,10 @@ public class HbaseImport {
         client.closeConnection();
     }
 
+    /**
+     * Loads results of the first query from the HDFS to an hbase table
+     * @param hBaseLightClient client for htable communication
+     */
     private static void importQuery1Result(HBaseLightClient hBaseLightClient) {
 
         String line;
@@ -106,13 +107,15 @@ public class HbaseImport {
             FileStatus[] fileStatuses = hdfs.listStatus(dirPath);
             // in case of splitted file output
             for (FileStatus fileStatus : fileStatuses) {
+                // _SUCCESS file and subdirectories are ignored
                 if (!fileStatus.isDirectory() && !fileStatus.getPath().toString().contains("SUCCESS")) {
                     inputStream = hdfs.open(fileStatus.getPath());
                     br = new BufferedReader(new InputStreamReader(inputStream));
 
                     while ((line = br.readLine()) != null) {
-
+                        // regex describing every line structure in the query 1 result file
                         Pattern pattern = Pattern.compile("\\((\\d+-\\d+-\\d+),\\((\\d+.\\d+),(\\d+.\\d+)\\)\\)");
+                        // splits the line in regex groups
                         Matcher matcher = pattern.matcher(line);
 
                         if (matcher.find()) {
@@ -135,6 +138,10 @@ public class HbaseImport {
         }
     }
 
+    /**
+     * Loads results of the second query from the HDFS to an hbase table
+     * @param hBaseLightClient client for htable communication
+     */
     private static void importQuery2Result(HBaseLightClient hBaseLightClient) {
 
         String line;
@@ -154,14 +161,16 @@ public class HbaseImport {
             FileStatus[] fileStatuses = hdfs.listStatus(dirPath);
             // in case of splitted file output
             for (FileStatus fileStatus : fileStatuses) {
+                // _SUCCESS file and subdirectories are ignored
                 if (!fileStatus.isDirectory() && !fileStatus.getPath().toString().contains("SUCCESS")) {
                     inputStream = hdfs.open(fileStatus.getPath());
                     br = new BufferedReader(new InputStreamReader(inputStream));
 
                     while ((line = br.readLine()) != null) {
-
+                        // regex describing every line structure in the query 2 result file
                         Pattern pattern = Pattern.compile("\\((\\w+\\s-\\s\\d+-\\d+-\\d+),\\[(\\d+.\\d+\\w*\\d*)," +
                                 "\\s(\\d+.\\d+\\w*\\d*),\\s(\\d+.\\d+\\w*\\d*),\\s(\\d+.\\d+\\w*\\d*)]\\)");
+                        // splits the line in regex groups
                         Matcher matcher = pattern.matcher(line);
 
                         if (matcher.find()) {
@@ -188,6 +197,10 @@ public class HbaseImport {
         }
     }
 
+    /**
+     * Loads results of the third query from the HDFS to an hbase table
+     * @param hBaseLightClient client for htable communication
+     */
     private static void importQuery3Result(HBaseLightClient hBaseLightClient) {
 
         String line;
@@ -207,8 +220,9 @@ public class HbaseImport {
             BufferedReader br = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_16));
 
             while ((line = br.readLine()) != null) {
-
+                // regex describing every line structure in the query 3 result file
                 Pattern pattern = Pattern.compile("\\((\\d+-\\d+),\\[\\[(.*)],\\[(.*)],\\[(.*)],\\[(.*)]]\\)");
+                // splits the line in regex groups
                 Matcher matcher = pattern.matcher(line);
 
                 if (matcher.find()) {

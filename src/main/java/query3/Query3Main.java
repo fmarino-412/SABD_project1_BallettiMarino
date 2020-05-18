@@ -47,14 +47,14 @@ public class Query3Main {
                         monthlyPoints.add(singlePoint);
                         currentDate.add(Calendar.DATE, 1);
                         if (!(format.format(currentDate.getTime())).equals(currentMonth)) {
-                            result.add(new Tuple2<>(currentMonth, new CountryDataQuery3(name, currentMonth,
+                            result.add(new Tuple2<>(currentMonth, new CountryDataQuery3(name,
                                     monthlyPoints)));
                             monthlyPoints = new ArrayList<>();
                             currentMonth = format.format(currentDate.getTime());
                         }
                     }
                     if (!monthlyPoints.isEmpty()) {
-                        result.add(new Tuple2<>(currentMonth, new CountryDataQuery3(name, currentMonth, monthlyPoints)));
+                        result.add(new Tuple2<>(currentMonth, new CountryDataQuery3(name, monthlyPoints)));
                     }
                     return result.iterator();
                 }

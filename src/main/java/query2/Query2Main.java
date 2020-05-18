@@ -28,10 +28,9 @@ public class Query2Main {
         JavaPairRDD<Double, CountryDataQuery2> data = dataset2.mapToPair(
                 line -> {
                     String[] splitted = line.split(",");
-                    String key = splitted[0].equals("") ? splitted[1] : splitted[0];
                     GeoCoordinate geoCoordinate = new GeoCoordinate(splitted[2], splitted[3]);
                     CountryDataQuery2 countryData = new CountryDataQuery2(geoCoordinate,
-                            Arrays.asList(splitted).subList(4,splitted.length), key);
+                            Arrays.asList(splitted).subList(4,splitted.length));
 
                     SimpleRegression regression = new SimpleRegression();
                     List<Double> values = countryData.getCovidConfirmedCases();
