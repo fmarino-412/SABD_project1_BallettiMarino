@@ -1,4 +1,4 @@
-package benchmark;
+package output_and_metrics;
 
 import query1.Query1Main;
 import query2.Query2Main;
