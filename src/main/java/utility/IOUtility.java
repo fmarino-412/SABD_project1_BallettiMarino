@@ -11,6 +11,9 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class that provides both getters for uri strings and writers to store data in hdfs
+ */
 public class IOUtility {
     private final static String HDFS_NAMENODE_ADDRESS = "127.0.0.1";
     private final static String HDFS_NAMENODE_PORT = "9871";
@@ -25,7 +28,6 @@ public class IOUtility {
     // console colors
     private static final String ANSI_GREEN = "\u001B[32m";
     private static final String ANSI_RESET = "\u001B[0m";
-
 
     public static String getDS1() {
         return "hdfs://" + HDFS_NAMENODE_ADDRESS + ":" + HDFS_NAMENODE_PORT + INPUT_FOLDER + DATASET1_FILENAME;
@@ -59,6 +61,11 @@ public class IOUtility {
                 ANSI_RESET);
     }
 
+    /**
+     * Used to format data param and write it as a text file in hdfs at the location specified by path param
+     * @param path string representing the desired location where store the text file
+     * @param data structured data representing the clusters' assignment for every month
+     */
     public static void writeLocalStructureToHdfs(String path, List<Tuple2<String, ArrayList<ArrayList<String>>>> data) {
         Configuration configuration = new Configuration();
         StringBuilder builder = new StringBuilder();
@@ -82,6 +89,11 @@ public class IOUtility {
         }
     }
 
+    /**
+     * Used to write an rdd as a text file in hdfs at the location specified by path param
+     * @param path string representing the desired location where store the text file
+     * @param rdd JavaPairRDD with all the data
+     */
     public static void writeRDDToHdfs(String path, JavaPairRDD rdd) {
         try {
             rdd.saveAsTextFile(path);
