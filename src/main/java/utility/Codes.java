@@ -1,5 +1,9 @@
 package utility;
 
+/**
+ * Enum with the mapping between country code and continent, when boundaries doesn't detect the country from latitude
+ * and longitude it's used a rest api that return the country code from latitude and longitude
+ */
 public enum Codes {
     AD("Europe"),
     AE("Asia"),

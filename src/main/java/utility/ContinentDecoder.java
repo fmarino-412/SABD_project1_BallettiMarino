@@ -5,28 +5,34 @@ import org.json.JSONObject;
 import java.io.*;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
+/**
+ * Class used to detect the continent from GeoCoordinate of a country
+ */
 public class ContinentDecoder {
 
+    /**
+     * Those are the information needed to use the first rest api (Nominatim) service we chose to perform the reverse
+     * geo-coding, it has been marked as deprecated due to the better performance gained using the BigDataCloud api
+     */
     private static final String URL_NOMINATIM = "https://nominatim.openstreetmap.org/reverse?format=json";
     private static final String LATHEAD_NOMINATIM = "&lat=";
     private static final String LONHEAD_NOMINATIM = "&lon=";
 
+    /**
+     * Those are the information needed to use the second rest api (BigDataCloud) service we chose to perform
+     * the reverse geo-coding
+     */
     private static final String URL_BDCLOUD = "https://api.bigdatacloud.net/data/reverse-geocode-client?";
     private static final String LATHEAD_BDCLOUD = "latitude=";
     private static final String LONHEAD_BDCLOUD = "&longitude=";
 
-    private static String readAll(Reader reader) throws IOException {
-        StringBuilder builder = new StringBuilder();
-        int read;
-        while ((read = reader.read()) != -1) {
-            builder.append((char)read);
-        }
-        return builder.toString();
-    }
-
+    /**
+     * Used to perform the reverse geo-coding using Nominatim rest api
+     * Slower api service, should move to "detectContinentOnWebBigDataCloud" function
+     * @param coordinate GeoCoordinate containing latitude and longitude
+     * @return a string representing the continent where the GeoCoordinate lies
+     */
     @Deprecated
     private static String detectContinentOnWebNominatim(GeoCoordinate coordinate) {
         String httpUrl = URL_NOMINATIM + LATHEAD_NOMINATIM + coordinate.getLatitude().toString() + LONHEAD_NOMINATIM +
@@ -48,6 +54,11 @@ public class ContinentDecoder {
         }
     }
 
+    /**
+     * Used to perform the reverse geo-coding using BigDataCloud rest api
+     * @param coordinate GeoCoordinate containing latitude and longitude
+     * @return a string representing the continent where the GeoCoordinate lies
+     */
     private static String detectContinentOnWebBigDataCloud(GeoCoordinate coordinate) {
         String httpUrl = URL_BDCLOUD + LATHEAD_BDCLOUD + coordinate.getLatitude().toString() + LONHEAD_BDCLOUD +
                 coordinate.getLongitude().toString();
@@ -69,6 +80,11 @@ public class ContinentDecoder {
         }
     }
 
+    /**
+     * Used to perform the reverse geo-coding using boundaries
+     * @param coordinate GeoCoordinate containing latitude and longitude
+     * @return a string representing the continent where the GeoCoordinate lies
+     */
     private static String detectContinentByBoundaries(GeoCoordinate coordinate) {
         try {
             if (Continents.NORTH_AMERICA_1.contains(coordinate) || Continents.NORTH_AMERICA_2.contains(coordinate) ||
@@ -93,6 +109,12 @@ public class ContinentDecoder {
         }
     }
 
+    /**
+     * Generic reverse geo-coding function that first tries to detect the continent using boundaries (coarse grain
+     * info) and if this faster method fails it perform a call to a rest api service to detect the continent
+     * @param coordinate GeoCoordinate containing latitude and longitude
+     * @return a string representing the continent where the GeoCoordinate lies
+     */
     public static String detectContinent(GeoCoordinate coordinate) {
         String continent = detectContinentByBoundaries(coordinate);
         if (continent.equals("")) {
@@ -101,49 +123,18 @@ public class ContinentDecoder {
         return continent;
     }
 
-    public static void testLocal() {
-        try {
-            BufferedReader br = Files.newBufferedReader(Paths.get("data/DS2.csv"));
-            String csvLine = br.readLine();
-            int i = 1;
-            String continent;
-            while (csvLine != null) {
-                String[] split = csvLine.split(",");
-                continent = detectContinentByBoundaries(new GeoCoordinate(Double.parseDouble(split[2]),
-                        Double.parseDouble(split[3])));
-                if (continent.equals("")) {
-                    System.err.printf("%d)\tError retrieving: %s\n", i, split[1]);
-                } else {
-                    System.out.printf("%d)\t%s:\t%s\n", i, split[1], continent);
-                }
-                i++;
-                csvLine = br.readLine();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+    /**
+     *
+     * @param reader
+     * @return
+     * @throws IOException
+     */
+    private static String readAll(Reader reader) throws IOException {
+        StringBuilder builder = new StringBuilder();
+        int read;
+        while ((read = reader.read()) != -1) {
+            builder.append((char)read);
         }
-    }
-
-    public static void testGlobal() {
-        try {
-            BufferedReader br = Files.newBufferedReader(Paths.get("data/DS2.csv"));
-            String csvLine = br.readLine();
-            int i = 1;
-            String continent;
-            while (csvLine != null) {
-                String[] split = csvLine.split(",");
-                continent = detectContinent(new GeoCoordinate(Double.parseDouble(split[2]),
-                        Double.parseDouble(split[3])));
-                if (continent.equals("")) {
-                    System.err.printf("%d)\tError retrieving: %s\n", i, split[1]);
-                } else {
-                    System.out.printf("%d)\t%s:\t%s\n", i, split[1], continent);
-                }
-                i++;
-                csvLine = br.readLine();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        return builder.toString();
     }
 }

@@ -2,10 +2,13 @@ package utility;
 
 import java.io.Serializable;
 
+/**
+ * Class representing the location of a country by latitude and longitude
+ */
 public class GeoCoordinate implements Serializable {
 
-    private Double latitude;
-    private Double longitude;
+    private final Double latitude;
+    private final Double longitude;
 
     public GeoCoordinate(Double latitude, Double longitude) {
         this.latitude = latitude;
@@ -17,20 +20,12 @@ public class GeoCoordinate implements Serializable {
         this.longitude = Double.valueOf(longitude);
     }
 
-
     public Double getLatitude() {
         return latitude;
-    }
-
-    public void setLatitude(Double latitude) {
-        this.latitude = latitude;
     }
 
     public Double getLongitude() {
         return longitude;
     }
 
-    public void setLongitude(Double longitude) {
-        this.longitude = longitude;
-    }
 }
