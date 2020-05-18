@@ -13,6 +13,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * Class that provides functions to perform clustering on query 3 data
+ */
 public class ClusteringUtility {
 
     // choose to perform clustering using mllib or loyd naive implementation
@@ -36,6 +39,11 @@ public class ClusteringUtility {
         );
     }
 
+    /**
+     * Naive implementation of the k-means clustering based on the Lloyd's algorithm
+     * @param data JavaPairRDD containing the points on which the algorithm will be performed
+     * @return the clustering result
+     */
     private static ArrayList<ArrayList<String>> clusteringNaive(JavaPairRDD<String, List<Tuple2<Double,
             CountryDataQuery3>>> data) {
 
@@ -94,10 +102,22 @@ public class ClusteringUtility {
         return result;
     }
 
+    /**
+     * Evaluate the euclidean distance between two values
+     * @param val1 double
+     * @param val2 double
+     * @return absolute value of the difference between the points
+     */
     private static double euclideanDistance(double val1, double val2) {
         return Math.abs(val1 - val2);
     }
 
+    /**
+     * Choose the nearest centroid from a point
+     * @param point to assign
+     * @param centroids list of centroids
+     * @return the index of the nearest centroid
+     */
     private static int assignToCluster(double point, List<Double> centroids) {
         int indexOfCetroid = -1;
         double minDistance = Double.MAX_VALUE;
@@ -114,6 +134,9 @@ public class ClusteringUtility {
         return indexOfCetroid;
     }
 
+    /**
+     * Print the sum of squared intra cluster distances that represents the "cost" of the solution
+     */
     private static void computeCost(ArrayList<ArrayList<Double>> costData, List<Double> centroids) {
         // compute cost as sum of squared intra cluster distances
         double totalCost = 0;
@@ -125,6 +148,11 @@ public class ClusteringUtility {
         System.out.println("Total cost: " + totalCost);
     }
 
+    /**
+     * Performs the clustering using MLlib
+     * @param data JavaPairRDD containing the points on which the algorithm will be performed
+     * @return the clustering result
+     */
     private static ArrayList<ArrayList<String>> clusteringMLlib(JavaPairRDD<String, List<Tuple2<Double,
             CountryDataQuery3>>> data) {
 
@@ -152,9 +180,12 @@ public class ClusteringUtility {
         return result;
     }
 
+    /**
+     * Wrapper for the clustering function, if NAIVE has been set to true it calls the naive function else it calls
+     * the MLlib function
+     */
     public static ArrayList<ArrayList<String>> performClustering(JavaPairRDD<String,
             List<Tuple2<Double, CountryDataQuery3>>> data) {
-
         if (NAIVE) {
             return clusteringNaive(data);
         } else {
