@@ -25,9 +25,11 @@ public class Query1Main {
 
         JavaRDD<String> dataset1 = sparkContext.textFile(IOUtility.getDS1());
 
+        // for performance measurement
         final long startTime = System.currentTimeMillis();
 
         JavaPairRDD<String, Tuple2<Double, Double>> averageDataByWeek = Query1Preprocessing.preprocessData(dataset1)
+            // obtain [Week start day as string, [List of cured in the week, List of swabs in the week]]
             .groupByKey().flatMapToPair(
                     tuple -> {
 
@@ -37,12 +39,15 @@ public class Query1Main {
 
                         int elements = 0;
 
+                        // save values of the current week to local structures for analysis
                         for (Tuple2<Integer, Integer> element : tuple._2()) {
                             cured.add(element._1());
                             swabs.add(element._2());
                             elements++;
                         }
 
+                        // order temporally (works since is being applied on cumulative data)
+                        // precedent week data will be then placed at index 0
                         cured.sort(Comparator.naturalOrder());
                         swabs.sort(Comparator.naturalOrder());
 
@@ -50,13 +55,15 @@ public class Query1Main {
                                 QueryUtility.getDataset1StartDate().get(Calendar.WEEK_OF_YEAR),
                                 QueryUtility.getDataset1StartDate().get(Calendar.YEAR));
 
+                        // in first week data there are no values from previous week
                         if (!firstWeekKey.equals(tuple._1())) {
                             if (elements == 1) {
-                                // week created with only a precedent week element
+                                // week created with only a precedent week element,
+                                // remove the corresponding RDD element
                                 return result.iterator();
                             }
 
-                            // we are not in the first week, there is precedent week data
+                            // not in the first week, there is precedent week data
                             // make week data independent from precedent weeks
                             for (int i = 1; i < elements; i++) {
                                 cured.set(i, cured.get(i) - cured.get(0));

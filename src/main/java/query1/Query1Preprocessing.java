@@ -20,23 +20,27 @@ public class Query1Preprocessing {
                             Integer.valueOf(lineSplit[2]));
                     // split the date basing on the T character and save just the initial part (year, month, day)
                     String generalDate = (lineSplit[0].split("T"))[0];
-                    // create the final tuple
+                    // create the final tuple as [Date,[Total cured, Total swabs]]
                     return new Tuple2<>(new SimpleDateFormat("yyyy-MM-dd").parse(generalDate), innerTuple);
                 }
         ).flatMapToPair(
                 tuple -> {
+                    // convert Date to string containing the week start day
                     List<Tuple2<String, Tuple2<Integer, Integer>>> result = new ArrayList<>();
                     Calendar calendar = new GregorianCalendar(Locale.ITALIAN);
                     calendar.setTime(tuple._1());
                     String key = QueryUtility.getFirstDayOfTheWeek(calendar.get(Calendar.WEEK_OF_YEAR),
                             calendar.get(Calendar.YEAR));
                     result.add(new Tuple2<>(key, tuple._2()));
+                    // if this is the last week day reinsert it in the RDD as a next week value to allow
+                    // conversion from cumulative to punctual value
                     if (calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
                         calendar.add(Calendar.WEEK_OF_YEAR, 1);
                         String key2 = QueryUtility.getFirstDayOfTheWeek(calendar.get(Calendar.WEEK_OF_YEAR),
                                 calendar.get(Calendar.YEAR));
                         result.add(new Tuple2<>(key2, tuple._2()));
                     }
+                    // final tuple as [Week start day as string, [Total cured, Total swabs]]
                     return result.iterator();
                 }
         );
