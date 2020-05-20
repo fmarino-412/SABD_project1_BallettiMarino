@@ -58,9 +58,9 @@ public class Query1SparkSQL {
 
         Dataset<Row> dataFrame = createSchema(session, dailyData);
 
-        dataFrame.groupBy("date")
+        dataFrame.groupBy("week")
                 .avg("cured", "swabs")
-                .orderBy("date");
+                .orderBy("week");
 
         IOUtility.printTime(System.currentTimeMillis() - startTime);
 
@@ -75,7 +75,7 @@ public class Query1SparkSQL {
         // Generating schema
         List<StructField> fields = new ArrayList<>();
         fields.add(DataTypes.createStructField("id", DataTypes.LongType, false));
-        fields.add(DataTypes.createStructField("date", DataTypes.StringType, false));
+        fields.add(DataTypes.createStructField("week", DataTypes.StringType, false));
         fields.add(DataTypes.createStructField("cured", DataTypes.IntegerType, false));
         fields.add(DataTypes.createStructField("swabs", DataTypes.IntegerType, false));
 

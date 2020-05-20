@@ -15,6 +15,7 @@ import scala.Tuple2;
 import utility.ContinentDecoder;
 import utility.IOUtility;
 import utility.QueryUtility;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -35,18 +36,21 @@ public class Query2SparkSQL {
 
         JavaRDD<Tuple2<Double, CountryDataQuery2>> data = Query2Preprocessing.preprocessData(dataset2);
 
-        JavaPairRDD<String, Tuple2<String, Double>> dailyData = data.flatMapToPair(
+        JavaPairRDD<String, Tuple2<Tuple2<String, Integer>, Double>> dailyData = data.flatMapToPair(
                 tuple -> {
 
-                    ArrayList<Tuple2<String, Tuple2<String, Double>>> result = new ArrayList<>();
+                    ArrayList<Tuple2<String, Tuple2<Tuple2<String, Integer>, Double>>> result = new ArrayList<>();
                     String continent = ContinentDecoder.detectContinent(tuple._2().getCoordinate());
 
                     Calendar currentDate = QueryUtility.getDataset2StartDate();
 
+                    String week;
+
                     for (Double value : tuple._2.getCovidConfirmedCases()) {
-                        result.add(new Tuple2<>(continent, new Tuple2<>(
-                                QueryUtility.getFirstDayOfTheWeek(currentDate.get(Calendar.WEEK_OF_YEAR),
-                                        currentDate.get(Calendar.YEAR)), value)));
+                        week = QueryUtility.getFirstDayOfTheWeek(currentDate.get(Calendar.WEEK_OF_YEAR),
+                                currentDate.get(Calendar.YEAR));
+                        result.add(new Tuple2<>(continent, new Tuple2<>(new Tuple2<>(week,
+                                currentDate.get(Calendar.DAY_OF_WEEK)), value)));
                         currentDate.add(Calendar.DATE, 1);
                     }
 
@@ -65,9 +69,14 @@ public class Query2SparkSQL {
 
         dataFrame.createOrReplaceTempView("query2");
 
-        Dataset<Row> result = session.sql("select continent, date, mean(positive) as mean, min(positive) " +
-                "as min, max(positive) as max, stddev(positive) as stddev from query2 group by continent, date " +
-                "order by continent, date");
+        Dataset<Row> totalValues = session.sql("SELECT continent, week, sum(positive) AS positive " +
+                "FROM query2 GROUP BY continent, week, day");
+
+        totalValues.createOrReplaceTempView("query2");
+
+        Dataset<Row> result = session.sql("SELECT continent, week, mean(positive) AS mean, " +
+                "stddev(positive) AS stddev, min(positive) AS min, max(positive) AS max FROM query2 " +
+                "GROUP BY continent, week ORDER BY continent, week");
 
         IOUtility.printTime(System.currentTimeMillis() - startTime);
 
@@ -77,20 +86,25 @@ public class Query2SparkSQL {
         sparkContext.close();
     }
 
-    private static Dataset<Row> createSchema(SparkSession session, JavaPairRDD<String, Tuple2<String, Double>> data) {
+    private static Dataset<Row> createSchema(SparkSession session,
+                                             JavaPairRDD<String, Tuple2<Tuple2<String, Integer>, Double>> data) {
 
         // Generating schema
         List<StructField> fields = new ArrayList<>();
         fields.add(DataTypes.createStructField("id", DataTypes.LongType, false));
         fields.add(DataTypes.createStructField("continent", DataTypes.StringType, false));
-        fields.add(DataTypes.createStructField("date", DataTypes.StringType, false));
+        fields.add(DataTypes.createStructField("week", DataTypes.StringType, false));
+        fields.add(DataTypes.createStructField("day", DataTypes.IntegerType, false));
         fields.add(DataTypes.createStructField("positive", DataTypes.DoubleType, false));
 
         StructType schema = DataTypes.createStructType(fields);
 
         // Convert RDD records to Rows
-        JavaRDD<Row> rowRDD = data.zipWithIndex().map(element -> RowFactory.create(element._2(), element._1()._1(),
-                element._1()._2()._1(), element._1()._2()._2()));
+        JavaRDD<Row> rowRDD = data.zipWithIndex().map(element -> RowFactory.create(element._2(),
+                element._1()._1(),
+                element._1()._2()._1()._1(),
+                element._1()._2()._1()._2(),
+                element._1()._2()._2()));
 
         // Apply schema to RDD and return
         return session.createDataFrame(rowRDD, schema);

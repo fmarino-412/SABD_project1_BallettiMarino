@@ -96,7 +96,7 @@ public class Query2Main {
                             for (Double value : tuple._2()) {
                                 weeklyStdDev += Math.pow((value - weeklyMean), 2);
                             }
-                            weeklyStdDev = weeklyStdDev / weekLength;
+                            weeklyStdDev = Math.sqrt(weeklyStdDev / (weekLength - 1));
 
                             List<Double> result = Arrays.asList(weeklyMean, weeklyStdDev, weeklyMin, weeklyMax);
 
@@ -107,7 +107,7 @@ public class Query2Main {
         JavaPairRDD<String, List<Double>> orderedStatistics = statistics.sortByKey(true);
 
         // uncomment and add .cache() on the previous line to print result on console
-        printResult(orderedStatistics.collect());
+        //printResult(orderedStatistics.collect());
 
         IOUtility.printTime(System.currentTimeMillis() - startTime);
 
