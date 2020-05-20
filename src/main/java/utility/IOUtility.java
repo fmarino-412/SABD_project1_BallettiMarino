@@ -95,10 +95,15 @@ public class IOUtility {
      * @param rdd JavaPairRDD with all the data
      */
     public static void writeRDDToHdfs(String path, JavaPairRDD rdd) {
+        Configuration configuration = new Configuration();
         try {
+            FileSystem hdfs = FileSystem.get(new URI(IOUtility.getHdfs()), configuration);
+            hdfs.delete(new Path(path), true);
+            hdfs.close();
             rdd.saveAsTextFile(path);
         } catch (Exception e) {
-            System.err.println("This query output has already been saved in HDFS");
+            e.printStackTrace();
+            System.err.println("Could not save file to HDFS");
         }
     }
 }
