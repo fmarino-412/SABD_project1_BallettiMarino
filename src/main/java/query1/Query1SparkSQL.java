@@ -39,10 +39,10 @@ public class Query1SparkSQL {
 
         Dataset<Row> dataFrame = createSchema(session, dailyData);
 
-        // Register DataFrame as SQL temporary view
-        dataFrame.createOrReplaceTempView("Query 1 SparkSQL");
-
-
+        dataFrame.groupBy("date")
+                .avg("cured", "swabs")
+                .orderBy("date")
+                .show();
     }
 
     private static Dataset<Row> createSchema(SparkSession session, JavaPairRDD<String, Tuple2<Integer, Integer>> data) {
