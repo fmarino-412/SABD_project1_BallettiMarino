@@ -29,7 +29,6 @@
             <artifactId>hbase-client</artifactId>
             <version>1.4.2</version>
         </dependency>
-        <!-- TODO: Remove if not necessary -->
         <dependency>
             <groupId>org.apache.spark</groupId>
             <artifactId>spark-sql_2.12</artifactId>
