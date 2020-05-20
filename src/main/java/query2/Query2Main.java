@@ -1,12 +1,13 @@
 package query2;
 
-import org.apache.commons.math3.stat.regression.SimpleRegression;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import scala.Tuple2;
-import utility.*;
+import utility.ContinentDecoder;
+import utility.IOUtility;
+import utility.QueryUtility;
 
 import java.util.*;
 
@@ -24,30 +25,16 @@ public class Query2Main {
 
         final long startTime = System.currentTimeMillis();
 
-        // convert data in RDD
-        JavaPairRDD<Double, CountryDataQuery2> data = dataset2.mapToPair(
-                line -> {
-                    String[] splitted = line.split(",");
-                    GeoCoordinate geoCoordinate = new GeoCoordinate(splitted[2], splitted[3]);
-                    CountryDataQuery2 countryData = new CountryDataQuery2(geoCoordinate,
-                            Arrays.asList(splitted).subList(4,splitted.length));
+        JavaRDD<Tuple2<Double, CountryDataQuery2>> data = Query2Preprocessing.preprocessData(dataset2);
 
-                    SimpleRegression regression = new SimpleRegression();
-                    List<Double> values = countryData.getCovidConfirmedCases();
-                    for (int i = 0; i < values.size(); i++) {
-                        regression.addData(i, values.get(i));
-                    }
-                    return new Tuple2<>(regression.getSlope(), countryData);
-                });
-
-        JavaPairRDD<String, List<Double>> continents = data.sortByKey(false).zipWithIndex()
-                .filter(xi -> xi._2 < 100).keys().flatMapToPair(
+        JavaPairRDD<String, List<Double>> continents = data.flatMapToPair(
                         tuple -> {
                             ArrayList<Tuple2<String, List<Double>>> result = new ArrayList<>();
                             String keyHeader = ContinentDecoder.detectContinent(tuple._2().getCoordinate()) + " - ";
 
                             Calendar currentDate = QueryUtility.getDataset2StartDate();
-                            // work on different years too being sequential and taking care of just two following values
+                            // being sequential and taking care of just two following values works on different years
+                            // too
                             int currentWeekNumber = currentDate.get(Calendar.WEEK_OF_YEAR);
                             List<Double> weeklyValues = new ArrayList<>();
                             for (Double value : tuple._2().getCovidConfirmedCases()) {
@@ -120,7 +107,7 @@ public class Query2Main {
         JavaPairRDD<String, List<Double>> orderedStatistics = statistics.sortByKey(true);
 
         // uncomment and add .cache() on the previous line to print result on console
-        //printResult(orderedStatistics.collect());
+        printResult(orderedStatistics.collect());
 
         IOUtility.printTime(System.currentTimeMillis() - startTime);
 
