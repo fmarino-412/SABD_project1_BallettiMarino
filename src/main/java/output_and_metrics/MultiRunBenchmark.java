@@ -11,7 +11,7 @@ import query3.Query3Main;
 
 public class MultiRunBenchmark {
 
-    private static int RUNS = 100;
+    private static final int RUNS = 100;
 
     public static void main(String[] args) {
 

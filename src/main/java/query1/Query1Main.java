@@ -9,8 +9,6 @@ import utility.IOUtility;
 import utility.QueryUtility;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Comparator;
 import java.util.Map;
 
 public class Query1Main {
@@ -32,56 +30,20 @@ public class Query1Main {
             // obtain [Week start day as string, [List of cured in the week, List of swabs in the week]]
             .groupByKey().flatMapToPair(
                     tuple -> {
-
                         ArrayList<Tuple2<String, Tuple2<Double, Double>>> result = new ArrayList<>();
-                        ArrayList<Integer> cured = new ArrayList<>();
-                        ArrayList<Integer> swabs = new ArrayList<>();
+                        // convert to punctual data
+                        Tuple2<ArrayList<Integer>, ArrayList<Integer>> punctualData =
+                                QueryUtility.toPunctualData(tuple);
 
-                        int elements = 0;
-
-                        // save values of the current week to local structures for analysis
-                        for (Tuple2<Integer, Integer> element : tuple._2()) {
-                            cured.add(element._1());
-                            swabs.add(element._2());
-                            elements++;
+                        if (punctualData != null) {
+                            Double avgCured = punctualData._1().stream().mapToInt(val -> val).average()
+                                    .orElse(0.0);
+                            Double avgSwabs = punctualData._2().stream().mapToInt(val -> val).average()
+                                    .orElse(0.0);
+                            result.add(new Tuple2<>(tuple._1(), new Tuple2<>(avgCured, avgSwabs)));
                         }
-
-                        // order temporally (works since is being applied on cumulative data)
-                        // precedent week data will be then placed at index 0
-                        cured.sort(Comparator.naturalOrder());
-                        swabs.sort(Comparator.naturalOrder());
-
-                        String firstWeekKey = QueryUtility.getFirstDayOfTheWeek(
-                                QueryUtility.getDataset1StartDate().get(Calendar.WEEK_OF_YEAR),
-                                QueryUtility.getDataset1StartDate().get(Calendar.YEAR));
-
-                        // in first week data there are no values from previous week
-                        if (!firstWeekKey.equals(tuple._1())) {
-                            if (elements == 1) {
-                                // week created with only a precedent week element,
-                                // remove the corresponding RDD element
-                                return result.iterator();
-                            }
-
-                            // not in the first week, there is precedent week data
-                            // make week data independent from precedent weeks
-                            for (int i = 1; i < elements; i++) {
-                                cured.set(i, cured.get(i) - cured.get(0));
-                                swabs.set(i, swabs.get(i) - swabs.get(0));
-                            }
-                            cured.remove(0);
-                            swabs.remove(0);
-                            elements = elements - 1;
-                        }
-
-                        // turn from cumulative to punctual data
-                        for (int i = elements - 1; i > 0; i--) {
-                            cured.set(i, cured.get(i) - cured.get(i-1));
-                            swabs.set(i, swabs.get(i) - swabs.get(i -1));
-                        }
-                        Double avgCured = cured.stream().mapToInt(val -> val).average().orElse(0.0);
-                        Double avgSwabs = swabs.stream().mapToInt(val -> val).average().orElse(0.0);
-                        result.add(new Tuple2<>(tuple._1(), new Tuple2<>(avgCured, avgSwabs)));
+                        // if null there was a single value corresponding to the previous week,
+                        // an empty array will be returned
                         return result.iterator();
                     }
             ).sortByKey(true);

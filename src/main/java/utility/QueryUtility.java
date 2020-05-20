@@ -1,10 +1,9 @@
 package utility;
 
+import scala.Tuple2;
+
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.List;
+import java.util.*;
 
 /**
  * Class that provides basic function to help queries' workflow
@@ -12,6 +11,7 @@ import java.util.List;
 public class QueryUtility {
 
     /**
+     * Scope: Query 2 and Query 3
      * Used to convert cumulative data in string format to punctual data
      * @param cumulativeData list of string representing cumulative data
      * @return list of double representing the punctual data related to cumulativeData param
@@ -33,6 +33,66 @@ public class QueryUtility {
             }
         }
         return conversionResult;
+    }
+
+    /**
+     * Scope: Query 1
+     * Used to convert weekly cumulative cured and swabs tuple to punctual values
+     * @param tuple containing cumulative data to convert
+     * @return a tuple composed of two array lists, one for punctual cured values and the other for punctual swabs
+     * values
+     */
+    public static Tuple2<ArrayList<Integer>, ArrayList<Integer>> toPunctualData(
+            Tuple2<String, Iterable<Tuple2<Integer, Integer>>> tuple) {
+
+        ArrayList<Integer> cured = new ArrayList<>();
+        ArrayList<Integer> swabs = new ArrayList<>();
+
+        int elements = 0;
+
+        // save values of the current week to local structures for analysis
+        for (Tuple2<Integer, Integer> element : tuple._2()) {
+            cured.add(element._1());
+            swabs.add(element._2());
+            elements++;
+        }
+
+        // order temporally (works since is being applied on cumulative data)
+        // precedent week data will be then placed at index 0
+        cured.sort(Comparator.naturalOrder());
+        swabs.sort(Comparator.naturalOrder());
+
+        String firstWeekKey = QueryUtility.getFirstDayOfTheWeek(
+                QueryUtility.getDataset1StartDate().get(Calendar.WEEK_OF_YEAR),
+                QueryUtility.getDataset1StartDate().get(Calendar.YEAR));
+
+        // in first week data there are no values from previous week
+        if (!firstWeekKey.equals(tuple._1())) {
+            if (elements == 1) {
+                // week created with only a precedent week element,
+                // remove the corresponding RDD element
+                return null;
+            }
+
+            // not in the first week, there is precedent week data
+            // make week data independent from precedent weeks
+            for (int i = 1; i < elements; i++) {
+                cured.set(i, cured.get(i) - cured.get(0));
+                swabs.set(i, swabs.get(i) - swabs.get(0));
+            }
+            cured.remove(0);
+            swabs.remove(0);
+            elements = elements - 1;
+        }
+
+        // turn from cumulative to punctual data
+        for (int i = elements - 1; i > 0; i--) {
+            cured.set(i, cured.get(i) - cured.get(i-1));
+            swabs.set(i, swabs.get(i) - swabs.get(i -1));
+        }
+
+        // return [[List of punctual cured], [List of punctual swabs]]
+        return new Tuple2<>(cured, swabs);
     }
 
     /**

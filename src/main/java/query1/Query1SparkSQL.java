@@ -13,6 +13,7 @@ import org.apache.spark.sql.types.StructField;
 import org.apache.spark.sql.types.StructType;
 import scala.Tuple2;
 import utility.IOUtility;
+import utility.QueryUtility;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,8 +29,26 @@ public class Query1SparkSQL {
         sparkContext.setLogLevel("ERROR");
 
         JavaRDD<String> dataset1 = sparkContext.textFile(IOUtility.getDS1());
-        JavaPairRDD<String, Tuple2<Integer, Integer>> dailyData = Query1Preprocessing.preprocessData(dataset1);
-        // TODO: switch to punctual data
+
+        // for performance measurement
+        final long startTime = System.currentTimeMillis();
+
+        JavaPairRDD<String, Tuple2<Integer, Integer>> dailyData = Query1Preprocessing.preprocessData(dataset1)
+                .groupByKey().flatMapToPair(
+                        tuple -> {
+                            ArrayList<Tuple2<String, Tuple2<Integer, Integer>>> result = new ArrayList<>();
+                            Tuple2<ArrayList<Integer>, ArrayList<Integer>> punctualData =
+                                    QueryUtility.toPunctualData(tuple);
+                            if (punctualData != null) {
+                                // both arrays have same dimension
+                                for (int i = 0; i < punctualData._1().size(); i++) {
+                                    result.add(new Tuple2<>(tuple._1(), new Tuple2<>(punctualData._1().get(i),
+                                            punctualData._2().get(i))));
+                                }
+                            }
+                            return result.iterator();
+                        }
+                );
 
         SparkSession session = SparkSession
                 .builder()
@@ -41,8 +60,14 @@ public class Query1SparkSQL {
 
         dataFrame.groupBy("date")
                 .avg("cured", "swabs")
-                .orderBy("date")
-                .show();
+                .orderBy("date");
+
+        IOUtility.printTime(System.currentTimeMillis() - startTime);
+
+        dataFrame.show();
+
+        session.close();
+        sparkContext.close();
     }
 
     private static Dataset<Row> createSchema(SparkSession session, JavaPairRDD<String, Tuple2<Integer, Integer>> data) {
