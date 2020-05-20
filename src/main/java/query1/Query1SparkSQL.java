@@ -49,15 +49,16 @@ public class Query1SparkSQL {
 
         // Generating schema
         List<StructField> fields = new ArrayList<>();
+        fields.add(DataTypes.createStructField("id", DataTypes.LongType, false));
         fields.add(DataTypes.createStructField("date", DataTypes.StringType, false));
-        fields.add(DataTypes.createStructField("cured", DataTypes.IntegerType, true));
-        fields.add(DataTypes.createStructField("swabs", DataTypes.IntegerType, true));
+        fields.add(DataTypes.createStructField("cured", DataTypes.IntegerType, false));
+        fields.add(DataTypes.createStructField("swabs", DataTypes.IntegerType, false));
 
         StructType schema = DataTypes.createStructType(fields);
 
         // Convert RDD records to Rows
-        JavaRDD<Row> rowRDD = data.map(element -> RowFactory.create(element._1(), element._2()._1(),
-                element._2()._2()));
+        JavaRDD<Row> rowRDD = data.zipWithIndex().map(element -> RowFactory.create(element._2(), element._1()._1(),
+                element._1()._2()._1(), element._1()._2()._2()));
 
         // Apply schema to RDD and return
         return session.createDataFrame(rowRDD, schema);
