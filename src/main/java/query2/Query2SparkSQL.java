@@ -63,14 +63,15 @@ public class Query2SparkSQL {
 
         Dataset<Row> dataFrame = createSchema(session, dailyData);
 
-        dataFrame.groupBy("continent", "date")
-                .avg("positive").as("average").show();
-        dataFrame.groupBy("continent", "date")
-                .min("positive").as("minimum").show();
-        dataFrame.groupBy("continent", "date")
-                .max("positive").as("maximum").show();
+        dataFrame.createOrReplaceTempView("query2");
+
+        Dataset<Row> result = session.sql("select continent, date, mean(positive) as mean, min(positive) " +
+                "as min, max(positive) as max, stddev(positive) as stddev from query2 group by continent, date " +
+                "order by continent, date");
 
         IOUtility.printTime(System.currentTimeMillis() - startTime);
+
+        result.show((int) result.count());
 
         session.close();
         sparkContext.close();
