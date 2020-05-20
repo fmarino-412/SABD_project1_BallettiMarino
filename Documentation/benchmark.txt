@@ -1,5 +1,4 @@
 Query 1 multi-run
-1249
 78
 63
 68
@@ -100,7 +99,6 @@ Query 1 multi-run
 29
 29
 Query 2 multi-run
-174
 149
 117
 116
@@ -201,7 +199,6 @@ Query 2 multi-run
 114
 110
 Query 3 Naive multi-run
-1719
 1622
 1568
 1539
@@ -302,7 +299,6 @@ Query 3 Naive multi-run
 1365
 1368
 Query 3 MLlib multi-run
-1024
 882
 873
 848
@@ -403,7 +399,6 @@ Query 3 MLlib multi-run
 830
 850
 Query 1 SparkSQL multi-run
-2428
 52
 58
 45
@@ -504,7 +499,6 @@ Query 1 SparkSQL multi-run
 31
 33
 Query 2 SparkSQL multi-run
-3527
 2384
 2109
 2014
