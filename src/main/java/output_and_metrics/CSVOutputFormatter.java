@@ -5,6 +5,10 @@ import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
+import query1.Query1Main;
+import query2.Query2Main;
+import query3.Query3Main;
+import utility.ClusteringUtility;
 import utility.IOUtility;
 
 import java.io.*;
@@ -21,16 +25,29 @@ public class CSVOutputFormatter {
 
     private static final String QUERY1_CSV_FILE_PATH = "Results/query1_output.csv";
     private static final String QUERY2_CSV_FILE_PATH = "Results/query2_output.csv";
-    private static final String QUERY3_CSV_FILE_PATH = "Results/query3_output.csv";
+    private static final String QUERY3_MLLIB_CSV_FILE_PATH = "Results/query3_mllib_output.csv";
+    private static final String QUERY3_NAIVE_CSV_FILE_PATH = "Results/query3_naive_output.csv";
 
     public static void main(String[] args) {
+        System.out.println("Executing query 1...");
+        Query1Main.main(null);
         System.out.println("Generating csv for query 1 result...");
         outputFromQuery1Result(QUERY1_CSV_FILE_PATH);
+        System.out.println("\n\nExecuting query 2...");
+        Query2Main.main(null);
         System.out.println("Generating csv for query 2 result...");
         outputFromQuery2Result(QUERY2_CSV_FILE_PATH);
-        System.out.println("Generating csv for query 3 result...");
-        outputFromQuery3Result(QUERY3_CSV_FILE_PATH);
-        System.out.println("Check \"Results\" directory");
+        System.out.println("\n\nExecuting query 3 with naive clustering...");
+        ClusteringUtility.setNaive(true);
+        Query3Main.main(null);
+        System.out.println("Generating csv for query 3 result with naive clustering...");
+        outputFromQuery3Result(QUERY3_NAIVE_CSV_FILE_PATH);
+        System.out.println("\n\nExecuting query 3 with mllib clustering...");
+        ClusteringUtility.setNaive(false);
+        Query3Main.main(null);
+        System.out.println("Generating csv for query 3 result with mllib clustering...");
+        outputFromQuery3Result(QUERY3_MLLIB_CSV_FILE_PATH);
+        System.out.println("\n\n\nCheck \"Results\" directory");
     }
 
     /**

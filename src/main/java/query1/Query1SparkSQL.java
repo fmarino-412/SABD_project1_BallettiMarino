@@ -62,6 +62,9 @@ public class Query1SparkSQL {
                 .avg("cured", "swabs")
                 .orderBy("week");
 
+        // necessary for correct performance evaluation
+        dataFrame.collect();
+
         IOUtility.printTime(System.currentTimeMillis() - startTime);
 
         dataFrame.show();

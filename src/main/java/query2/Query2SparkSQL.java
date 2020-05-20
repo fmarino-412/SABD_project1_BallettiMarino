@@ -78,6 +78,9 @@ public class Query2SparkSQL {
                 "stddev(positive) AS stddev, min(positive) AS min, max(positive) AS max FROM query2 " +
                 "GROUP BY continent, week ORDER BY continent, week");
 
+        // necessary for correct performance evaluation
+        result.collect();
+
         IOUtility.printTime(System.currentTimeMillis() - startTime);
 
         result.show((int) result.count());

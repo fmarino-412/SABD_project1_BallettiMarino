@@ -46,10 +46,12 @@ public class Query1Main {
                         // an empty array will be returned
                         return result.iterator();
                     }
-            ).sortByKey(true);
+            ).sortByKey(true).cache();
 
-        // uncomment and add .cache() on the previous line to print result on console
-        //printResult(averageDataByWeek.collectAsMap());
+        Map<String, Tuple2<Double, Double>> finalResult = averageDataByWeek.collectAsMap();
+
+        // uncomment next line to print result on console
+        //printResult(finalResult);
 
         IOUtility.printTime(System.currentTimeMillis() - startTime);
 

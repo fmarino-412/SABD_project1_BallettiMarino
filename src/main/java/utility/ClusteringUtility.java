@@ -19,7 +19,7 @@ import java.util.Random;
 public class ClusteringUtility {
 
     // choose to perform clustering using mllib or lloyd naive implementation
-    private static final boolean NAIVE = false;
+    private static boolean NAIVE = false;
 
     private static final Integer CLUSTERS = 4;
     private static final Integer ITERATION = 20;
@@ -202,5 +202,14 @@ public class ClusteringUtility {
         } else {
             return clusteringMLlib(data);
         }
+    }
+
+    /**
+     * Global scope.
+     * To set programmatically the clustering mode
+     * @param naiveMode true to run naive clustering algorithm, false to run mllib clustering algorithm
+     */
+    public static void setNaive(boolean naiveMode) {
+        NAIVE = naiveMode;
     }
 }
