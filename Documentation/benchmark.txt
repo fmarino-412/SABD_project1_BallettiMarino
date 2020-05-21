@@ -598,3 +598,8 @@ Query 2 SparkSQL multi-run
 1863
 1868
 1868
+
+Reverse Geocoding:
+Nominatim:	    262936 ms
+BigDataCloud:	21619 ms
+Hybrid:	        213 ms
