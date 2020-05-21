@@ -48,6 +48,7 @@ public class Query1Main {
                     }
             ).sortByKey(true).cache();
 
+        // without console printing result this line is not needed, although it was added for benchmark purposes
         Map<String, Tuple2<Double, Double>> finalResult = averageDataByWeek.collectAsMap();
 
         // uncomment next line to print result on console

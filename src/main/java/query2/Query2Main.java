@@ -106,6 +106,7 @@ public class Query2Main {
 
         JavaPairRDD<String, List<Double>> orderedStatistics = statistics.sortByKey(true).cache();
 
+        // without console printing result this line is not needed, although it was added for benchmark purposes
         List<Tuple2<String, List<Double>>> finalResult = orderedStatistics.collect();
         // uncomment the next line to print result on console
         //printResult(finalResult);
