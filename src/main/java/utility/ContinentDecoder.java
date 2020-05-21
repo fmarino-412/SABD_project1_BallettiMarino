@@ -5,6 +5,7 @@ import org.json.JSONObject;
 import java.io.*;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 
 /**
  * Class used to detect the continent from GeoCoordinate of a country
@@ -23,9 +24,10 @@ public class ContinentDecoder {
      * Those are the information needed to use the second rest api (BigDataCloud) service we chose to perform
      * the reverse geo-coding
      */
-    private static final String URL_BDCLOUD = "https://api.bigdatacloud.net/data/reverse-geocode-client?";
+    private static final String URL_BDCLOUD = "https://api.bigdatacloud.net/data/reverse-geocode?";
     private static final String LATHEAD_BDCLOUD = "latitude=";
     private static final String LONHEAD_BDCLOUD = "&longitude=";
+    private static final String API_KEY = "&key=98848b588a2f4b3896e280bd5bfae1bc";
 
     /**
      * Used to perform the reverse geo-coding using Nominatim rest api
@@ -61,7 +63,7 @@ public class ContinentDecoder {
      */
     private static String detectContinentOnWebBigDataCloud(GeoCoordinate coordinate) {
         String httpUrl = URL_BDCLOUD + LATHEAD_BDCLOUD + coordinate.getLatitude().toString() + LONHEAD_BDCLOUD +
-                coordinate.getLongitude().toString();
+                coordinate.getLongitude().toString() + API_KEY;
 
         try {
             InputStream inputStream = new URL(httpUrl).openStream();
@@ -136,5 +138,39 @@ public class ContinentDecoder {
             builder.append((char)read);
         }
         return builder.toString();
+    }
+
+
+    // TODO: remove
+    public static void test() {
+        ArrayList<GeoCoordinate> coordinates = new ArrayList<>();
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader("test_files/coordinates.csv"));
+            String line = "";
+            String[] coords;
+            while ((line = reader.readLine()) != null) {
+                coords = line.split(";");
+                coordinates.add(new GeoCoordinate(coords[0], coords[1]));
+            }
+            reader.close();
+            long currentTime = System.currentTimeMillis();
+            for (GeoCoordinate geoCoordinate : coordinates) {
+                detectContinentOnWebNominatim(geoCoordinate);
+            }
+            System.out.println("Nominatim:\t" + (System.currentTimeMillis() - currentTime) + " ms");
+            currentTime = System.currentTimeMillis();
+            for (GeoCoordinate geoCoordinate : coordinates) {
+                detectContinentOnWebBigDataCloud(geoCoordinate);
+            }
+            System.out.println("BigDataCloud:\t" + (System.currentTimeMillis() - currentTime) + " ms");
+            currentTime = System.currentTimeMillis();
+            for (GeoCoordinate geoCoordinate : coordinates) {
+                detectContinent(geoCoordinate);
+            }
+            System.out.println("Hybrid:\t" + (System.currentTimeMillis() - currentTime) + " ms");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 }
