@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
 
 public class InfluxDBClient {
 
-    private static final String DB_URL = "influxdb:8086";
+    private static final String DB_URL = "http://influxdb:8086";
     private static final String USERNAME = "admin";
     private static final String PASSWORD = "password";
 
@@ -51,8 +51,12 @@ public class InfluxDBClient {
 
     public void createDatabase(String dbName, String retentionTime) {
         InfluxDB connection = getConnection();
+        if (connection.databaseExists(dbName)) {
+            connection.deleteDatabase(dbName);
+        }
         connection.createDatabase(dbName);
         connection.createRetentionPolicy("defaultPolicy", dbName, retentionTime, 1, true);
+        connection.disableBatch();
     }
 
     public void insertPoints(String dbName, List<Double> slopes, List<String> countries,
@@ -64,18 +68,12 @@ public class InfluxDBClient {
         try {
             DateFormat formatter = new SimpleDateFormat("MM-yyyy");
             long time = TimeUnit.MILLISECONDS.toDays(formatter.parse(month).getTime());
-            BatchPoints batch = BatchPoints.database(dbName).retentionPolicy("defaultPolicy").build();
-            Point newPoint;
-            for (int i = 0; i < slopes.size(); i++) {
-                newPoint = Point.measurement("clustering")
-                        .time(time, TimeUnit.DAYS)
-                        .addField("slope", slopes.get(i))
-                        .addField("country", countries.get(i))
-                        .addField("cluster", clusterAssignement)
-                        .build();
-                batch.point(newPoint);
-            }
-            getConnection().write(batch);
+            Point newPoint = Point.measurement("cluster"+clusterAssignement)
+                    .time(time, TimeUnit.DAYS)
+                    .addField("slopes", slopes.toString())
+                    .addField("countries", countries.toString())
+                    .build();
+            getConnection().setRetentionPolicy("defaultPolicy").setDatabase(dbName).write(newPoint);
         } catch (Exception e) {
             e.printStackTrace();
         }

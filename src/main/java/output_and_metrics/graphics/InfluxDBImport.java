@@ -23,8 +23,10 @@ public class InfluxDBImport {
 
     public static void main(String[] args) {
 
-        System.out.println("Starting influxDB import...");
         InfluxDBClient client = new InfluxDBClient();
+        System.out.println("Creating influxDB database...");
+        client.createDatabase(DB_NAME, "365d");
+        System.out.println("Starting influxDB import...");
         importQuery3Result(client, DB_NAME);
         System.out.println("Closing connection...");
         client.closeConnection();
