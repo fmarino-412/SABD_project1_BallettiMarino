@@ -9,6 +9,7 @@ import org.apache.spark.mllib.linalg.Vectors;
 import query3.CountryDataQuery3;
 import scala.Tuple2;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -79,9 +80,10 @@ public class ClusteringUtility {
 
         int clusterAssignment;
         List<Tuple2<Double, String>> toPredict = toCluster.collect();
+        DecimalFormat doubleFormat = new DecimalFormat("#.###");
         for (Tuple2<Double, String> elem : toPredict) {
             clusterAssignment = assignToCluster(elem._1(), centroids);
-            result.get(clusterAssignment).add(elem._2());
+            result.get(clusterAssignment).add(elem._2()+"("+doubleFormat.format(elem._1())+")");
             costData.get(clusterAssignment).add(elem._1());
         }
 
@@ -164,9 +166,10 @@ public class ClusteringUtility {
             result.add(new ArrayList<>());
         }
 
+        DecimalFormat doubleFormat = new DecimalFormat("#.###");
         for (Tuple2<Double, String> elem : toPredict) {
             int clusterIndex = model.predict(Vectors.dense(elem._1()));
-            result.get(clusterIndex).add(elem._2());
+            result.get(clusterIndex).add(elem._2()+"("+doubleFormat.format(elem._1())+")");
         }
 
         return result;

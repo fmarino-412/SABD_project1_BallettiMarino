@@ -9,3 +9,6 @@ docker run -t -i -p 9870:9870 -p 9871:54310 -d --network=apache_network --name=m
 docker cp hdfs-script/start-hdfs.sh master:/start-hdfs.sh
 docker exec -it master sh /start-hdfs.sh
 docker run -it --name=hbase -h hbase -p 2181:2181 -p 8080:8080 -p 8085:8085 -p 9090:9090 -p 9095:9095 -p 16000:16000 -p 16010:16010 -p 16020:16020 -p 16201:16201 -p 16301:16301 -d harisekhon/hbase:1.4
+docker run -d -p 3000:3000 -v grafana_storage:/var/lib/grafana --network=apache_network --name=grafana grafana/grafana:6.5.0
+docker run -d -p 15672:15672 -p 5672:5672 -e RABBITMQ_DEFAULT_USER=admin -e RABBITMQ_DEFAULT_PASS=password --network=apache_network --name=rabbitmq rabbitmq:3-management
+ docker run -d -p 8086:8086 -v influx_storage:/var/lib/influxdb -e INFLUXDB_USERNAME=admin -e INFLUXDB_PASSWORD=password --network=apache_network --name=influxdb influxdb

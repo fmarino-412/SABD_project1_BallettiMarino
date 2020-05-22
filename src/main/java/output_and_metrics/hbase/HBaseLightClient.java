@@ -13,6 +13,7 @@ import java.io.IOException;
 
 /**
  * An hbase client containing the required functions to export data from HDFS to the datastore
+ * In order to use this class make sure to have in /etc/hosts the line "127.0.0.1  hbase".
  */
 
 public class HBaseLightClient {
