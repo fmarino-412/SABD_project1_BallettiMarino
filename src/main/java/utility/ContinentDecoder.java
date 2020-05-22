@@ -5,7 +5,6 @@ import org.json.JSONObject;
 import java.io.*;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 
 /**
  * Class used to detect the continent from GeoCoordinate of a country
@@ -138,39 +137,5 @@ public class ContinentDecoder {
             builder.append((char)read);
         }
         return builder.toString();
-    }
-
-
-    // TODO: remove
-    public static void test() {
-        ArrayList<GeoCoordinate> coordinates = new ArrayList<>();
-        try {
-            BufferedReader reader = new BufferedReader(new FileReader("test_files/coordinates.csv"));
-            String line = "";
-            String[] coords;
-            while ((line = reader.readLine()) != null) {
-                coords = line.split(";");
-                coordinates.add(new GeoCoordinate(coords[0], coords[1]));
-            }
-            reader.close();
-            long currentTime = System.currentTimeMillis();
-            for (GeoCoordinate geoCoordinate : coordinates) {
-                detectContinentOnWebNominatim(geoCoordinate);
-            }
-            System.out.println("Nominatim:\t" + (System.currentTimeMillis() - currentTime) + " ms");
-            currentTime = System.currentTimeMillis();
-            for (GeoCoordinate geoCoordinate : coordinates) {
-                detectContinentOnWebBigDataCloud(geoCoordinate);
-            }
-            System.out.println("BigDataCloud:\t" + (System.currentTimeMillis() - currentTime) + " ms");
-            currentTime = System.currentTimeMillis();
-            for (GeoCoordinate geoCoordinate : coordinates) {
-                detectContinent(geoCoordinate);
-            }
-            System.out.println("Hybrid:\t" + (System.currentTimeMillis() - currentTime) + " ms");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
     }
 }
