@@ -6,11 +6,8 @@ import org.influxdb.dto.BatchPoints;
 import org.influxdb.dto.Point;
 import org.influxdb.dto.Pong;
 
-import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -27,6 +24,11 @@ public class InfluxDBClient {
 
     private InfluxDB connection = null;
 
+    /**
+     * Returns an instance of connection. If the current one is null (has never been crested or has been closed) it
+     * creates a new one, tests the database reachability and returns it.
+     * @return Connection to influxDB
+     */
     public InfluxDB getConnection() {
 
         if (this.connection == null) {
@@ -41,6 +43,10 @@ public class InfluxDBClient {
         return this.connection;
     }
 
+    /**
+     * Closes the current influxDB connection, it must be called when no other operation has to be performed on the
+     * time series database.
+     */
     public void closeConnection() {
 
         if (!(this.connection == null)) {
@@ -49,6 +55,11 @@ public class InfluxDBClient {
         }
     }
 
+    /**
+     * Creates a new influxDB database and sets the retention time policy to the specified time interval.
+     * @param dbName name of the database to create
+     * @param retentionTime data persistence duration
+     */
     public void createDatabase(String dbName, String retentionTime) {
         InfluxDB connection = getConnection();
         if (connection.databaseExists(dbName)) {
@@ -59,41 +70,29 @@ public class InfluxDBClient {
         connection.disableBatch();
     }
 
-    public void insertPoints(String dbName, List<Double> slopes, List<String> countries,
-                             int clusterAssignement, String month) {
-        if (slopes.size() != countries.size()) {
-            System.err.println("Data structure passed are not consistent in dimension");
-            return;
-        }
-        try {
-            DateFormat formatter = new SimpleDateFormat("MM-yyyy");
-            long time = TimeUnit.MILLISECONDS.toDays(formatter.parse(month).getTime());
-            Point newPoint = Point.measurement("cluster"+clusterAssignement)
-                    .time(time, TimeUnit.DAYS)
-                    .addField("slopes", slopes.toString())
-                    .addField("countries", countries.toString())
-                    .build();
-            getConnection().setRetentionPolicy("defaultPolicy").setDatabase(dbName).write(newPoint);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void insertPoints(String dbName, String month, Double cured, Double swabs) {
+    /**
+     * Scope: Query 1 results
+     * Inserts mean of cured people and performed swabs as measurement point in influxDB.
+     * @param dbName name of the DB to which data must to be added
+     * @param startDay week start day, month and year corresponding to weekly measurements
+     * @param cured value of mean cured people
+     * @param swabs value of mean performed swabs
+     */
+    public void insertPoints(String dbName, String startDay, Double cured, Double swabs) {
         try {
             DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-            long time = TimeUnit.MILLISECONDS.toDays(formatter.parse(month).getTime());
+            long time = TimeUnit.MILLISECONDS.toDays(formatter.parse(startDay).getTime());
 
             BatchPoints batch = BatchPoints
                     .database(dbName)
                     .retentionPolicy("defaultPolicy")
                     .build();
 
-            Point curedPoint = Point.measurement("mean_cured")
+            Point curedPoint = Point.measurement("query1_mean_cured")
                     .time(time, TimeUnit.DAYS)
                     .addField("cured", cured)
                     .build();
-            Point swabsPoint = Point.measurement("mean_swabs")
+            Point swabsPoint = Point.measurement("query1_mean_swabs")
                     .time(time, TimeUnit.DAYS)
                     .addField("swabs", swabs)
                     .build();
@@ -101,6 +100,31 @@ public class InfluxDBClient {
             batch.point(curedPoint);
             batch.point(swabsPoint);
             getConnection().write(batch);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Scope: Query 3 results
+     * Inserts centroid position and countries list as measurement point in influxDB.
+     * @param dbName name of the DB to which data must to be added
+     * @param centroid current cluster centroid position
+     * @param countries list of countries belonging to the cluster
+     * @param clusterAssignement cluster index
+     * @param month month and year corresponding to the cluster composition
+     */
+    public void insertPoints(String dbName, Double centroid, List<String> countries,
+                             int clusterAssignement, String month) {
+        try {
+            DateFormat formatter = new SimpleDateFormat("MM-yyyy");
+            long time = TimeUnit.MILLISECONDS.toDays(formatter.parse(month).getTime());
+            Point newPoint = Point.measurement("query2_cluster"+clusterAssignement)
+                    .time(time, TimeUnit.DAYS)
+                    .addField("centroid", centroid)
+                    .addField("countries", countries.toString())
+                    .build();
+            getConnection().setRetentionPolicy("defaultPolicy").setDatabase(dbName).write(newPoint);
         } catch (Exception e) {
             e.printStackTrace();
         }

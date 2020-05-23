@@ -20,20 +20,27 @@ import java.util.regex.Pattern;
 
 public class InfluxDBImport {
 
-    static final String DB_NAME = "Query1";
+    static final String DB_NAME = "Queries";
 
     public static void main(String[] args) {
 
         InfluxDBClient client = new InfluxDBClient();
         System.out.println("Creating influxDB database...");
         client.createDatabase(DB_NAME, "365d");
-        System.out.println("Starting influxDB import...");
+        System.out.println("Starting influxDB import for Query 1 output...");
         importQuery1Result(client, DB_NAME);
+        System.out.println("Starting influxDB import for Query 3 output...");
+        importQuery3Result(client, DB_NAME);
         System.out.println("Closing connection...");
         client.closeConnection();
         System.out.println("Done!");
     }
 
+    /**
+     * Loads results of the first query from the HDFS to an influxDB database.
+     * @param client client for influxDB communication
+     * @param dbName name of the db to which data must be added
+     */
     private static void importQuery1Result(InfluxDBClient client, String dbName) {
         String line;
 
@@ -75,6 +82,11 @@ public class InfluxDBImport {
         }
     }
 
+    /**
+     * Loads results of the third query from the HDFS to an influxDB database.
+     * @param client client for influxDB communication
+     * @param dbName name of the db to which data must be added
+     */
     private static void importQuery3Result(InfluxDBClient client, String dbName) {
 
         String line;
@@ -113,21 +125,38 @@ public class InfluxDBImport {
         }
     }
 
-    private static void parseAndInsert(InfluxDBClient client, String dbName, String cluster, String month, int clusterIndex) {
+    /**
+     * Scope: Query 3
+     * Inserts cluster specific values in influxDB.
+     * @param client client for influxDB communication
+     * @param dbName name of the db to which data must be added
+     * @param cluster list of elements belonging to the cluster passed as string
+     * @param month month and year corresponding to the cluster composition
+     * @param clusterIndex index of the current cluster (from 1 to 4)
+     */
+    private static void parseAndInsert(InfluxDBClient client, String dbName, String cluster, String month,
+                                       int clusterIndex) {
         List<String> countries = new ArrayList<>();
         List<Double> slopes = new ArrayList<>();
+        // splits single measurement points
         String[] elements = cluster.split(", ");
+        // extract country and slope from every point
         Pattern pattern = Pattern.compile("(.*)\\((.*)\\)");
         Matcher matcher;
         for (String element : elements) {
             matcher = pattern.matcher(element);
             if (matcher.find()) {
+                // add country name to list of countries
                 countries.add(matcher.group(1));
+                // add slope value to list of values
                 slopes.add(Double.parseDouble(matcher.group(2)));
             } else {
                 System.err.println("Error parsing: " + element);
             }
         }
-        client.insertPoints(dbName, slopes, countries, clusterIndex, month);
+        // compute centroid
+        double centroid = slopes.stream().mapToDouble(a -> a).average().orElse(0.0);
+        // perform insertion
+        client.insertPoints(dbName, centroid, countries, clusterIndex, month);
     }
 }

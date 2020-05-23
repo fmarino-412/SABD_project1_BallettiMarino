@@ -26,7 +26,7 @@ public class HBaseLightClient {
     private Connection connection = null;
 
     /**
-     * Used to return a singleton instance of connection. If the current one is not active or does not exist, a new
+     * Used to return an instance of connection. If the current one is not active or does not exist, a new
      * connection is created and the current instance is updated to the new one.
      * @return Connection to hbase
      * @throws IOException
