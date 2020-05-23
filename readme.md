@@ -28,6 +28,7 @@ this directory contains in its subdirectories Java code for:
 5. moving data from HDFS to InfluxDB.
 
 
+
 ## Java Project structure description:
 
 It is recommended to open the entire directory with an IDE for better code navigation. Java project part was developed using JetBrains' IntelliJ IDEA.
@@ -85,7 +86,7 @@ This package contains classes needed to export queries results from HDFS to HBas
 
 ### output\_and\_metrics.graphics package
 
-This package contains classes needed to export queries result from HDFS to InfluxDB in order to be graphically represented on Grafana, in particular:
+This package contains classes needed to export queries result from HDFS to InfluxDB in order to be graphically represented using Grafana, in particular:
 
 * `InfluxDBClient.java` implementing basic methods for datastore interaction,
 * `InfluxDBImport.java` implementing methods to get query outputs from HDFS and putting in InfluxDB after format translation.
