@@ -106,6 +106,53 @@ public class InfluxDBClient {
     }
 
     /**
+     * Scope: Query 2 results
+     * Inserts mean of cured people and performed swabs as measurement point in influxDB.
+     * @param dbName name of the DB to which data must to be added
+     * @param week week start day, month and year corresponding to weekly measurements
+     * @param mean value of positive case's mean
+     * @param stddev value of positive case's standard deviation
+     * @param min value of positive case's maximum value
+     * @param max value of positive case's minumum value
+     */
+    public void insertPoints(String dbName, String week, Double mean, Double stddev, Double min, Double max) {
+        try {
+            DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+            long time = TimeUnit.MILLISECONDS.toDays(formatter.parse(week).getTime());
+
+            BatchPoints batch = BatchPoints
+                    .database(dbName)
+                    .retentionPolicy("defaultPolicy")
+                    .build();
+
+            Point meanPoint = Point.measurement("query2_mean")
+                    .time(time, TimeUnit.DAYS)
+                    .addField("mean", mean)
+                    .build();
+            Point stddevPoint = Point.measurement("query2_stddev")
+                    .time(time, TimeUnit.DAYS)
+                    .addField("stddev", stddev)
+                    .build();
+            Point minPoint = Point.measurement("query2_min")
+                    .time(time, TimeUnit.DAYS)
+                    .addField("min", min)
+                    .build();
+            Point maxPoint = Point.measurement("query2_max")
+                    .time(time, TimeUnit.DAYS)
+                    .addField("max", max)
+                    .build();
+
+            batch.point(meanPoint);
+            batch.point(stddevPoint);
+            batch.point(minPoint);
+            batch.point(maxPoint);
+            getConnection().write(batch);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
      * Scope: Query 3 results
      * Inserts centroid position and countries list as measurement point in influxDB.
      * @param dbName name of the DB to which data must to be added

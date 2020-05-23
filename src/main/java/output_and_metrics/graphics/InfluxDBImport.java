@@ -29,6 +29,8 @@ public class InfluxDBImport {
         client.createDatabase(DB_NAME, "365d");
         System.out.println("Starting influxDB import for Query 1 output...");
         importQuery1Result(client, DB_NAME);
+        System.out.println("Starting influxDB import for Query 2 output...");
+        importQuery2Result(client, DB_NAME);
         System.out.println("Starting influxDB import for Query 3 output...");
         importQuery3Result(client, DB_NAME);
         System.out.println("Closing connection...");
@@ -79,6 +81,57 @@ public class InfluxDBImport {
             hdfs.close();
         } catch (IOException | URISyntaxException e) {
             e.printStackTrace();
+            System.err.println("Could not load query 1 result from HDFS");
+        }
+    }
+
+    /**
+     * Loads results of the second query from the HDFS to an influxDB database.
+     * @param client client for influxDB communication
+     * @param dbName name of the db to which data must be added
+     */
+    private static void importQuery2Result(InfluxDBClient client, String dbName) {
+        String line;
+
+        Configuration configuration = new Configuration();
+
+        try {
+            FSDataInputStream inputStream;
+            BufferedReader br;
+            FileSystem hdfs = FileSystem.get(new URI(IOUtility.getHdfs()), configuration);
+            Path dirPath = new Path(IOUtility.getOutputPathQuery1());
+            FileStatus[] fileStatuses = hdfs.listStatus(dirPath);
+            // in case of splitted file output
+            for (FileStatus fileStatus : fileStatuses) {
+                // _SUCCESS file and subdirectories are ignored
+                if (!fileStatus.isDirectory() && !fileStatus.getPath().toString().contains("SUCCESS")) {
+                    inputStream = hdfs.open(fileStatus.getPath());
+                    br = new BufferedReader(new InputStreamReader(inputStream));
+
+                    while ((line = br.readLine()) != null) {
+                        // regex describing every line structure in the query 2 result file
+                        Pattern pattern = Pattern.compile("\\((\\w+\\s-\\s\\d+-\\d+-\\d+),\\[(\\d+.\\d+\\w*\\d*)," +
+                                "\\s(\\d+.\\d+\\w*\\d*),\\s(\\d+.\\d+\\w*\\d*),\\s(\\d+.\\d+\\w*\\d*)]\\)");
+                        // splits the line in regex groups
+                        Matcher matcher = pattern.matcher(line);
+
+                        if (matcher.find()) {
+                            client.insertPoints(dbName,
+                                    matcher.group(1),
+                                    Double.valueOf(matcher.group(2)),
+                                    Double.valueOf(matcher.group(3)),
+                                    Double.valueOf(matcher.group(4)),
+                                    Double.valueOf(matcher.group(5)));
+                        }
+                    }
+                    br.close();
+                    inputStream.close();
+                }
+            }
+            hdfs.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println("Could not load query 2 result from HDFS");
         }
     }
 
