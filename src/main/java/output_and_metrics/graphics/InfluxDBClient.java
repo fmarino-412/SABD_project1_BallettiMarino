@@ -110,12 +110,14 @@ public class InfluxDBClient {
      * Inserts mean of cured people and performed swabs as measurement point in influxDB.
      * @param dbName name of the DB to which data must to be added
      * @param week week start day, month and year corresponding to weekly measurements
+     * @param continent name of the continent
      * @param mean value of positive case's mean
      * @param stddev value of positive case's standard deviation
      * @param min value of positive case's maximum value
      * @param max value of positive case's minumum value
      */
-    public void insertPoints(String dbName, String week, Double mean, Double stddev, Double min, Double max) {
+    public void insertPoints(String dbName, String week, String continent, Double mean, Double stddev,
+                             Double min, Double max) {
         try {
             DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
             long time = TimeUnit.MILLISECONDS.toDays(formatter.parse(week).getTime());
@@ -128,18 +130,22 @@ public class InfluxDBClient {
             Point meanPoint = Point.measurement("query2_mean")
                     .time(time, TimeUnit.DAYS)
                     .addField("mean", mean)
+                    .addField("continent", continent)
                     .build();
             Point stddevPoint = Point.measurement("query2_stddev")
                     .time(time, TimeUnit.DAYS)
                     .addField("stddev", stddev)
+                    .addField("continent", continent)
                     .build();
             Point minPoint = Point.measurement("query2_min")
                     .time(time, TimeUnit.DAYS)
                     .addField("min", min)
+                    .addField("continent", continent)
                     .build();
             Point maxPoint = Point.measurement("query2_max")
                     .time(time, TimeUnit.DAYS)
                     .addField("max", max)
+                    .addField("continent", continent)
                     .build();
 
             batch.point(meanPoint);

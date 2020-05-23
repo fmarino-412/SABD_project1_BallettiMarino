@@ -99,7 +99,7 @@ public class InfluxDBImport {
             FSDataInputStream inputStream;
             BufferedReader br;
             FileSystem hdfs = FileSystem.get(new URI(IOUtility.getHdfs()), configuration);
-            Path dirPath = new Path(IOUtility.getOutputPathQuery1());
+            Path dirPath = new Path(IOUtility.getOutputPathQuery2());
             FileStatus[] fileStatuses = hdfs.listStatus(dirPath);
             // in case of splitted file output
             for (FileStatus fileStatus : fileStatuses) {
@@ -110,13 +110,14 @@ public class InfluxDBImport {
 
                     while ((line = br.readLine()) != null) {
                         // regex describing every line structure in the query 2 result file
-                        Pattern pattern = Pattern.compile("\\((\\w+\\s-\\s\\d+-\\d+-\\d+),\\[(\\d+.\\d+\\w*\\d*)," +
+                        Pattern pattern = Pattern.compile("\\((\\w+)\\s-\\s(\\d+-\\d+-\\d+),\\[(\\d+.\\d+\\w*\\d*)," +
                                 "\\s(\\d+.\\d+\\w*\\d*),\\s(\\d+.\\d+\\w*\\d*),\\s(\\d+.\\d+\\w*\\d*)]\\)");
                         // splits the line in regex groups
                         Matcher matcher = pattern.matcher(line);
 
                         if (matcher.find()) {
                             client.insertPoints(dbName,
+                                    matcher.group(2),
                                     matcher.group(1),
                                     Double.valueOf(matcher.group(2)),
                                     Double.valueOf(matcher.group(3)),
