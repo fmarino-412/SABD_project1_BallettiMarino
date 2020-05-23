@@ -119,10 +119,10 @@ public class InfluxDBImport {
                             client.insertPoints(dbName,
                                     matcher.group(2),
                                     matcher.group(1),
-                                    Double.valueOf(matcher.group(2)),
                                     Double.valueOf(matcher.group(3)),
                                     Double.valueOf(matcher.group(4)),
-                                    Double.valueOf(matcher.group(5)));
+                                    Double.valueOf(matcher.group(5)),
+                                    Double.valueOf(matcher.group(6)));
                         }
                     }
                     br.close();

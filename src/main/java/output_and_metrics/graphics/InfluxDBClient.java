@@ -127,25 +127,21 @@ public class InfluxDBClient {
                     .retentionPolicy("defaultPolicy")
                     .build();
 
-            Point meanPoint = Point.measurement("query2_mean")
+            Point meanPoint = Point.measurement("query2_mean_" + continent)
                     .time(time, TimeUnit.DAYS)
                     .addField("mean", mean)
-                    .addField("continent", continent)
                     .build();
-            Point stddevPoint = Point.measurement("query2_stddev")
+            Point stddevPoint = Point.measurement("query2_stddev_" + continent)
                     .time(time, TimeUnit.DAYS)
                     .addField("stddev", stddev)
-                    .addField("continent", continent)
                     .build();
-            Point minPoint = Point.measurement("query2_min")
+            Point minPoint = Point.measurement("query2_min_" + continent)
                     .time(time, TimeUnit.DAYS)
                     .addField("min", min)
-                    .addField("continent", continent)
                     .build();
-            Point maxPoint = Point.measurement("query2_max")
+            Point maxPoint = Point.measurement("query2_max_" + continent)
                     .time(time, TimeUnit.DAYS)
                     .addField("max", max)
-                    .addField("continent", continent)
                     .build();
 
             batch.point(meanPoint);
