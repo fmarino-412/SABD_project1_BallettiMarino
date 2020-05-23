@@ -1,7 +1,7 @@
 # SABD 2019/2020 first project
 Authors: Marco Balletti, Francesco Marino
 
-## Project structure descritption:
+<h2>Project structure descritption:</h2>
 
 ### Results
 Folder containing CSV files:
@@ -28,7 +28,8 @@ this directory contains in its subdirectories Java code for:
 5. moving data from HDFS to InfluxDB.
 
 ---
-## Java Project structure description:
+
+<h2>Java Project structure description:</h2>
 
 It is recommended to open the entire directory with an IDE for better code navigation. Java project part was developed using JetBrains' IntelliJ IDEA.
 
