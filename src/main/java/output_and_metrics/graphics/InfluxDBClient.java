@@ -166,7 +166,7 @@ public class InfluxDBClient {
         try {
             DateFormat formatter = new SimpleDateFormat("MM-yyyy");
             long time = TimeUnit.MILLISECONDS.toDays(formatter.parse(month).getTime());
-            Point newPoint = Point.measurement("query2_cluster"+clusterAssignement)
+            Point newPoint = Point.measurement("query3_cluster"+clusterAssignement)
                     .time(time, TimeUnit.DAYS)
                     .addField("centroid", centroid)
                     .addField("countries", countries.toString())
