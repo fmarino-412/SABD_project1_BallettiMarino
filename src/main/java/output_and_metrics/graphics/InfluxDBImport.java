@@ -2,6 +2,7 @@ package output_and_metrics.graphics;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataInputStream;
+import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import utility.IOUtility;
@@ -19,7 +20,7 @@ import java.util.regex.Pattern;
 
 public class InfluxDBImport {
 
-    static final String DB_NAME = "Query3";
+    static final String DB_NAME = "Query1";
 
     public static void main(String[] args) {
 
@@ -27,10 +28,51 @@ public class InfluxDBImport {
         System.out.println("Creating influxDB database...");
         client.createDatabase(DB_NAME, "365d");
         System.out.println("Starting influxDB import...");
-        importQuery3Result(client, DB_NAME);
+        importQuery1Result(client, DB_NAME);
         System.out.println("Closing connection...");
         client.closeConnection();
         System.out.println("Done!");
+    }
+
+    private static void importQuery1Result(InfluxDBClient client, String dbName) {
+        String line;
+
+        Configuration configuration = new Configuration();
+
+        try {
+            FSDataInputStream inputStream;
+            BufferedReader br;
+            FileSystem hdfs = FileSystem.get(new URI(IOUtility.getHdfs()), configuration);
+            Path dirPath = new Path(IOUtility.getOutputPathQuery1());
+            FileStatus[] fileStatuses = hdfs.listStatus(dirPath);
+            // in case of splitted file output
+            for (FileStatus fileStatus : fileStatuses) {
+                // _SUCCESS file and subdirectories are ignored
+                if (!fileStatus.isDirectory() && !fileStatus.getPath().toString().contains("SUCCESS")) {
+                    inputStream = hdfs.open(fileStatus.getPath());
+                    br = new BufferedReader(new InputStreamReader(inputStream));
+
+                    while ((line = br.readLine()) != null) {
+                        // regex describing every line structure in the query 1 result file
+                        Pattern pattern = Pattern.compile("\\((\\d+-\\d+-\\d+),\\((\\d+.\\d+),(\\d+.\\d+)\\)\\)");
+                        // splits the line in regex groups
+                        Matcher matcher = pattern.matcher(line);
+
+                        if (matcher.find()) {
+                            client.insertPoints(dbName,
+                                    matcher.group(1),
+                                    Double.valueOf(matcher.group(2)),
+                                    Double.valueOf(matcher.group(3)));
+                        }
+                    }
+                    br.close();
+                    inputStream.close();
+                }
+            }
+            hdfs.close();
+        } catch (IOException | URISyntaxException e) {
+            e.printStackTrace();
+        }
     }
 
     private static void importQuery3Result(InfluxDBClient client, String dbName) {

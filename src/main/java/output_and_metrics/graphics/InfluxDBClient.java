@@ -78,4 +78,31 @@ public class InfluxDBClient {
             e.printStackTrace();
         }
     }
+
+    public void insertPoints(String dbName, String month, Double cured, Double swabs) {
+        try {
+            DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+            long time = TimeUnit.MILLISECONDS.toDays(formatter.parse(month).getTime());
+
+            BatchPoints batch = BatchPoints
+                    .database(dbName)
+                    .retentionPolicy("defaultPolicy")
+                    .build();
+
+            Point curedPoint = Point.measurement("mean_cured")
+                    .time(time, TimeUnit.DAYS)
+                    .addField("cured", cured)
+                    .build();
+            Point swabsPoint = Point.measurement("mean_swabs")
+                    .time(time, TimeUnit.DAYS)
+                    .addField("swabs", swabs)
+                    .build();
+
+            batch.point(curedPoint);
+            batch.point(swabsPoint);
+            getConnection().write(batch);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
