@@ -27,7 +27,7 @@ this directory contains in its subdirectories Java code for:
 4. moving data from HDFS to Hbase,
 5. moving data from HDFS to InfluxDB.
 
-
+&nbsp;
 
 ## Java Project structure description:
 
