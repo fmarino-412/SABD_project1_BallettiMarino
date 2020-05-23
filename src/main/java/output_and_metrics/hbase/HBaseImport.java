@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
  * In order to use this class make sure to have in /etc/hosts the line "127.0.0.1  hbase".
  */
 
-public class HbaseImport {
+public class HBaseImport {
 
     private static final String TABLE_QUERY1 = "Query1_hbase_table";
     private static final String TABLE_QUERY2 = "Query2_hbase_table";
