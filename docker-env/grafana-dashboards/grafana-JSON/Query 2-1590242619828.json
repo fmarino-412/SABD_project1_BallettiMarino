@@ -183,7 +183,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Mean of cured by continent",
+      "title": "Mean of positive by continent",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -385,7 +385,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Standard deviation of cured by continent",
+      "title": "Standard deviation of positive by continent",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -587,7 +587,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Max of cured by continent",
+      "title": "Max of positive by continent",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -789,7 +789,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Min of cured by continent",
+      "title": "Min of positive by continent",
       "tooltip": {
         "shared": true,
         "sort": 0,
