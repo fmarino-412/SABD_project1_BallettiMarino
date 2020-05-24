@@ -21,9 +21,10 @@ Authors: Marco Balletti, Francesco Marino
 
 * **Grafana**:
 	1. connect to _http://localhost:3000/_,
-	2. select the "*+*" tab,
-	3. choose "*import*" option,
-	4. select all of queries dashboard inside the `grafana-dashboards/grafana-JSON` directory.
+	2. login using username:`admin` and password:`password`
+	3. select the "*+*" tab,
+	4. choose "*import*" option,
+	5. select all of queries dashboard inside the `grafana-dashboards/grafana-JSON` directory.
 
 ### Containers descriptions:
 * **NiFi** container:
