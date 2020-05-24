@@ -58,16 +58,17 @@ public class Query1SparkSQL {
 
         Dataset<Row> dataFrame = createSchema(session, dailyData);
 
-        dataFrame.groupBy("week")
-                .avg("cured", "swabs")
-                .orderBy("week");
+        dataFrame.createOrReplaceTempView("query1");
+
+        Dataset<Row> result = session.sql("SELECT week, avg(cured) AS mean_cured, avg(swabs) AS mean_swabs " +
+                "FROM query1 GROUP BY week ORDER BY week");
 
         // necessary for correct performance evaluation
-        dataFrame.collect();
+        result.collect();
 
         IOUtility.printTime(System.currentTimeMillis() - startTime);
 
-        dataFrame.show();
+        result.show((int) result.count());
 
         session.close();
         sparkContext.close();
