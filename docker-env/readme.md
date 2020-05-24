@@ -1,6 +1,10 @@
 # SABD 2019/2020 first project
 Authors: Marco Balletti, Francesco Marino
 
+Suggested host OS: Linux
+
+Incompatible host OS: MacOS
+
 ## Docker container descritption and initialization notes:
 
 ### Containers starting and stopping scripts:
@@ -22,9 +26,12 @@ Authors: Marco Balletti, Francesco Marino
 * **Grafana**:
 	1. connect to _http://localhost:3000/_,
 	2. login using username:`admin` and password:`password`
-	3. select the "*+*" tab,
-	4. choose "*import*" option,
-	5. select all of queries dashboard inside the `grafana-dashboards/grafana-JSON` directory.
+	3. select the "*setting*" panel,
+	4. choose "*datasources*" and add a new datasource,
+	5. choose influxDB as datasource, set _http://influxdb:8086_ as url, set `Queries` as database and `admin`, `password` as datastore credentials,
+	6. select the "*+*" tab,
+	7. choose "*import*" option,
+	8. select all of queries dashboard inside the `grafana-dashboards/grafana-JSON` directory.
 
 ### Containers descriptions:
 * **NiFi** container:
