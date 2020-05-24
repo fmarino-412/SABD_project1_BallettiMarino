@@ -14,8 +14,6 @@ import utility.ClusteringUtility;
 
 public class MultiRunBenchmark {
 
-    // TODO: confrontare costi MLLib con costi Naive
-
     private static final int RUNS = 100;
 
     public static void main(String[] args) {
