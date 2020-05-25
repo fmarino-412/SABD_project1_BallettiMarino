@@ -222,7 +222,7 @@
       ],
       "targets": [
         {
-          "alias": "Cluster 1 composition",
+          "alias": "Cluster 1",
           "groupBy": [],
           "measurement": "query3_cluster1",
           "orderByTime": "ASC",
@@ -242,7 +242,7 @@
           "tags": []
         },
         {
-          "alias": "Cluster 2 composition",
+          "alias": "Cluster 2",
           "groupBy": [],
           "measurement": "query3_cluster2",
           "orderByTime": "ASC",
@@ -262,7 +262,7 @@
           "tags": []
         },
         {
-          "alias": "Cluster 3 composition",
+          "alias": "Cluster 3",
           "groupBy": [],
           "measurement": "query3_cluster3",
           "orderByTime": "ASC",
@@ -282,7 +282,7 @@
           "tags": []
         },
         {
-          "alias": "Cluster 4 composition",
+          "alias": "Cluster 4",
           "groupBy": [],
           "measurement": "query3_cluster4",
           "orderByTime": "ASC",
