@@ -237,7 +237,7 @@
       "styles": [
         {
           "alias": "Time",
-          "dateFormat": "YYYY-MM-DD",
+          "dateFormat": "YYYY-MM",
           "pattern": "Time",
           "type": "date"
         },
@@ -359,5 +359,5 @@
   "timezone": "",
   "title": "Query 3",
   "uid": "o6PdLZkGk",
-  "version": 3
+  "version": 2
 }

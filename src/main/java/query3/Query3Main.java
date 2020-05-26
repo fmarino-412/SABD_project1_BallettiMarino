@@ -11,10 +11,7 @@ import utility.IOUtility;
 import utility.QueryUtility;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -36,16 +33,25 @@ public class Query3Main {
                 line -> {
                     List<Tuple2<String, CountryDataQuery3>> result = new ArrayList<>();
                     String[] splitted = line.split(",");
+
+                    // name as country or state when country is not available
                     String name = splitted[0].equals("") ? splitted[1] : splitted[0];
+
+                    // conversion of cumulative data to punctual data for every RDD row
                     List<Double> punctualData = QueryUtility.toPunctualData(Arrays.asList(splitted)
                             .subList(4, splitted.length));
+
                     Calendar currentDate = QueryUtility.getDataset2StartDate();
                     SimpleDateFormat format = new SimpleDateFormat("MM-yyyy");
+                    // for monthly grouping
                     String currentMonth = format.format(currentDate.getTime());
                     List<Double> monthlyPoints = new ArrayList<>();
                     for (Double singlePoint : punctualData) {
+                        // add point for current date
                         monthlyPoints.add(singlePoint);
+                        // increment date
                         currentDate.add(Calendar.DATE, 1);
+                        // switch of month then save previous data
                         if (!(format.format(currentDate.getTime())).equals(currentMonth)) {
                             result.add(new Tuple2<>(currentMonth, new CountryDataQuery3(name,
                                     monthlyPoints)));
@@ -53,6 +59,7 @@ public class Query3Main {
                             currentMonth = format.format(currentDate.getTime());
                         }
                     }
+                    // may have not yet inserted last month data
                     if (!monthlyPoints.isEmpty()) {
                         result.add(new Tuple2<>(currentMonth, new CountryDataQuery3(name, monthlyPoints)));
                     }
@@ -67,6 +74,7 @@ public class Query3Main {
                     for (int i = 0; i < values.size(); i++) {
                         regression.addData(i, values.get(i));
                     }
+                    // compute and save trendline coefficient
                     tuple._2().setSlope(regression.getSlope());
                     return new Tuple2<>(tuple._1(), new Tuple2<>(tuple._2().getSlope(), tuple._2()));
                 }
@@ -78,6 +86,8 @@ public class Query3Main {
                         tuple -> {
                             List<Tuple2<Double, CountryDataQuery3>> data = StreamSupport
                                     .stream(tuple._2().spliterator(), false).sorted((t1, t2) -> {
+                                        // must be in descending order so the implementation is the inverse respect to
+                                        // the ascending one
                                         double val = t1._1 - t2._1;
                                         if (val > 0) return -1;
                                         else if (val < 0) return 1;
@@ -87,11 +97,16 @@ public class Query3Main {
                         })
                 .cache();
 
+        // list of months
         List<String> keys = topMonthlySlopes.keys().collect();
+
+        // result structure
         List<Tuple2<String, ArrayList<ArrayList<String>>>> result = new ArrayList<>();
 
+        // perform clustering for every month and add result to result structure
         for (String key : keys) {
             result.add(new Tuple2<>(key,
+                    // perform clustering filtering the RDD by current month
                     ClusteringUtility.performClustering(topMonthlySlopes.filter(tuple -> tuple._1().equals(key)))));
         }
 
