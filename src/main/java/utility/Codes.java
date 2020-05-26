@@ -223,7 +223,7 @@ public enum Codes {
     TH("Asia"),
     TJ("Asia"),
     TK("Oceania"),
-    TL("Oceania"),
+    TL("Asia"),
     TM("Asia"),
     TN("Africa"),
     TO("Oceania"),
