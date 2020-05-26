@@ -54,6 +54,8 @@ Incompatible host OS: MacOS
 
 	For queries results graphical representation. The `grafana_storage` folder is automatically bounded to the container to implement local host machine persistence.
 	
+	In `grafana-dashboards/images` there are graphics result updated to 26th of May, 2020 (18:00 UTC+1).
+	
 * **InfluxDB** container:
 
 	For queries result export from HDFS to Grafana. The `influx_storage` directory is automatically bounded to the container to implement local host machine persistence of the time series database.

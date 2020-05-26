@@ -11,6 +11,8 @@ Folder containing CSV files:
 3. `query3_mllib_output.csv` containing the output of the third query performed using the mllib k-means implementation,
 4. `query3_naive_output.csv` containing the output of the third query performed using a naive implementation of the Lloyd k-means algorithm.
 
+**Results are updated to 26th of May, 2020 (18:00 UTC+1)**
+
 ### Documentation
 Folder containing benchmark results, project report and project presentation slides.
 ### docker-env
