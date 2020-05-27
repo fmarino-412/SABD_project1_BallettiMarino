@@ -12,7 +12,7 @@ Incompatible host OS: MacOS
 * `stop-dockers.sh` stops and removes every container and deletes the network.
 
 ### First start notes:
-* **/etc/hosts/**:
+* **in /etc/hosts**:
 
 	1. 	insert `127.0.0.1	hbase`
 	2. insert `127.0.0.1	influxdb`
