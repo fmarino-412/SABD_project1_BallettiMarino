@@ -32,14 +32,18 @@ public class Query2SparkSQL {
 
         JavaRDD<String> dataset2 = sparkContext.textFile(IOUtility.getDS2());
 
+        // for benchmark purposes
         final long startTime = System.currentTimeMillis();
 
+        // perform preprocessing
         JavaRDD<Tuple2<Double, CountryDataQuery2>> data = Query2Preprocessing.preprocessData(dataset2);
 
         JavaPairRDD<String, Tuple2<Tuple2<String, Integer>, Double>> dailyData = data.flatMapToPair(
                 tuple -> {
-
+                    // initialization of result structure
+                    // return values are 4-ples [continent, week, day of week, positive cases]
                     ArrayList<Tuple2<String, Tuple2<Tuple2<String, Integer>, Double>>> result = new ArrayList<>();
+                    // detect continent
                     String continent = ContinentDecoder.detectContinent(tuple._2().getCoordinate());
 
                     Calendar currentDate = QueryUtility.getDataset2StartDate();
@@ -47,8 +51,10 @@ public class Query2SparkSQL {
                     String week;
 
                     for (Double value : tuple._2.getCovidConfirmedCases()) {
+                        // evaluate week
                         week = QueryUtility.getFirstDayOfTheWeek(currentDate.get(Calendar.WEEK_OF_YEAR),
                                 currentDate.get(Calendar.YEAR));
+                        // add to result structure
                         result.add(new Tuple2<>(continent, new Tuple2<>(new Tuple2<>(week,
                                 currentDate.get(Calendar.DAY_OF_WEEK)), value)));
                         currentDate.add(Calendar.DATE, 1);
@@ -65,15 +71,20 @@ public class Query2SparkSQL {
                 .master("local")
                 .getOrCreate();
 
+        // create Spark SQL schema for dailyData
         Dataset<Row> dataFrame = createSchema(session, dailyData);
 
+        // to access result as "SQL table"
         dataFrame.createOrReplaceTempView("query2");
 
+        // perform day-by-day sum of values for every continent
         Dataset<Row> totalValues = session.sql("SELECT continent, week, sum(positive) AS positive " +
                 "FROM query2 GROUP BY continent, week, day");
 
+        // update "SQL table"
         totalValues.createOrReplaceTempView("query2");
 
+        // evaluate statistics
         Dataset<Row> result = session.sql("SELECT continent, week, mean(positive) AS mean, " +
                 "stddev(positive) AS stddev, min(positive) AS min, max(positive) AS max FROM query2 " +
                 "GROUP BY continent, week ORDER BY continent, week");
@@ -92,7 +103,7 @@ public class Query2SparkSQL {
     private static Dataset<Row> createSchema(SparkSession session,
                                              JavaPairRDD<String, Tuple2<Tuple2<String, Integer>, Double>> data) {
 
-        // Generating schema
+        // generating schema
         List<StructField> fields = new ArrayList<>();
         fields.add(DataTypes.createStructField("id", DataTypes.LongType, false));
         fields.add(DataTypes.createStructField("continent", DataTypes.StringType, false));
@@ -102,14 +113,14 @@ public class Query2SparkSQL {
 
         StructType schema = DataTypes.createStructType(fields);
 
-        // Convert RDD records to Rows
+        // convert RDD records to Rows
         JavaRDD<Row> rowRDD = data.zipWithIndex().map(element -> RowFactory.create(element._2(),
                 element._1()._1(),
                 element._1()._2()._1()._1(),
                 element._1()._2()._1()._2(),
                 element._1()._2()._2()));
 
-        // Apply schema to RDD and return
+        // apply schema to RDD and return
         return session.createDataFrame(rowRDD, schema);
     }
 }

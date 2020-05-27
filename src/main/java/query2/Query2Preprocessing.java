@@ -15,15 +15,19 @@ public class Query2Preprocessing {
          return dataset2.mapToPair(
                 line -> {
                     String[] splitted = line.split(",");
+                    // create a point from latitude and longitude
                     GeoCoordinate geoCoordinate = new GeoCoordinate(splitted[2], splitted[3]);
+                    // create country info structure
                     CountryDataQuery2 countryData = new CountryDataQuery2(geoCoordinate,
                             Arrays.asList(splitted).subList(4,splitted.length));
 
+                    // evaluate trendline coefficient
                     SimpleRegression regression = new SimpleRegression();
                     List<Double> values = countryData.getCovidConfirmedCases();
                     for (int i = 0; i < values.size(); i++) {
                         regression.addData(i, values.get(i));
                     }
+                    // tuples of type [slope, country info]
                     return new Tuple2<>(regression.getSlope(), countryData);
 
                 // sort by slope in descending order and take out just the first 100 elements

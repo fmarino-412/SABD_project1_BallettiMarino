@@ -32,19 +32,25 @@ public class Query2Main {
                             ArrayList<Tuple2<String, List<Double>>> result = new ArrayList<>();
                             String keyHeader = ContinentDecoder.detectContinent(tuple._2().getCoordinate()) + " - ";
 
+                            // create an RDD row for every week
                             Calendar currentDate = QueryUtility.getDataset2StartDate();
-                            // being sequential and taking care of just two following values works on different years
+                            // being sequential and taking care of just two consecutive values works on different years
                             // too
                             int currentWeekNumber = currentDate.get(Calendar.WEEK_OF_YEAR);
                             List<Double> weeklyValues = new ArrayList<>();
                             for (Double value : tuple._2().getCovidConfirmedCases()) {
                                 if (currentWeekNumber != currentDate.get(Calendar.WEEK_OF_YEAR)) {
+                                    // back to before week switch
                                     currentDate.add(Calendar.WEEK_OF_YEAR, -1);
+                                    // add result with current date
                                     result.add(new Tuple2<>(keyHeader +
                                             QueryUtility.getFirstDayOfTheWeek(currentDate.get(Calendar.WEEK_OF_YEAR),
                                                     currentDate.get(Calendar.YEAR)), weeklyValues));
+                                    // reswitch week
                                     currentDate.add(Calendar.WEEK_OF_YEAR, 1);
+                                    // reinitialize current week structure
                                     weeklyValues = new ArrayList<>();
+                                    // update current week number
                                     currentWeekNumber = currentDate.get(Calendar.WEEK_OF_YEAR);
                                 }
                                 weeklyValues.add(value);
@@ -67,6 +73,7 @@ public class Query2Main {
                 ).reduceByKey(
                         (x, y) -> {
                             // same x and y list length due to dataset update rules
+                            // sum day-by-day data for each continent
                             List<Double> sum = new ArrayList<>();
                             for (int i = 0; i < x.size(); i++) {
                                 sum.add(x.get(i) + y.get(i));
