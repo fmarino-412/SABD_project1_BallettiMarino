@@ -62,6 +62,9 @@ public class Continents {
     private static final Double[] LON_ANT = {-180.0, 180.0, 180.0, -180.0};
 
 
+    /**
+     * Continents as Boundary objects
+     */
     public static Boundary NORTH_AMERICA_1 = new Boundary(LAT_N_AM, LON_N_AM);
     public static Boundary NORTH_AMERICA_2 = new Boundary(LAT_N_AM_2, LON_N_AM_2);
     public static Boundary SOUTH_AMERICA = new Boundary(LAT_S_AM, LON_S_AM);

@@ -47,11 +47,12 @@ public class ClusteringUtility {
 
         JavaPairRDD<Double, String> toCluster = prepareData(data).cache();
 
-        // evaluate centroids
         for (int i = 0; i < ITERATION; i++) {
+            // perform cluster assignment
             List<Tuple2<Integer, Double>> newCentroids = toCluster.mapToPair(
                     tuple -> new Tuple2<>(assignToCluster(tuple._1(), centroids), tuple._1())
             ).groupByKey().mapToPair(
+                    // evaluate new centroids
                     tuple -> {
                         int numOfPoints = 0;
                         double sumOfPoints = 0.0;
@@ -63,6 +64,7 @@ public class ClusteringUtility {
                     }
             ).collect();
 
+            // update current centroid versions
             for (Tuple2<Integer, Double> newCentroid : newCentroids) {
                 centroids.set(newCentroid._1(), newCentroid._2());
             }
@@ -131,6 +133,8 @@ public class ClusteringUtility {
     /**
      * Naive scope.
      * Print the sum of squared intra cluster distances that represents the "cost" of the solution
+     * @param costData arrays of points, one array for cluster
+     * @param centroids list of centroids
      */
     private static void computeCost(ArrayList<ArrayList<Double>> costData, List<Double> centroids) {
         // compute cost as sum of squared intra cluster distances

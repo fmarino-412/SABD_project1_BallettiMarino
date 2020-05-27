@@ -14,7 +14,7 @@ Folder containing CSV files:
 **Results are updated to 26th of May, 2020 (18:00 UTC+1)**
 
 ### Documentation
-Folder containing benchmark results, project report and project presentation slides.
+Folder containing benchmark results (under `Benchmark` directory), project report and project presentation slides.
 ### docker-env
 Folder containing scripts and file for a container based execution of the project architecture.
 
