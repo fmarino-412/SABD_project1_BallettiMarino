@@ -116,9 +116,11 @@ public class ClusteringUtility {
         double currentDistance;
 
         for (Double centroid : centroids) {
+            // check the euclidean distance between centroid and point to find the minimum
             currentDistance = euclideanDistance(centroid, point);
             if (currentDistance < minDistance) {
                 minDistance = currentDistance;
+                // keep track of the centroid's index to be returned
                 indexOfCetroid = centroids.indexOf(centroid);
             }
         }
@@ -156,6 +158,7 @@ public class ClusteringUtility {
                 tuple -> Vectors.dense(tuple._1())
         );
 
+        // model initialization
         KMeansModel model = KMeans.train(values.rdd(), CLUSTERS, ITERATION, INITIALIZATION_MODE, SEED);
         //System.out.println("Total cost: " + model.computeCost(values.rdd()));
         List<Tuple2<Double, String>> toPredict = toCluster.collect();
@@ -166,6 +169,7 @@ public class ClusteringUtility {
             result.add(new ArrayList<>());
         }
 
+        // fill result structure with model predictions
         DecimalFormat doubleFormat = new DecimalFormat("#.###");
         for (Tuple2<Double, String> elem : toPredict) {
             int clusterIndex = model.predict(Vectors.dense(elem._1()));

@@ -33,6 +33,9 @@ public class Boundary {
         boolean result = false;
         int i, j;
         for (i = 0, j = this.npoints - 1; i < this.npoints; j = i++) {
+            // check if the geoCoordinate cross the boundaries, if so negate result
+            // in such way if it cross boundaries an even number of times means that
+            // the point doesn't fall within the boundaries, else it falls within
             if (checkCrossing(i, j, geoCoordinate.getLatitude(), geoCoordinate.getLongitude())) {
                 result = !result;
             }
