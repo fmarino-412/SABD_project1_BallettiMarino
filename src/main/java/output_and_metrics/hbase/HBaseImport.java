@@ -53,6 +53,7 @@ public class HBaseImport {
 
         System.out.println("Htable started!");
         System.out.println("Preparing environment...");
+        // delete tables if they already exist
         if (client.exists(TABLE_QUERY1)) {
             client.deleteTable(TABLE_QUERY1);
         }
@@ -65,11 +66,13 @@ public class HBaseImport {
 
         System.out.println("Htable environment ready!");
         System.out.println("Creating tables...");
+        // create tables
         client.createTable(TABLE_QUERY1, TABLE_QUERY1_CF);
         client.createTable(TABLE_QUERY2, TABLE_QUERY2_CF);
         client.createTable(TABLE_QUERY3, TABLE_QUERY3_CF);
 
         System.out.println("Importing hdfs data to tables...");
+        // import data to tables
         importQuery1Result(client);
         importQuery2Result(client);
         importQuery3Result(client);
@@ -102,10 +105,11 @@ public class HBaseImport {
         try {
             FSDataInputStream inputStream;
             BufferedReader br;
+            // get HDFS connection
             FileSystem hdfs = FileSystem.get(new URI(IOUtility.getHdfs()), configuration);
             Path dirPath = new Path(IOUtility.getOutputPathQuery1());
             FileStatus[] fileStatuses = hdfs.listStatus(dirPath);
-            // in case of splitted file output
+            // in case of splitted file output add every file data
             for (FileStatus fileStatus : fileStatuses) {
                 // _SUCCESS file and subdirectories are ignored
                 if (!fileStatus.isDirectory() && !fileStatus.getPath().toString().contains("SUCCESS")) {
@@ -156,10 +160,11 @@ public class HBaseImport {
         try {
             FSDataInputStream inputStream;
             BufferedReader br;
+            // get HDFS connection
             FileSystem hdfs = FileSystem.get(new URI(IOUtility.getHdfs()), configuration);
             Path dirPath = new Path(IOUtility.getOutputPathQuery2());
             FileStatus[] fileStatuses = hdfs.listStatus(dirPath);
-            // in case of splitted file output
+            // in case of splitted file output add every file data
             for (FileStatus fileStatus : fileStatuses) {
                 // _SUCCESS file and subdirectories are ignored
                 if (!fileStatus.isDirectory() && !fileStatus.getPath().toString().contains("SUCCESS")) {

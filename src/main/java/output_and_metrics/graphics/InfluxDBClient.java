@@ -66,6 +66,7 @@ public class InfluxDBClient {
             connection.deleteDatabase(dbName);
         }
         connection.createDatabase(dbName);
+        // maintains time series data for specified time interval
         connection.createRetentionPolicy("defaultPolicy", dbName, retentionTime, 1, true);
         connection.disableBatch();
     }
@@ -77,12 +78,14 @@ public class InfluxDBClient {
      * @param startDay week start day, month and year corresponding to weekly measurements
      * @param cured value of mean cured people
      * @param swabs value of mean performed swabs
+     * @return true if insertion has been completed, false elsewhere
      */
-    public void insertPoints(String dbName, String startDay, Double cured, Double swabs) {
+    public boolean insertPoints(String dbName, String startDay, Double cured, Double swabs) {
         try {
             DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
             long time = TimeUnit.MILLISECONDS.toDays(formatter.parse(startDay).getTime());
 
+            // to insert two points at a time
             BatchPoints batch = BatchPoints
                     .database(dbName)
                     .retentionPolicy("defaultPolicy")
@@ -97,11 +100,15 @@ public class InfluxDBClient {
                     .addField("swabs", swabs)
                     .build();
 
+            // add points to batch
             batch.point(curedPoint);
             batch.point(swabsPoint);
+            // write batch
             getConnection().write(batch);
+            return true;
         } catch (Exception e) {
             e.printStackTrace();
+            return false;
         }
     }
 
@@ -115,13 +122,15 @@ public class InfluxDBClient {
      * @param stddev value of positive case's standard deviation
      * @param min value of positive case's maximum value
      * @param max value of positive case's minumum value
+     * @return true if insertion has been completed, false elsewhere
      */
-    public void insertPoints(String dbName, String week, String continent, Double mean, Double stddev,
+    public boolean insertPoints(String dbName, String week, String continent, Double mean, Double stddev,
                              Double min, Double max) {
         try {
             DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
             long time = TimeUnit.MILLISECONDS.toDays(formatter.parse(week).getTime());
 
+            // to insert multiple points at a time
             BatchPoints batch = BatchPoints
                     .database(dbName)
                     .retentionPolicy("defaultPolicy")
@@ -144,13 +153,17 @@ public class InfluxDBClient {
                     .addField("max", max)
                     .build();
 
+            // add points to batch
             batch.point(meanPoint);
             batch.point(stddevPoint);
             batch.point(minPoint);
             batch.point(maxPoint);
+            // write batch
             getConnection().write(batch);
+            return true;
         } catch (Exception e) {
             e.printStackTrace();
+            return false;
         }
     }
 
@@ -162,20 +175,25 @@ public class InfluxDBClient {
      * @param countries list of countries belonging to the cluster
      * @param clusterAssignement cluster index
      * @param month month and year corresponding to the cluster composition
+     * @return true if insertion has been completed, false elsewhere
      */
-    public void insertPoints(String dbName, Double centroid, List<String> countries,
+    public boolean insertPoints(String dbName, Double centroid, List<String> countries,
                              int clusterAssignement, String month) {
         try {
             DateFormat formatter = new SimpleDateFormat("MM-yyyy");
             long time = TimeUnit.MILLISECONDS.toDays(formatter.parse(month).getTime());
+            // insert clustering info as a single point
             Point newPoint = Point.measurement("query3_cluster"+clusterAssignement)
                     .time(time, TimeUnit.DAYS)
                     .addField("centroid", centroid)
                     .addField("countries", countries.toString())
                     .build();
+            // perform insertion
             getConnection().setRetentionPolicy("defaultPolicy").setDatabase(dbName).write(newPoint);
+            return true;
         } catch (Exception e) {
             e.printStackTrace();
+            return false;
         }
     }
 }

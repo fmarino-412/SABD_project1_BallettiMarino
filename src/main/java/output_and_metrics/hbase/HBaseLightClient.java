@@ -40,6 +40,7 @@ public class HBaseLightClient {
             conf.set("hbase.zookeeper.property.clientPort", ZOOKEEPER_PORT);
             conf.set("hbase.master", HBASE_MASTER);
 
+            // check connection
             HBaseAdmin.checkHBaseAvailable(conf);
             this.connection = ConnectionFactory.createConnection(conf);
         }
@@ -100,6 +101,7 @@ public class HBaseLightClient {
     public boolean exists(String tableName) {
 
         try {
+            // must assume admin privileges to check existence of a table
             Admin admin = getConnection().getAdmin();
             TableName table = TableName.valueOf(tableName);
             return admin.tableExists(table);
@@ -117,6 +119,7 @@ public class HBaseLightClient {
     public boolean deleteTable(String tableName) {
 
         try {
+            // must assume admin privileges to drop table
             Admin admin = getConnection().getAdmin();
             TableName table = TableName.valueOf(tableName);
 
@@ -152,17 +155,20 @@ public class HBaseLightClient {
 
         try {
 
+            // get table
             Table hTable = getConnection().getTable(TableName.valueOf(tableName));
 
+            // create row
             Put row = new Put(Bytes.toBytes(rowKey));
 
+            // append columns to row
             for (int i = 0; i < (columns.length / 3); i++) {
                 row.addColumn(Bytes.toBytes(columns[i * 3]),
                         Bytes.toBytes(columns[(i * 3) + 1]),
                         Bytes.toBytes(columns[(i * 3) + 2]));
             }
 
-            // Put row in table
+            // put row in table
             hTable.put(row);
 
             hTable.close();
@@ -182,13 +188,14 @@ public class HBaseLightClient {
 
         try {
 
+            // get table
             Table table = getConnection().getTable(TableName.valueOf(tableName));
 
             Scan scan = new Scan();
 
             ResultScanner scanner = table.getScanner(scan);
 
-            // Reading values from scan result
+            // reading values from scan result
             for (Result result = scanner.next(); result != null; result = scanner.next()) {
                 System.out.println("Found row : " + result);
             }
