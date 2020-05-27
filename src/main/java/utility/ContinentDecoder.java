@@ -36,11 +36,13 @@ public class ContinentDecoder {
      */
     @Deprecated
     private static String detectContinentOnWebNominatim(GeoCoordinate coordinate) {
+        // build request URL
         String httpUrl = URL_NOMINATIM + LATHEAD_NOMINATIM + coordinate.getLatitude().toString() + LONHEAD_NOMINATIM +
                 coordinate.getLongitude().toString();
         try {
             InputStream inputStream = new URL(httpUrl).openStream();
             BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+            // obtains JSON response as string
             String jsonResponse = readAll(reader);
             JSONObject object = new JSONObject(jsonResponse);
             if (object.has("error")) {
@@ -61,12 +63,14 @@ public class ContinentDecoder {
      * @return a string representing the continent where the GeoCoordinate lies
      */
     private static String detectContinentOnWebBigDataCloud(GeoCoordinate coordinate) {
+        // build request URL
         String httpUrl = URL_BDCLOUD + LATHEAD_BDCLOUD + coordinate.getLatitude().toString() + LONHEAD_BDCLOUD +
                 coordinate.getLongitude().toString() + API_KEY;
 
         try {
             InputStream inputStream = new URL(httpUrl).openStream();
             BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+            // obtains JSON response as string
             String jsonResponse = readAll(reader);
             JSONObject object = new JSONObject(jsonResponse);
             if (object.has("error")) {

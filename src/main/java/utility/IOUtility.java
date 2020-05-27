@@ -29,30 +29,58 @@ public class IOUtility {
     private static final String ANSI_GREEN = "\u001B[32m";
     private static final String ANSI_RESET = "\u001B[0m";
 
+    /**
+     * Used to get first dataset HDFS path
+     * @return path of the first dataset
+     */
     public static String getDS1() {
         return "hdfs://" + HDFS_NAMENODE_ADDRESS + ":" + HDFS_NAMENODE_PORT + INPUT_FOLDER + DATASET1_FILENAME;
     }
 
+    /**
+     * Used to get the second dataset HDFS path
+     * @return path of the second dataset
+     */
     public static String getDS2() {
         return "hdfs://" + HDFS_NAMENODE_ADDRESS + ":" + HDFS_NAMENODE_PORT + INPUT_FOLDER + DATASET2_FILENAME;
     }
 
+    /**
+     * Used to get first query output directory HDFS path
+     * @return first query output directory path
+     */
     public static String getOutputPathQuery1() {
         return "hdfs://" + HDFS_NAMENODE_ADDRESS + ":" + HDFS_NAMENODE_PORT + OUTPUT_FOLDER + QUERY1_RESULT;
     }
 
+    /**
+     * Used to get second query output directory HDFS path
+     * @return second query output directory path
+     */
     public static String getOutputPathQuery2() {
         return "hdfs://" + HDFS_NAMENODE_ADDRESS + ":" + HDFS_NAMENODE_PORT + OUTPUT_FOLDER + QUERY2_RESULT;
     }
 
+    /**
+     * Used to get third query output HDFS path
+     * @return third query output path
+     */
     public static String getOutputPathQuery3() {
         return "hdfs://" + HDFS_NAMENODE_ADDRESS + ":" + HDFS_NAMENODE_PORT + OUTPUT_FOLDER + QUERY3_RESULT;
     }
 
+    /**
+     * Used to get HDFS URL for connection
+     * @return HDFS URL
+     */
     public static String getHdfs() {
         return "hdfs://" + HDFS_NAMENODE_ADDRESS + ":" + HDFS_NAMENODE_PORT;
     }
 
+    /**
+     * Formatted console print used for execution time results
+     * @param time to print in milliseconds
+     */
     public static void printTime(Long time) {
         System.out.println(ANSI_GREEN +
                 "\nExecution completed in " +
@@ -70,8 +98,10 @@ public class IOUtility {
         Configuration configuration = new Configuration();
         StringBuilder builder = new StringBuilder();
         try {
+            // connect to HDFS
             FileSystem hdfs = FileSystem.get(new URI(IOUtility.getHdfs()), configuration);
             Path file = new Path(path);
+            // create file and overwrite if exists
             FSDataOutputStream outputStream = hdfs.create(file, true);
             // convert result to string file
             for (Tuple2<String, ArrayList<ArrayList<String>>> monthData : data) {
@@ -81,6 +111,7 @@ public class IOUtility {
                 }
                 builder.deleteCharAt(builder.length() - 1).append("])\n");
             }
+            // perform write to HDFS file
             outputStream.writeChars(builder.toString());
             outputStream.close();
             hdfs.close();
@@ -97,9 +128,12 @@ public class IOUtility {
     public static void writeRDDToHdfs(String path, JavaPairRDD rdd) {
         Configuration configuration = new Configuration();
         try {
+            // connect to HDFS
             FileSystem hdfs = FileSystem.get(new URI(IOUtility.getHdfs()), configuration);
+            // delete previous file version
             hdfs.delete(new Path(path), true);
             hdfs.close();
+            // save new file version
             rdd.saveAsTextFile(path);
         } catch (Exception e) {
             e.printStackTrace();
