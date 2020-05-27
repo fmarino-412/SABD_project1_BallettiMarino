@@ -36,11 +36,15 @@ public class Query1SparkSQL {
         JavaPairRDD<String, Tuple2<Integer, Integer>> dailyData = Query1Preprocessing.preprocessData(dataset1)
                 .groupByKey().flatMapToPair(
                         tuple -> {
+                            // result structure initialization
                             ArrayList<Tuple2<String, Tuple2<Integer, Integer>>> result = new ArrayList<>();
+
+                            // convert cumulative data to punctual
                             Tuple2<ArrayList<Integer>, ArrayList<Integer>> punctualData =
                                     QueryUtility.toPunctualData(tuple);
+
                             if (punctualData != null) {
-                                // both arrays have same dimension
+                                // both arrays have same dimension, add data to result structure
                                 for (int i = 0; i < punctualData._1().size(); i++) {
                                     result.add(new Tuple2<>(tuple._1(), new Tuple2<>(punctualData._1().get(i),
                                             punctualData._2().get(i))));
@@ -56,10 +60,11 @@ public class Query1SparkSQL {
                 .master("local")
                 .getOrCreate();
 
+        // create the spark SQL schema for those results
         Dataset<Row> dataFrame = createSchema(session, dailyData);
-
         dataFrame.createOrReplaceTempView("query1");
 
+        // SQL query to evaluate requested statistics
         Dataset<Row> result = session.sql("SELECT week, avg(cured) AS mean_cured, avg(swabs) AS mean_swabs " +
                 "FROM query1 GROUP BY week ORDER BY week");
 
@@ -68,15 +73,17 @@ public class Query1SparkSQL {
 
         IOUtility.printTime(System.currentTimeMillis() - startTime);
 
+        // print query results
         result.show((int) result.count());
 
+        //close both session and context
         session.close();
         sparkContext.close();
     }
 
     private static Dataset<Row> createSchema(SparkSession session, JavaPairRDD<String, Tuple2<Integer, Integer>> data) {
 
-        // Generating schema
+        // generating schema
         List<StructField> fields = new ArrayList<>();
         fields.add(DataTypes.createStructField("id", DataTypes.LongType, false));
         fields.add(DataTypes.createStructField("week", DataTypes.StringType, false));
@@ -85,11 +92,11 @@ public class Query1SparkSQL {
 
         StructType schema = DataTypes.createStructType(fields);
 
-        // Convert RDD records to Rows
+        // convert RDD records to Rows
         JavaRDD<Row> rowRDD = data.zipWithIndex().map(element -> RowFactory.create(element._2(), element._1()._1(),
                 element._1()._2()._1(), element._1()._2()._2()));
 
-        // Apply schema to RDD and return
+        // apply schema to RDD and return
         return session.createDataFrame(rowRDD, schema);
     }
 }
