@@ -83,7 +83,7 @@ public class Query1SparkSQL {
 
     private static Dataset<Row> createSchema(SparkSession session, JavaPairRDD<String, Tuple2<Integer, Integer>> data) {
 
-        // Generating schema
+        // generating schema
         List<StructField> fields = new ArrayList<>();
         fields.add(DataTypes.createStructField("id", DataTypes.LongType, false));
         fields.add(DataTypes.createStructField("week", DataTypes.StringType, false));
@@ -92,11 +92,11 @@ public class Query1SparkSQL {
 
         StructType schema = DataTypes.createStructType(fields);
 
-        // Convert RDD records to Rows
+        // convert RDD records to Rows
         JavaRDD<Row> rowRDD = data.zipWithIndex().map(element -> RowFactory.create(element._2(), element._1()._1(),
                 element._1()._2()._1(), element._1()._2()._2()));
 
-        // Apply schema to RDD and return
+        // apply schema to RDD and return
         return session.createDataFrame(rowRDD, schema);
     }
 }
